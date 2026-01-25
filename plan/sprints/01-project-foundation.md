@@ -291,9 +291,9 @@ enum AnalyticsEventType { questStarted, questCompleted, questAbandoned, appOpene
 Define abstract repository interfaces for data access.
 
 **Acceptance Criteria**:
-- [ ] IAuthRepository, IQuestRepository, IAttemptRepository, IAnalyticsRepository, ISyncRepository
-- [ ] Methods return `Future<Either<Failure, T>>` or `Stream<T>`
-- [ ] Failure classes defined
+- [x] IAuthRepository, IQuestRepository, IAttemptRepository, IAnalyticsRepository, ISyncRepository
+- [x] Methods return `Future<Either<Failure, T>>` or `Stream<T>`
+- [x] Failure classes defined
 
 **Failure types**:
 ```dart
