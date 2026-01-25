@@ -1,5 +1,3 @@
-/// Widgets barrel export
-library widgets;
 
 export 'loading_overlay.dart';
 export 'error_view.dart';

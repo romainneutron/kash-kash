@@ -1,5 +1,3 @@
-/// Repository interfaces barrel export
-library repositories;
 
 export 'auth_repository.dart';
 export 'quest_repository.dart';

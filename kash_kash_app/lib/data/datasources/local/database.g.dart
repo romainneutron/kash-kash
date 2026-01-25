@@ -11,54 +11,94 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
-      'id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _emailMeta = const VerificationMeta('email');
   @override
   late final GeneratedColumn<String> email = GeneratedColumn<String>(
-      'email', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _displayNameMeta =
-      const VerificationMeta('displayName');
+    'email',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _displayNameMeta = const VerificationMeta(
+    'displayName',
+  );
   @override
   late final GeneratedColumn<String> displayName = GeneratedColumn<String>(
-      'display_name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _avatarUrlMeta =
-      const VerificationMeta('avatarUrl');
+    'display_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _avatarUrlMeta = const VerificationMeta(
+    'avatarUrl',
+  );
   @override
   late final GeneratedColumn<String> avatarUrl = GeneratedColumn<String>(
-      'avatar_url', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _roleMeta = const VerificationMeta('role');
+    'avatar_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   late final GeneratedColumnWithTypeConverter<UserRole, int> role =
-      GeneratedColumn<int>('role', aliasedName, false,
-              type: DriftSqlType.int, requiredDuringInsert: true)
-          .withConverter<UserRole>($UsersTable.$converterrole);
-  static const VerificationMeta _createdAtMeta =
-      const VerificationMeta('createdAt');
+      GeneratedColumn<int>(
+        'role',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: true,
+      ).withConverter<UserRole>($UsersTable.$converterrole);
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
   @override
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-      'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, email, displayName, avatarUrl, role, createdAt, updatedAt];
+  List<GeneratedColumn> get $columns => [
+    id,
+    email,
+    displayName,
+    avatarUrl,
+    role,
+    createdAt,
+    updatedAt,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'users';
   @override
-  VerificationContext validateIntegrity(Insertable<User> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<User> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -68,32 +108,42 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
     }
     if (data.containsKey('email')) {
       context.handle(
-          _emailMeta, email.isAcceptableOrUnknown(data['email']!, _emailMeta));
+        _emailMeta,
+        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
+      );
     } else if (isInserting) {
       context.missing(_emailMeta);
     }
     if (data.containsKey('display_name')) {
       context.handle(
+        _displayNameMeta,
+        displayName.isAcceptableOrUnknown(
+          data['display_name']!,
           _displayNameMeta,
-          displayName.isAcceptableOrUnknown(
-              data['display_name']!, _displayNameMeta));
+        ),
+      );
     } else if (isInserting) {
       context.missing(_displayNameMeta);
     }
     if (data.containsKey('avatar_url')) {
-      context.handle(_avatarUrlMeta,
-          avatarUrl.isAcceptableOrUnknown(data['avatar_url']!, _avatarUrlMeta));
+      context.handle(
+        _avatarUrlMeta,
+        avatarUrl.isAcceptableOrUnknown(data['avatar_url']!, _avatarUrlMeta),
+      );
     }
-    context.handle(_roleMeta, const VerificationResult.success());
     if (data.containsKey('created_at')) {
-      context.handle(_createdAtMeta,
-          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     } else if (isInserting) {
       context.missing(_updatedAtMeta);
     }
@@ -106,20 +156,36 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   User map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return User(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      email: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}email'])!,
-      displayName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}display_name'])!,
-      avatarUrl: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}avatar_url']),
-      role: $UsersTable.$converterrole.fromSql(attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}role'])!),
-      createdAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      )!,
+      displayName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}display_name'],
+      )!,
+      avatarUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}avatar_url'],
+      ),
+      role: $UsersTable.$converterrole.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}role'],
+        )!,
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
     );
   }
 
@@ -140,14 +206,15 @@ class User extends DataClass implements Insertable<User> {
   final UserRole role;
   final DateTime createdAt;
   final DateTime updatedAt;
-  const User(
-      {required this.id,
-      required this.email,
-      required this.displayName,
-      this.avatarUrl,
-      required this.role,
-      required this.createdAt,
-      required this.updatedAt});
+  const User({
+    required this.id,
+    required this.email,
+    required this.displayName,
+    this.avatarUrl,
+    required this.role,
+    required this.createdAt,
+    required this.updatedAt,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -179,16 +246,19 @@ class User extends DataClass implements Insertable<User> {
     );
   }
 
-  factory User.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory User.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return User(
       id: serializer.fromJson<String>(json['id']),
       email: serializer.fromJson<String>(json['email']),
       displayName: serializer.fromJson<String>(json['displayName']),
       avatarUrl: serializer.fromJson<String?>(json['avatarUrl']),
-      role: $UsersTable.$converterrole
-          .fromJson(serializer.fromJson<int>(json['role'])),
+      role: $UsersTable.$converterrole.fromJson(
+        serializer.fromJson<int>(json['role']),
+      ),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -207,29 +277,30 @@ class User extends DataClass implements Insertable<User> {
     };
   }
 
-  User copyWith(
-          {String? id,
-          String? email,
-          String? displayName,
-          Value<String?> avatarUrl = const Value.absent(),
-          UserRole? role,
-          DateTime? createdAt,
-          DateTime? updatedAt}) =>
-      User(
-        id: id ?? this.id,
-        email: email ?? this.email,
-        displayName: displayName ?? this.displayName,
-        avatarUrl: avatarUrl.present ? avatarUrl.value : this.avatarUrl,
-        role: role ?? this.role,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
+  User copyWith({
+    String? id,
+    String? email,
+    String? displayName,
+    Value<String?> avatarUrl = const Value.absent(),
+    UserRole? role,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => User(
+    id: id ?? this.id,
+    email: email ?? this.email,
+    displayName: displayName ?? this.displayName,
+    avatarUrl: avatarUrl.present ? avatarUrl.value : this.avatarUrl,
+    role: role ?? this.role,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
   User copyWithCompanion(UsersCompanion data) {
     return User(
       id: data.id.present ? data.id.value : this.id,
       email: data.email.present ? data.email.value : this.email,
-      displayName:
-          data.displayName.present ? data.displayName.value : this.displayName,
+      displayName: data.displayName.present
+          ? data.displayName.value
+          : this.displayName,
       avatarUrl: data.avatarUrl.present ? data.avatarUrl.value : this.avatarUrl,
       role: data.role.present ? data.role.value : this.role,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -253,7 +324,14 @@ class User extends DataClass implements Insertable<User> {
 
   @override
   int get hashCode => Object.hash(
-      id, email, displayName, avatarUrl, role, createdAt, updatedAt);
+    id,
+    email,
+    displayName,
+    avatarUrl,
+    role,
+    createdAt,
+    updatedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -295,12 +373,12 @@ class UsersCompanion extends UpdateCompanion<User> {
     required DateTime createdAt,
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
-  })  : id = Value(id),
-        email = Value(email),
-        displayName = Value(displayName),
-        role = Value(role),
-        createdAt = Value(createdAt),
-        updatedAt = Value(updatedAt);
+  }) : id = Value(id),
+       email = Value(email),
+       displayName = Value(displayName),
+       role = Value(role),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
   static Insertable<User> custom({
     Expression<String>? id,
     Expression<String>? email,
@@ -323,15 +401,16 @@ class UsersCompanion extends UpdateCompanion<User> {
     });
   }
 
-  UsersCompanion copyWith(
-      {Value<String>? id,
-      Value<String>? email,
-      Value<String>? displayName,
-      Value<String?>? avatarUrl,
-      Value<UserRole>? role,
-      Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt,
-      Value<int>? rowid}) {
+  UsersCompanion copyWith({
+    Value<String>? id,
+    Value<String>? email,
+    Value<String>? displayName,
+    Value<String?>? avatarUrl,
+    Value<UserRole>? role,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
     return UsersCompanion(
       id: id ?? this.id,
       email: email ?? this.email,
@@ -398,111 +477,169 @@ class $QuestsTable extends Quests with TableInfo<$QuestsTable, Quest> {
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
-      'id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
-      'title', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _descriptionMeta =
-      const VerificationMeta('description');
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
   @override
   late final GeneratedColumn<String> description = GeneratedColumn<String>(
-      'description', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _latitudeMeta =
-      const VerificationMeta('latitude');
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _latitudeMeta = const VerificationMeta(
+    'latitude',
+  );
   @override
   late final GeneratedColumn<double> latitude = GeneratedColumn<double>(
-      'latitude', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  static const VerificationMeta _longitudeMeta =
-      const VerificationMeta('longitude');
+    'latitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _longitudeMeta = const VerificationMeta(
+    'longitude',
+  );
   @override
   late final GeneratedColumn<double> longitude = GeneratedColumn<double>(
-      'longitude', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  static const VerificationMeta _radiusMetersMeta =
-      const VerificationMeta('radiusMeters');
+    'longitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _radiusMetersMeta = const VerificationMeta(
+    'radiusMeters',
+  );
   @override
   late final GeneratedColumn<double> radiusMeters = GeneratedColumn<double>(
-      'radius_meters', aliasedName, false,
-      type: DriftSqlType.double,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(3.0));
-  static const VerificationMeta _createdByMeta =
-      const VerificationMeta('createdBy');
+    'radius_meters',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(3.0),
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
-      'created_by', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _publishedMeta =
-      const VerificationMeta('published');
+    'created_by',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _publishedMeta = const VerificationMeta(
+    'published',
+  );
   @override
   late final GeneratedColumn<bool> published = GeneratedColumn<bool>(
-      'published', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("published" IN (0, 1))'),
-      defaultValue: const Constant(false));
-  static const VerificationMeta _difficultyMeta =
-      const VerificationMeta('difficulty');
+    'published',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("published" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   late final GeneratedColumnWithTypeConverter<QuestDifficulty?, int>
-      difficulty = GeneratedColumn<int>('difficulty', aliasedName, true,
-              type: DriftSqlType.int, requiredDuringInsert: false)
-          .withConverter<QuestDifficulty?>($QuestsTable.$converterdifficultyn);
-  static const VerificationMeta _locationTypeMeta =
-      const VerificationMeta('locationType');
+  difficulty = GeneratedColumn<int>(
+    'difficulty',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  ).withConverter<QuestDifficulty?>($QuestsTable.$converterdifficultyn);
   @override
   late final GeneratedColumnWithTypeConverter<LocationType?, int> locationType =
-      GeneratedColumn<int>('location_type', aliasedName, true,
-              type: DriftSqlType.int, requiredDuringInsert: false)
-          .withConverter<LocationType?>($QuestsTable.$converterlocationTypen);
-  static const VerificationMeta _createdAtMeta =
-      const VerificationMeta('createdAt');
+      GeneratedColumn<int>(
+        'location_type',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      ).withConverter<LocationType?>($QuestsTable.$converterlocationTypen);
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
   @override
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-      'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _syncedAtMeta =
-      const VerificationMeta('syncedAt');
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
-      'synced_at', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
-        id,
-        title,
-        description,
-        latitude,
-        longitude,
-        radiusMeters,
-        createdBy,
-        published,
-        difficulty,
-        locationType,
-        createdAt,
-        updatedAt,
-        syncedAt
-      ];
+    id,
+    title,
+    description,
+    latitude,
+    longitude,
+    radiusMeters,
+    createdBy,
+    published,
+    difficulty,
+    locationType,
+    createdAt,
+    updatedAt,
+    syncedAt,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'quests';
   @override
-  VerificationContext validateIntegrity(Insertable<Quest> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<Quest> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -512,61 +649,81 @@ class $QuestsTable extends Quests with TableInfo<$QuestsTable, Quest> {
     }
     if (data.containsKey('title')) {
       context.handle(
-          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
     } else if (isInserting) {
       context.missing(_titleMeta);
     }
     if (data.containsKey('description')) {
       context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
           _descriptionMeta,
-          description.isAcceptableOrUnknown(
-              data['description']!, _descriptionMeta));
+        ),
+      );
     }
     if (data.containsKey('latitude')) {
-      context.handle(_latitudeMeta,
-          latitude.isAcceptableOrUnknown(data['latitude']!, _latitudeMeta));
+      context.handle(
+        _latitudeMeta,
+        latitude.isAcceptableOrUnknown(data['latitude']!, _latitudeMeta),
+      );
     } else if (isInserting) {
       context.missing(_latitudeMeta);
     }
     if (data.containsKey('longitude')) {
-      context.handle(_longitudeMeta,
-          longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta));
+      context.handle(
+        _longitudeMeta,
+        longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta),
+      );
     } else if (isInserting) {
       context.missing(_longitudeMeta);
     }
     if (data.containsKey('radius_meters')) {
       context.handle(
+        _radiusMetersMeta,
+        radiusMeters.isAcceptableOrUnknown(
+          data['radius_meters']!,
           _radiusMetersMeta,
-          radiusMeters.isAcceptableOrUnknown(
-              data['radius_meters']!, _radiusMetersMeta));
+        ),
+      );
     }
     if (data.containsKey('created_by')) {
-      context.handle(_createdByMeta,
-          createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta));
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
     } else if (isInserting) {
       context.missing(_createdByMeta);
     }
     if (data.containsKey('published')) {
-      context.handle(_publishedMeta,
-          published.isAcceptableOrUnknown(data['published']!, _publishedMeta));
+      context.handle(
+        _publishedMeta,
+        published.isAcceptableOrUnknown(data['published']!, _publishedMeta),
+      );
     }
-    context.handle(_difficultyMeta, const VerificationResult.success());
-    context.handle(_locationTypeMeta, const VerificationResult.success());
     if (data.containsKey('created_at')) {
-      context.handle(_createdAtMeta,
-          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     } else if (isInserting) {
       context.missing(_updatedAtMeta);
     }
     if (data.containsKey('synced_at')) {
-      context.handle(_syncedAtMeta,
-          syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta));
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
     }
     return context;
   }
@@ -577,34 +734,62 @@ class $QuestsTable extends Quests with TableInfo<$QuestsTable, Quest> {
   Quest map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Quest(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      description: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}description']),
-      latitude: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}latitude'])!,
-      longitude: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}longitude'])!,
-      radiusMeters: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}radius_meters'])!,
-      createdBy: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}created_by'])!,
-      published: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}published'])!,
-      difficulty: $QuestsTable.$converterdifficultyn.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}difficulty'])),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+      latitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}latitude'],
+      )!,
+      longitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}longitude'],
+      )!,
+      radiusMeters: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}radius_meters'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      )!,
+      published: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}published'],
+      )!,
+      difficulty: $QuestsTable.$converterdifficultyn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}difficulty'],
+        ),
+      ),
       locationType: $QuestsTable.$converterlocationTypen.fromSql(
-          attachedDatabase.typeMapping
-              .read(DriftSqlType.int, data['${effectivePrefix}location_type'])),
-      createdAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
-      syncedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}synced_at']),
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}location_type'],
+        ),
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -616,8 +801,7 @@ class $QuestsTable extends Quests with TableInfo<$QuestsTable, Quest> {
   static JsonTypeConverter2<QuestDifficulty, int, int> $converterdifficulty =
       const EnumIndexConverter<QuestDifficulty>(QuestDifficulty.values);
   static JsonTypeConverter2<QuestDifficulty?, int?, int?>
-      $converterdifficultyn =
-      JsonTypeConverter2.asNullable($converterdifficulty);
+  $converterdifficultyn = JsonTypeConverter2.asNullable($converterdifficulty);
   static JsonTypeConverter2<LocationType, int, int> $converterlocationType =
       const EnumIndexConverter<LocationType>(LocationType.values);
   static JsonTypeConverter2<LocationType?, int?, int?> $converterlocationTypen =
@@ -638,20 +822,21 @@ class Quest extends DataClass implements Insertable<Quest> {
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? syncedAt;
-  const Quest(
-      {required this.id,
-      required this.title,
-      this.description,
-      required this.latitude,
-      required this.longitude,
-      required this.radiusMeters,
-      required this.createdBy,
-      required this.published,
-      this.difficulty,
-      this.locationType,
-      required this.createdAt,
-      required this.updatedAt,
-      this.syncedAt});
+  const Quest({
+    required this.id,
+    required this.title,
+    this.description,
+    required this.latitude,
+    required this.longitude,
+    required this.radiusMeters,
+    required this.createdBy,
+    required this.published,
+    this.difficulty,
+    this.locationType,
+    required this.createdAt,
+    required this.updatedAt,
+    this.syncedAt,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -666,12 +851,14 @@ class Quest extends DataClass implements Insertable<Quest> {
     map['created_by'] = Variable<String>(createdBy);
     map['published'] = Variable<bool>(published);
     if (!nullToAbsent || difficulty != null) {
-      map['difficulty'] =
-          Variable<int>($QuestsTable.$converterdifficultyn.toSql(difficulty));
+      map['difficulty'] = Variable<int>(
+        $QuestsTable.$converterdifficultyn.toSql(difficulty),
+      );
     }
     if (!nullToAbsent || locationType != null) {
       map['location_type'] = Variable<int>(
-          $QuestsTable.$converterlocationTypen.toSql(locationType));
+        $QuestsTable.$converterlocationTypen.toSql(locationType),
+      );
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
@@ -707,8 +894,10 @@ class Quest extends DataClass implements Insertable<Quest> {
     );
   }
 
-  factory Quest.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory Quest.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Quest(
       id: serializer.fromJson<String>(json['id']),
@@ -719,10 +908,12 @@ class Quest extends DataClass implements Insertable<Quest> {
       radiusMeters: serializer.fromJson<double>(json['radiusMeters']),
       createdBy: serializer.fromJson<String>(json['createdBy']),
       published: serializer.fromJson<bool>(json['published']),
-      difficulty: $QuestsTable.$converterdifficultyn
-          .fromJson(serializer.fromJson<int?>(json['difficulty'])),
-      locationType: $QuestsTable.$converterlocationTypen
-          .fromJson(serializer.fromJson<int?>(json['locationType'])),
+      difficulty: $QuestsTable.$converterdifficultyn.fromJson(
+        serializer.fromJson<int?>(json['difficulty']),
+      ),
+      locationType: $QuestsTable.$converterlocationTypen.fromJson(
+        serializer.fromJson<int?>(json['locationType']),
+      ),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
@@ -740,52 +931,54 @@ class Quest extends DataClass implements Insertable<Quest> {
       'radiusMeters': serializer.toJson<double>(radiusMeters),
       'createdBy': serializer.toJson<String>(createdBy),
       'published': serializer.toJson<bool>(published),
-      'difficulty': serializer
-          .toJson<int?>($QuestsTable.$converterdifficultyn.toJson(difficulty)),
+      'difficulty': serializer.toJson<int?>(
+        $QuestsTable.$converterdifficultyn.toJson(difficulty),
+      ),
       'locationType': serializer.toJson<int?>(
-          $QuestsTable.$converterlocationTypen.toJson(locationType)),
+        $QuestsTable.$converterlocationTypen.toJson(locationType),
+      ),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
-  Quest copyWith(
-          {String? id,
-          String? title,
-          Value<String?> description = const Value.absent(),
-          double? latitude,
-          double? longitude,
-          double? radiusMeters,
-          String? createdBy,
-          bool? published,
-          Value<QuestDifficulty?> difficulty = const Value.absent(),
-          Value<LocationType?> locationType = const Value.absent(),
-          DateTime? createdAt,
-          DateTime? updatedAt,
-          Value<DateTime?> syncedAt = const Value.absent()}) =>
-      Quest(
-        id: id ?? this.id,
-        title: title ?? this.title,
-        description: description.present ? description.value : this.description,
-        latitude: latitude ?? this.latitude,
-        longitude: longitude ?? this.longitude,
-        radiusMeters: radiusMeters ?? this.radiusMeters,
-        createdBy: createdBy ?? this.createdBy,
-        published: published ?? this.published,
-        difficulty: difficulty.present ? difficulty.value : this.difficulty,
-        locationType:
-            locationType.present ? locationType.value : this.locationType,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
-      );
+  Quest copyWith({
+    String? id,
+    String? title,
+    Value<String?> description = const Value.absent(),
+    double? latitude,
+    double? longitude,
+    double? radiusMeters,
+    String? createdBy,
+    bool? published,
+    Value<QuestDifficulty?> difficulty = const Value.absent(),
+    Value<LocationType?> locationType = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> syncedAt = const Value.absent(),
+  }) => Quest(
+    id: id ?? this.id,
+    title: title ?? this.title,
+    description: description.present ? description.value : this.description,
+    latitude: latitude ?? this.latitude,
+    longitude: longitude ?? this.longitude,
+    radiusMeters: radiusMeters ?? this.radiusMeters,
+    createdBy: createdBy ?? this.createdBy,
+    published: published ?? this.published,
+    difficulty: difficulty.present ? difficulty.value : this.difficulty,
+    locationType: locationType.present ? locationType.value : this.locationType,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+  );
   Quest copyWithCompanion(QuestsCompanion data) {
     return Quest(
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
-      description:
-          data.description.present ? data.description.value : this.description,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
       latitude: data.latitude.present ? data.latitude.value : this.latitude,
       longitude: data.longitude.present ? data.longitude.value : this.longitude,
       radiusMeters: data.radiusMeters.present
@@ -793,8 +986,9 @@ class Quest extends DataClass implements Insertable<Quest> {
           : this.radiusMeters,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
       published: data.published.present ? data.published.value : this.published,
-      difficulty:
-          data.difficulty.present ? data.difficulty.value : this.difficulty,
+      difficulty: data.difficulty.present
+          ? data.difficulty.value
+          : this.difficulty,
       locationType: data.locationType.present
           ? data.locationType.value
           : this.locationType,
@@ -826,19 +1020,20 @@ class Quest extends DataClass implements Insertable<Quest> {
 
   @override
   int get hashCode => Object.hash(
-      id,
-      title,
-      description,
-      latitude,
-      longitude,
-      radiusMeters,
-      createdBy,
-      published,
-      difficulty,
-      locationType,
-      createdAt,
-      updatedAt,
-      syncedAt);
+    id,
+    title,
+    description,
+    latitude,
+    longitude,
+    radiusMeters,
+    createdBy,
+    published,
+    difficulty,
+    locationType,
+    createdAt,
+    updatedAt,
+    syncedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -904,13 +1099,13 @@ class QuestsCompanion extends UpdateCompanion<Quest> {
     required DateTime updatedAt,
     this.syncedAt = const Value.absent(),
     this.rowid = const Value.absent(),
-  })  : id = Value(id),
-        title = Value(title),
-        latitude = Value(latitude),
-        longitude = Value(longitude),
-        createdBy = Value(createdBy),
-        createdAt = Value(createdAt),
-        updatedAt = Value(updatedAt);
+  }) : id = Value(id),
+       title = Value(title),
+       latitude = Value(latitude),
+       longitude = Value(longitude),
+       createdBy = Value(createdBy),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
   static Insertable<Quest> custom({
     Expression<String>? id,
     Expression<String>? title,
@@ -945,21 +1140,22 @@ class QuestsCompanion extends UpdateCompanion<Quest> {
     });
   }
 
-  QuestsCompanion copyWith(
-      {Value<String>? id,
-      Value<String>? title,
-      Value<String?>? description,
-      Value<double>? latitude,
-      Value<double>? longitude,
-      Value<double>? radiusMeters,
-      Value<String>? createdBy,
-      Value<bool>? published,
-      Value<QuestDifficulty?>? difficulty,
-      Value<LocationType?>? locationType,
-      Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt,
-      Value<DateTime?>? syncedAt,
-      Value<int>? rowid}) {
+  QuestsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? title,
+    Value<String?>? description,
+    Value<double>? latitude,
+    Value<double>? longitude,
+    Value<double>? radiusMeters,
+    Value<String>? createdBy,
+    Value<bool>? published,
+    Value<QuestDifficulty?>? difficulty,
+    Value<LocationType?>? locationType,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? syncedAt,
+    Value<int>? rowid,
+  }) {
     return QuestsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -1007,11 +1203,13 @@ class QuestsCompanion extends UpdateCompanion<Quest> {
     }
     if (difficulty.present) {
       map['difficulty'] = Variable<int>(
-          $QuestsTable.$converterdifficultyn.toSql(difficulty.value));
+        $QuestsTable.$converterdifficultyn.toSql(difficulty.value),
+      );
     }
     if (locationType.present) {
       map['location_type'] = Variable<int>(
-          $QuestsTable.$converterlocationTypen.toSql(locationType.value));
+        $QuestsTable.$converterlocationTypen.toSql(locationType.value),
+      );
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -1059,85 +1257,132 @@ class $QuestAttemptsTable extends QuestAttempts
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
-      'id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _questIdMeta =
-      const VerificationMeta('questId');
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _questIdMeta = const VerificationMeta(
+    'questId',
+  );
   @override
   late final GeneratedColumn<String> questId = GeneratedColumn<String>(
-      'quest_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'quest_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
   @override
   late final GeneratedColumn<String> userId = GeneratedColumn<String>(
-      'user_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _startedAtMeta =
-      const VerificationMeta('startedAt');
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _startedAtMeta = const VerificationMeta(
+    'startedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> startedAt = GeneratedColumn<DateTime>(
-      'started_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _completedAtMeta =
-      const VerificationMeta('completedAt');
+    'started_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
-      'completed_at', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
-  static const VerificationMeta _abandonedAtMeta =
-      const VerificationMeta('abandonedAt');
+    'completed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _abandonedAtMeta = const VerificationMeta(
+    'abandonedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> abandonedAt = GeneratedColumn<DateTime>(
-      'abandoned_at', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
-  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+    'abandoned_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   late final GeneratedColumnWithTypeConverter<AttemptStatus, int> status =
-      GeneratedColumn<int>('status', aliasedName, false,
-              type: DriftSqlType.int, requiredDuringInsert: true)
-          .withConverter<AttemptStatus>($QuestAttemptsTable.$converterstatus);
-  static const VerificationMeta _durationSecondsMeta =
-      const VerificationMeta('durationSeconds');
+      GeneratedColumn<int>(
+        'status',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: true,
+      ).withConverter<AttemptStatus>($QuestAttemptsTable.$converterstatus);
+  static const VerificationMeta _durationSecondsMeta = const VerificationMeta(
+    'durationSeconds',
+  );
   @override
   late final GeneratedColumn<int> durationSeconds = GeneratedColumn<int>(
-      'duration_seconds', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
-  static const VerificationMeta _distanceWalkedMeta =
-      const VerificationMeta('distanceWalked');
+    'duration_seconds',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _distanceWalkedMeta = const VerificationMeta(
+    'distanceWalked',
+  );
   @override
   late final GeneratedColumn<double> distanceWalked = GeneratedColumn<double>(
-      'distance_walked', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
+    'distance_walked',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
   @override
   late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
-      'synced', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("synced" IN (0, 1))'),
-      defaultValue: const Constant(false));
+    'synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
-        id,
-        questId,
-        userId,
-        startedAt,
-        completedAt,
-        abandonedAt,
-        status,
-        durationSeconds,
-        distanceWalked,
-        synced
-      ];
+    id,
+    questId,
+    userId,
+    startedAt,
+    completedAt,
+    abandonedAt,
+    status,
+    durationSeconds,
+    distanceWalked,
+    synced,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'quest_attempts';
   @override
-  VerificationContext validateIntegrity(Insertable<QuestAttempt> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<QuestAttempt> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -1146,51 +1391,70 @@ class $QuestAttemptsTable extends QuestAttempts
       context.missing(_idMeta);
     }
     if (data.containsKey('quest_id')) {
-      context.handle(_questIdMeta,
-          questId.isAcceptableOrUnknown(data['quest_id']!, _questIdMeta));
+      context.handle(
+        _questIdMeta,
+        questId.isAcceptableOrUnknown(data['quest_id']!, _questIdMeta),
+      );
     } else if (isInserting) {
       context.missing(_questIdMeta);
     }
     if (data.containsKey('user_id')) {
-      context.handle(_userIdMeta,
-          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
     } else if (isInserting) {
       context.missing(_userIdMeta);
     }
     if (data.containsKey('started_at')) {
-      context.handle(_startedAtMeta,
-          startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta));
+      context.handle(
+        _startedAtMeta,
+        startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta),
+      );
     } else if (isInserting) {
       context.missing(_startedAtMeta);
     }
     if (data.containsKey('completed_at')) {
       context.handle(
+        _completedAtMeta,
+        completedAt.isAcceptableOrUnknown(
+          data['completed_at']!,
           _completedAtMeta,
-          completedAt.isAcceptableOrUnknown(
-              data['completed_at']!, _completedAtMeta));
+        ),
+      );
     }
     if (data.containsKey('abandoned_at')) {
       context.handle(
+        _abandonedAtMeta,
+        abandonedAt.isAcceptableOrUnknown(
+          data['abandoned_at']!,
           _abandonedAtMeta,
-          abandonedAt.isAcceptableOrUnknown(
-              data['abandoned_at']!, _abandonedAtMeta));
+        ),
+      );
     }
-    context.handle(_statusMeta, const VerificationResult.success());
     if (data.containsKey('duration_seconds')) {
       context.handle(
+        _durationSecondsMeta,
+        durationSeconds.isAcceptableOrUnknown(
+          data['duration_seconds']!,
           _durationSecondsMeta,
-          durationSeconds.isAcceptableOrUnknown(
-              data['duration_seconds']!, _durationSecondsMeta));
+        ),
+      );
     }
     if (data.containsKey('distance_walked')) {
       context.handle(
+        _distanceWalkedMeta,
+        distanceWalked.isAcceptableOrUnknown(
+          data['distance_walked']!,
           _distanceWalkedMeta,
-          distanceWalked.isAcceptableOrUnknown(
-              data['distance_walked']!, _distanceWalkedMeta));
+        ),
+      );
     }
     if (data.containsKey('synced')) {
-      context.handle(_syncedMeta,
-          synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta));
+      context.handle(
+        _syncedMeta,
+        synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
+      );
     }
     return context;
   }
@@ -1201,27 +1465,48 @@ class $QuestAttemptsTable extends QuestAttempts
   QuestAttempt map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return QuestAttempt(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      questId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}quest_id'])!,
-      userId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}user_id'])!,
-      startedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}started_at'])!,
-      completedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}completed_at']),
-      abandonedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}abandoned_at']),
-      status: $QuestAttemptsTable.$converterstatus.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}status'])!),
-      durationSeconds: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}duration_seconds']),
-      distanceWalked: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}distance_walked']),
-      synced: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}synced'])!,
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      questId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}quest_id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      startedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_at'],
+      )!,
+      completedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}completed_at'],
+      ),
+      abandonedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}abandoned_at'],
+      ),
+      status: $QuestAttemptsTable.$converterstatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}status'],
+        )!,
+      ),
+      durationSeconds: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}duration_seconds'],
+      ),
+      distanceWalked: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}distance_walked'],
+      ),
+      synced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}synced'],
+      )!,
     );
   }
 
@@ -1245,17 +1530,18 @@ class QuestAttempt extends DataClass implements Insertable<QuestAttempt> {
   final int? durationSeconds;
   final double? distanceWalked;
   final bool synced;
-  const QuestAttempt(
-      {required this.id,
-      required this.questId,
-      required this.userId,
-      required this.startedAt,
-      this.completedAt,
-      this.abandonedAt,
-      required this.status,
-      this.durationSeconds,
-      this.distanceWalked,
-      required this.synced});
+  const QuestAttempt({
+    required this.id,
+    required this.questId,
+    required this.userId,
+    required this.startedAt,
+    this.completedAt,
+    this.abandonedAt,
+    required this.status,
+    this.durationSeconds,
+    this.distanceWalked,
+    required this.synced,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1270,8 +1556,9 @@ class QuestAttempt extends DataClass implements Insertable<QuestAttempt> {
       map['abandoned_at'] = Variable<DateTime>(abandonedAt);
     }
     {
-      map['status'] =
-          Variable<int>($QuestAttemptsTable.$converterstatus.toSql(status));
+      map['status'] = Variable<int>(
+        $QuestAttemptsTable.$converterstatus.toSql(status),
+      );
     }
     if (!nullToAbsent || durationSeconds != null) {
       map['duration_seconds'] = Variable<int>(durationSeconds);
@@ -1306,8 +1593,10 @@ class QuestAttempt extends DataClass implements Insertable<QuestAttempt> {
     );
   }
 
-  factory QuestAttempt.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory QuestAttempt.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return QuestAttempt(
       id: serializer.fromJson<String>(json['id']),
@@ -1316,8 +1605,9 @@ class QuestAttempt extends DataClass implements Insertable<QuestAttempt> {
       startedAt: serializer.fromJson<DateTime>(json['startedAt']),
       completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
       abandonedAt: serializer.fromJson<DateTime?>(json['abandonedAt']),
-      status: $QuestAttemptsTable.$converterstatus
-          .fromJson(serializer.fromJson<int>(json['status'])),
+      status: $QuestAttemptsTable.$converterstatus.fromJson(
+        serializer.fromJson<int>(json['status']),
+      ),
       durationSeconds: serializer.fromJson<int?>(json['durationSeconds']),
       distanceWalked: serializer.fromJson<double?>(json['distanceWalked']),
       synced: serializer.fromJson<bool>(json['synced']),
@@ -1333,50 +1623,54 @@ class QuestAttempt extends DataClass implements Insertable<QuestAttempt> {
       'startedAt': serializer.toJson<DateTime>(startedAt),
       'completedAt': serializer.toJson<DateTime?>(completedAt),
       'abandonedAt': serializer.toJson<DateTime?>(abandonedAt),
-      'status': serializer
-          .toJson<int>($QuestAttemptsTable.$converterstatus.toJson(status)),
+      'status': serializer.toJson<int>(
+        $QuestAttemptsTable.$converterstatus.toJson(status),
+      ),
       'durationSeconds': serializer.toJson<int?>(durationSeconds),
       'distanceWalked': serializer.toJson<double?>(distanceWalked),
       'synced': serializer.toJson<bool>(synced),
     };
   }
 
-  QuestAttempt copyWith(
-          {String? id,
-          String? questId,
-          String? userId,
-          DateTime? startedAt,
-          Value<DateTime?> completedAt = const Value.absent(),
-          Value<DateTime?> abandonedAt = const Value.absent(),
-          AttemptStatus? status,
-          Value<int?> durationSeconds = const Value.absent(),
-          Value<double?> distanceWalked = const Value.absent(),
-          bool? synced}) =>
-      QuestAttempt(
-        id: id ?? this.id,
-        questId: questId ?? this.questId,
-        userId: userId ?? this.userId,
-        startedAt: startedAt ?? this.startedAt,
-        completedAt: completedAt.present ? completedAt.value : this.completedAt,
-        abandonedAt: abandonedAt.present ? abandonedAt.value : this.abandonedAt,
-        status: status ?? this.status,
-        durationSeconds: durationSeconds.present
-            ? durationSeconds.value
-            : this.durationSeconds,
-        distanceWalked:
-            distanceWalked.present ? distanceWalked.value : this.distanceWalked,
-        synced: synced ?? this.synced,
-      );
+  QuestAttempt copyWith({
+    String? id,
+    String? questId,
+    String? userId,
+    DateTime? startedAt,
+    Value<DateTime?> completedAt = const Value.absent(),
+    Value<DateTime?> abandonedAt = const Value.absent(),
+    AttemptStatus? status,
+    Value<int?> durationSeconds = const Value.absent(),
+    Value<double?> distanceWalked = const Value.absent(),
+    bool? synced,
+  }) => QuestAttempt(
+    id: id ?? this.id,
+    questId: questId ?? this.questId,
+    userId: userId ?? this.userId,
+    startedAt: startedAt ?? this.startedAt,
+    completedAt: completedAt.present ? completedAt.value : this.completedAt,
+    abandonedAt: abandonedAt.present ? abandonedAt.value : this.abandonedAt,
+    status: status ?? this.status,
+    durationSeconds: durationSeconds.present
+        ? durationSeconds.value
+        : this.durationSeconds,
+    distanceWalked: distanceWalked.present
+        ? distanceWalked.value
+        : this.distanceWalked,
+    synced: synced ?? this.synced,
+  );
   QuestAttempt copyWithCompanion(QuestAttemptsCompanion data) {
     return QuestAttempt(
       id: data.id.present ? data.id.value : this.id,
       questId: data.questId.present ? data.questId.value : this.questId,
       userId: data.userId.present ? data.userId.value : this.userId,
       startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
-      completedAt:
-          data.completedAt.present ? data.completedAt.value : this.completedAt,
-      abandonedAt:
-          data.abandonedAt.present ? data.abandonedAt.value : this.abandonedAt,
+      completedAt: data.completedAt.present
+          ? data.completedAt.value
+          : this.completedAt,
+      abandonedAt: data.abandonedAt.present
+          ? data.abandonedAt.value
+          : this.abandonedAt,
       status: data.status.present ? data.status.value : this.status,
       durationSeconds: data.durationSeconds.present
           ? data.durationSeconds.value
@@ -1406,8 +1700,18 @@ class QuestAttempt extends DataClass implements Insertable<QuestAttempt> {
   }
 
   @override
-  int get hashCode => Object.hash(id, questId, userId, startedAt, completedAt,
-      abandonedAt, status, durationSeconds, distanceWalked, synced);
+  int get hashCode => Object.hash(
+    id,
+    questId,
+    userId,
+    startedAt,
+    completedAt,
+    abandonedAt,
+    status,
+    durationSeconds,
+    distanceWalked,
+    synced,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1461,11 +1765,11 @@ class QuestAttemptsCompanion extends UpdateCompanion<QuestAttempt> {
     this.distanceWalked = const Value.absent(),
     this.synced = const Value.absent(),
     this.rowid = const Value.absent(),
-  })  : id = Value(id),
-        questId = Value(questId),
-        userId = Value(userId),
-        startedAt = Value(startedAt),
-        status = Value(status);
+  }) : id = Value(id),
+       questId = Value(questId),
+       userId = Value(userId),
+       startedAt = Value(startedAt),
+       status = Value(status);
   static Insertable<QuestAttempt> custom({
     Expression<String>? id,
     Expression<String>? questId,
@@ -1494,18 +1798,19 @@ class QuestAttemptsCompanion extends UpdateCompanion<QuestAttempt> {
     });
   }
 
-  QuestAttemptsCompanion copyWith(
-      {Value<String>? id,
-      Value<String>? questId,
-      Value<String>? userId,
-      Value<DateTime>? startedAt,
-      Value<DateTime?>? completedAt,
-      Value<DateTime?>? abandonedAt,
-      Value<AttemptStatus>? status,
-      Value<int?>? durationSeconds,
-      Value<double?>? distanceWalked,
-      Value<bool>? synced,
-      Value<int>? rowid}) {
+  QuestAttemptsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? questId,
+    Value<String>? userId,
+    Value<DateTime>? startedAt,
+    Value<DateTime?>? completedAt,
+    Value<DateTime?>? abandonedAt,
+    Value<AttemptStatus>? status,
+    Value<int?>? durationSeconds,
+    Value<double?>? distanceWalked,
+    Value<bool>? synced,
+    Value<int>? rowid,
+  }) {
     return QuestAttemptsCompanion(
       id: id ?? this.id,
       questId: questId ?? this.questId,
@@ -1544,7 +1849,8 @@ class QuestAttemptsCompanion extends UpdateCompanion<QuestAttempt> {
     }
     if (status.present) {
       map['status'] = Variable<int>(
-          $QuestAttemptsTable.$converterstatus.toSql(status.value));
+        $QuestAttemptsTable.$converterstatus.toSql(status.value),
+      );
     }
     if (durationSeconds.present) {
       map['duration_seconds'] = Variable<int>(durationSeconds.value);
@@ -1589,63 +1895,110 @@ class $PathPointsTable extends PathPoints
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
-      'id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _attemptIdMeta =
-      const VerificationMeta('attemptId');
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _attemptIdMeta = const VerificationMeta(
+    'attemptId',
+  );
   @override
   late final GeneratedColumn<String> attemptId = GeneratedColumn<String>(
-      'attempt_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _latitudeMeta =
-      const VerificationMeta('latitude');
+    'attempt_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _latitudeMeta = const VerificationMeta(
+    'latitude',
+  );
   @override
   late final GeneratedColumn<double> latitude = GeneratedColumn<double>(
-      'latitude', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  static const VerificationMeta _longitudeMeta =
-      const VerificationMeta('longitude');
+    'latitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _longitudeMeta = const VerificationMeta(
+    'longitude',
+  );
   @override
   late final GeneratedColumn<double> longitude = GeneratedColumn<double>(
-      'longitude', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  static const VerificationMeta _timestampMeta =
-      const VerificationMeta('timestamp');
+    'longitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _timestampMeta = const VerificationMeta(
+    'timestamp',
+  );
   @override
   late final GeneratedColumn<DateTime> timestamp = GeneratedColumn<DateTime>(
-      'timestamp', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _accuracyMeta =
-      const VerificationMeta('accuracy');
+    'timestamp',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _accuracyMeta = const VerificationMeta(
+    'accuracy',
+  );
   @override
   late final GeneratedColumn<double> accuracy = GeneratedColumn<double>(
-      'accuracy', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+    'accuracy',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _speedMeta = const VerificationMeta('speed');
   @override
   late final GeneratedColumn<double> speed = GeneratedColumn<double>(
-      'speed', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+    'speed',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
   @override
   late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
-      'synced', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("synced" IN (0, 1))'),
-      defaultValue: const Constant(false));
+    'synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, attemptId, latitude, longitude, timestamp, accuracy, speed, synced];
+  List<GeneratedColumn> get $columns => [
+    id,
+    attemptId,
+    latitude,
+    longitude,
+    timestamp,
+    accuracy,
+    speed,
+    synced,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'path_points';
   @override
-  VerificationContext validateIntegrity(Insertable<PathPoint> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<PathPoint> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -1654,44 +2007,58 @@ class $PathPointsTable extends PathPoints
       context.missing(_idMeta);
     }
     if (data.containsKey('attempt_id')) {
-      context.handle(_attemptIdMeta,
-          attemptId.isAcceptableOrUnknown(data['attempt_id']!, _attemptIdMeta));
+      context.handle(
+        _attemptIdMeta,
+        attemptId.isAcceptableOrUnknown(data['attempt_id']!, _attemptIdMeta),
+      );
     } else if (isInserting) {
       context.missing(_attemptIdMeta);
     }
     if (data.containsKey('latitude')) {
-      context.handle(_latitudeMeta,
-          latitude.isAcceptableOrUnknown(data['latitude']!, _latitudeMeta));
+      context.handle(
+        _latitudeMeta,
+        latitude.isAcceptableOrUnknown(data['latitude']!, _latitudeMeta),
+      );
     } else if (isInserting) {
       context.missing(_latitudeMeta);
     }
     if (data.containsKey('longitude')) {
-      context.handle(_longitudeMeta,
-          longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta));
+      context.handle(
+        _longitudeMeta,
+        longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta),
+      );
     } else if (isInserting) {
       context.missing(_longitudeMeta);
     }
     if (data.containsKey('timestamp')) {
-      context.handle(_timestampMeta,
-          timestamp.isAcceptableOrUnknown(data['timestamp']!, _timestampMeta));
+      context.handle(
+        _timestampMeta,
+        timestamp.isAcceptableOrUnknown(data['timestamp']!, _timestampMeta),
+      );
     } else if (isInserting) {
       context.missing(_timestampMeta);
     }
     if (data.containsKey('accuracy')) {
-      context.handle(_accuracyMeta,
-          accuracy.isAcceptableOrUnknown(data['accuracy']!, _accuracyMeta));
+      context.handle(
+        _accuracyMeta,
+        accuracy.isAcceptableOrUnknown(data['accuracy']!, _accuracyMeta),
+      );
     } else if (isInserting) {
       context.missing(_accuracyMeta);
     }
     if (data.containsKey('speed')) {
       context.handle(
-          _speedMeta, speed.isAcceptableOrUnknown(data['speed']!, _speedMeta));
+        _speedMeta,
+        speed.isAcceptableOrUnknown(data['speed']!, _speedMeta),
+      );
     } else if (isInserting) {
       context.missing(_speedMeta);
     }
     if (data.containsKey('synced')) {
-      context.handle(_syncedMeta,
-          synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta));
+      context.handle(
+        _syncedMeta,
+        synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
+      );
     }
     return context;
   }
@@ -1702,22 +2069,38 @@ class $PathPointsTable extends PathPoints
   PathPoint map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PathPoint(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      attemptId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}attempt_id'])!,
-      latitude: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}latitude'])!,
-      longitude: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}longitude'])!,
-      timestamp: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}timestamp'])!,
-      accuracy: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}accuracy'])!,
-      speed: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}speed'])!,
-      synced: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}synced'])!,
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      attemptId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}attempt_id'],
+      )!,
+      latitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}latitude'],
+      )!,
+      longitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}longitude'],
+      )!,
+      timestamp: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}timestamp'],
+      )!,
+      accuracy: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}accuracy'],
+      )!,
+      speed: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}speed'],
+      )!,
+      synced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}synced'],
+      )!,
     );
   }
 
@@ -1736,15 +2119,16 @@ class PathPoint extends DataClass implements Insertable<PathPoint> {
   final double accuracy;
   final double speed;
   final bool synced;
-  const PathPoint(
-      {required this.id,
-      required this.attemptId,
-      required this.latitude,
-      required this.longitude,
-      required this.timestamp,
-      required this.accuracy,
-      required this.speed,
-      required this.synced});
+  const PathPoint({
+    required this.id,
+    required this.attemptId,
+    required this.latitude,
+    required this.longitude,
+    required this.timestamp,
+    required this.accuracy,
+    required this.speed,
+    required this.synced,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1772,8 +2156,10 @@ class PathPoint extends DataClass implements Insertable<PathPoint> {
     );
   }
 
-  factory PathPoint.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory PathPoint.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PathPoint(
       id: serializer.fromJson<String>(json['id']),
@@ -1801,25 +2187,25 @@ class PathPoint extends DataClass implements Insertable<PathPoint> {
     };
   }
 
-  PathPoint copyWith(
-          {String? id,
-          String? attemptId,
-          double? latitude,
-          double? longitude,
-          DateTime? timestamp,
-          double? accuracy,
-          double? speed,
-          bool? synced}) =>
-      PathPoint(
-        id: id ?? this.id,
-        attemptId: attemptId ?? this.attemptId,
-        latitude: latitude ?? this.latitude,
-        longitude: longitude ?? this.longitude,
-        timestamp: timestamp ?? this.timestamp,
-        accuracy: accuracy ?? this.accuracy,
-        speed: speed ?? this.speed,
-        synced: synced ?? this.synced,
-      );
+  PathPoint copyWith({
+    String? id,
+    String? attemptId,
+    double? latitude,
+    double? longitude,
+    DateTime? timestamp,
+    double? accuracy,
+    double? speed,
+    bool? synced,
+  }) => PathPoint(
+    id: id ?? this.id,
+    attemptId: attemptId ?? this.attemptId,
+    latitude: latitude ?? this.latitude,
+    longitude: longitude ?? this.longitude,
+    timestamp: timestamp ?? this.timestamp,
+    accuracy: accuracy ?? this.accuracy,
+    speed: speed ?? this.speed,
+    synced: synced ?? this.synced,
+  );
   PathPoint copyWithCompanion(PathPointsCompanion data) {
     return PathPoint(
       id: data.id.present ? data.id.value : this.id,
@@ -1850,7 +2236,15 @@ class PathPoint extends DataClass implements Insertable<PathPoint> {
 
   @override
   int get hashCode => Object.hash(
-      id, attemptId, latitude, longitude, timestamp, accuracy, speed, synced);
+    id,
+    attemptId,
+    latitude,
+    longitude,
+    timestamp,
+    accuracy,
+    speed,
+    synced,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1896,13 +2290,13 @@ class PathPointsCompanion extends UpdateCompanion<PathPoint> {
     required double speed,
     this.synced = const Value.absent(),
     this.rowid = const Value.absent(),
-  })  : id = Value(id),
-        attemptId = Value(attemptId),
-        latitude = Value(latitude),
-        longitude = Value(longitude),
-        timestamp = Value(timestamp),
-        accuracy = Value(accuracy),
-        speed = Value(speed);
+  }) : id = Value(id),
+       attemptId = Value(attemptId),
+       latitude = Value(latitude),
+       longitude = Value(longitude),
+       timestamp = Value(timestamp),
+       accuracy = Value(accuracy),
+       speed = Value(speed);
   static Insertable<PathPoint> custom({
     Expression<String>? id,
     Expression<String>? attemptId,
@@ -1927,16 +2321,17 @@ class PathPointsCompanion extends UpdateCompanion<PathPoint> {
     });
   }
 
-  PathPointsCompanion copyWith(
-      {Value<String>? id,
-      Value<String>? attemptId,
-      Value<double>? latitude,
-      Value<double>? longitude,
-      Value<DateTime>? timestamp,
-      Value<double>? accuracy,
-      Value<double>? speed,
-      Value<bool>? synced,
-      Value<int>? rowid}) {
+  PathPointsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? attemptId,
+    Value<double>? latitude,
+    Value<double>? longitude,
+    Value<DateTime>? timestamp,
+    Value<double>? accuracy,
+    Value<double>? speed,
+    Value<bool>? synced,
+    Value<int>? rowid,
+  }) {
     return PathPointsCompanion(
       id: id ?? this.id,
       attemptId: attemptId ?? this.attemptId,
@@ -2009,63 +2404,106 @@ class $SyncQueueTable extends SyncQueue
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _targetTableMeta =
-      const VerificationMeta('targetTable');
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _targetTableMeta = const VerificationMeta(
+    'targetTable',
+  );
   @override
   late final GeneratedColumn<String> targetTable = GeneratedColumn<String>(
-      'target_table', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _recordIdMeta =
-      const VerificationMeta('recordId');
+    'target_table',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recordIdMeta = const VerificationMeta(
+    'recordId',
+  );
   @override
   late final GeneratedColumn<String> recordId = GeneratedColumn<String>(
-      'record_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _operationMeta =
-      const VerificationMeta('operation');
+    'record_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _operationMeta = const VerificationMeta(
+    'operation',
+  );
   @override
   late final GeneratedColumn<String> operation = GeneratedColumn<String>(
-      'operation', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _payloadMeta =
-      const VerificationMeta('payload');
+    'operation',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadMeta = const VerificationMeta(
+    'payload',
+  );
   @override
   late final GeneratedColumn<String> payload = GeneratedColumn<String>(
-      'payload', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _createdAtMeta =
-      const VerificationMeta('createdAt');
+    'payload',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
   @override
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-      'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _processedMeta =
-      const VerificationMeta('processed');
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _processedMeta = const VerificationMeta(
+    'processed',
+  );
   @override
   late final GeneratedColumn<bool> processed = GeneratedColumn<bool>(
-      'processed', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("processed" IN (0, 1))'),
-      defaultValue: const Constant(false));
+    'processed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("processed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, targetTable, recordId, operation, payload, createdAt, processed];
+  List<GeneratedColumn> get $columns => [
+    id,
+    targetTable,
+    recordId,
+    operation,
+    payload,
+    createdAt,
+    processed,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'sync_queue';
   @override
-  VerificationContext validateIntegrity(Insertable<SyncQueueData> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<SyncQueueData> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -2073,39 +2511,52 @@ class $SyncQueueTable extends SyncQueue
     }
     if (data.containsKey('target_table')) {
       context.handle(
+        _targetTableMeta,
+        targetTable.isAcceptableOrUnknown(
+          data['target_table']!,
           _targetTableMeta,
-          targetTable.isAcceptableOrUnknown(
-              data['target_table']!, _targetTableMeta));
+        ),
+      );
     } else if (isInserting) {
       context.missing(_targetTableMeta);
     }
     if (data.containsKey('record_id')) {
-      context.handle(_recordIdMeta,
-          recordId.isAcceptableOrUnknown(data['record_id']!, _recordIdMeta));
+      context.handle(
+        _recordIdMeta,
+        recordId.isAcceptableOrUnknown(data['record_id']!, _recordIdMeta),
+      );
     } else if (isInserting) {
       context.missing(_recordIdMeta);
     }
     if (data.containsKey('operation')) {
-      context.handle(_operationMeta,
-          operation.isAcceptableOrUnknown(data['operation']!, _operationMeta));
+      context.handle(
+        _operationMeta,
+        operation.isAcceptableOrUnknown(data['operation']!, _operationMeta),
+      );
     } else if (isInserting) {
       context.missing(_operationMeta);
     }
     if (data.containsKey('payload')) {
-      context.handle(_payloadMeta,
-          payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta));
+      context.handle(
+        _payloadMeta,
+        payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta),
+      );
     } else if (isInserting) {
       context.missing(_payloadMeta);
     }
     if (data.containsKey('created_at')) {
-      context.handle(_createdAtMeta,
-          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
     if (data.containsKey('processed')) {
-      context.handle(_processedMeta,
-          processed.isAcceptableOrUnknown(data['processed']!, _processedMeta));
+      context.handle(
+        _processedMeta,
+        processed.isAcceptableOrUnknown(data['processed']!, _processedMeta),
+      );
     }
     return context;
   }
@@ -2116,20 +2567,34 @@ class $SyncQueueTable extends SyncQueue
   SyncQueueData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return SyncQueueData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      targetTable: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}target_table'])!,
-      recordId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}record_id'])!,
-      operation: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}operation'])!,
-      payload: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}payload'])!,
-      createdAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
-      processed: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}processed'])!,
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      targetTable: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}target_table'],
+      )!,
+      recordId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}record_id'],
+      )!,
+      operation: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}operation'],
+      )!,
+      payload: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      processed: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}processed'],
+      )!,
     );
   }
 
@@ -2147,14 +2612,15 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
   final String payload;
   final DateTime createdAt;
   final bool processed;
-  const SyncQueueData(
-      {required this.id,
-      required this.targetTable,
-      required this.recordId,
-      required this.operation,
-      required this.payload,
-      required this.createdAt,
-      required this.processed});
+  const SyncQueueData({
+    required this.id,
+    required this.targetTable,
+    required this.recordId,
+    required this.operation,
+    required this.payload,
+    required this.createdAt,
+    required this.processed,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2180,8 +2646,10 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     );
   }
 
-  factory SyncQueueData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory SyncQueueData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return SyncQueueData(
       id: serializer.fromJson<int>(json['id']),
@@ -2207,28 +2675,29 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     };
   }
 
-  SyncQueueData copyWith(
-          {int? id,
-          String? targetTable,
-          String? recordId,
-          String? operation,
-          String? payload,
-          DateTime? createdAt,
-          bool? processed}) =>
-      SyncQueueData(
-        id: id ?? this.id,
-        targetTable: targetTable ?? this.targetTable,
-        recordId: recordId ?? this.recordId,
-        operation: operation ?? this.operation,
-        payload: payload ?? this.payload,
-        createdAt: createdAt ?? this.createdAt,
-        processed: processed ?? this.processed,
-      );
+  SyncQueueData copyWith({
+    int? id,
+    String? targetTable,
+    String? recordId,
+    String? operation,
+    String? payload,
+    DateTime? createdAt,
+    bool? processed,
+  }) => SyncQueueData(
+    id: id ?? this.id,
+    targetTable: targetTable ?? this.targetTable,
+    recordId: recordId ?? this.recordId,
+    operation: operation ?? this.operation,
+    payload: payload ?? this.payload,
+    createdAt: createdAt ?? this.createdAt,
+    processed: processed ?? this.processed,
+  );
   SyncQueueData copyWithCompanion(SyncQueueCompanion data) {
     return SyncQueueData(
       id: data.id.present ? data.id.value : this.id,
-      targetTable:
-          data.targetTable.present ? data.targetTable.value : this.targetTable,
+      targetTable: data.targetTable.present
+          ? data.targetTable.value
+          : this.targetTable,
       recordId: data.recordId.present ? data.recordId.value : this.recordId,
       operation: data.operation.present ? data.operation.value : this.operation,
       payload: data.payload.present ? data.payload.value : this.payload,
@@ -2253,7 +2722,14 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
 
   @override
   int get hashCode => Object.hash(
-      id, targetTable, recordId, operation, payload, createdAt, processed);
+    id,
+    targetTable,
+    recordId,
+    operation,
+    payload,
+    createdAt,
+    processed,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2292,11 +2768,11 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
     required String payload,
     required DateTime createdAt,
     this.processed = const Value.absent(),
-  })  : targetTable = Value(targetTable),
-        recordId = Value(recordId),
-        operation = Value(operation),
-        payload = Value(payload),
-        createdAt = Value(createdAt);
+  }) : targetTable = Value(targetTable),
+       recordId = Value(recordId),
+       operation = Value(operation),
+       payload = Value(payload),
+       createdAt = Value(createdAt);
   static Insertable<SyncQueueData> custom({
     Expression<int>? id,
     Expression<String>? targetTable,
@@ -2317,14 +2793,15 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
     });
   }
 
-  SyncQueueCompanion copyWith(
-      {Value<int>? id,
-      Value<String>? targetTable,
-      Value<String>? recordId,
-      Value<String>? operation,
-      Value<String>? payload,
-      Value<DateTime>? createdAt,
-      Value<bool>? processed}) {
+  SyncQueueCompanion copyWith({
+    Value<int>? id,
+    Value<String>? targetTable,
+    Value<String>? recordId,
+    Value<String>? operation,
+    Value<String>? payload,
+    Value<DateTime>? createdAt,
+    Value<bool>? processed,
+  }) {
     return SyncQueueCompanion(
       id: id ?? this.id,
       targetTable: targetTable ?? this.targetTable,
@@ -2390,963 +2867,1399 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [users, quests, questAttempts, pathPoints, syncQueue];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    users,
+    quests,
+    questAttempts,
+    pathPoints,
+    syncQueue,
+  ];
 }
 
-typedef $$UsersTableCreateCompanionBuilder = UsersCompanion Function({
-  required String id,
-  required String email,
-  required String displayName,
-  Value<String?> avatarUrl,
-  required UserRole role,
-  required DateTime createdAt,
-  required DateTime updatedAt,
-  Value<int> rowid,
-});
-typedef $$UsersTableUpdateCompanionBuilder = UsersCompanion Function({
-  Value<String> id,
-  Value<String> email,
-  Value<String> displayName,
-  Value<String?> avatarUrl,
-  Value<UserRole> role,
-  Value<DateTime> createdAt,
-  Value<DateTime> updatedAt,
-  Value<int> rowid,
-});
+typedef $$UsersTableCreateCompanionBuilder =
+    UsersCompanion Function({
+      required String id,
+      required String email,
+      required String displayName,
+      Value<String?> avatarUrl,
+      required UserRole role,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$UsersTableUpdateCompanionBuilder =
+    UsersCompanion Function({
+      Value<String> id,
+      Value<String> email,
+      Value<String> displayName,
+      Value<String?> avatarUrl,
+      Value<UserRole> role,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
 
-class $$UsersTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $UsersTable,
-    User,
-    $$UsersTableFilterComposer,
-    $$UsersTableOrderingComposer,
-    $$UsersTableCreateCompanionBuilder,
-    $$UsersTableUpdateCompanionBuilder> {
-  $$UsersTableTableManager(_$AppDatabase db, $UsersTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$UsersTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$UsersTableOrderingComposer(ComposerState(db, table)),
-          updateCompanionCallback: ({
-            Value<String> id = const Value.absent(),
-            Value<String> email = const Value.absent(),
-            Value<String> displayName = const Value.absent(),
-            Value<String?> avatarUrl = const Value.absent(),
-            Value<UserRole> role = const Value.absent(),
-            Value<DateTime> createdAt = const Value.absent(),
-            Value<DateTime> updatedAt = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              UsersCompanion(
-            id: id,
-            email: email,
-            displayName: displayName,
-            avatarUrl: avatarUrl,
-            role: role,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String id,
-            required String email,
-            required String displayName,
-            Value<String?> avatarUrl = const Value.absent(),
-            required UserRole role,
-            required DateTime createdAt,
-            required DateTime updatedAt,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              UsersCompanion.insert(
-            id: id,
-            email: email,
-            displayName: displayName,
-            avatarUrl: avatarUrl,
-            role: role,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            rowid: rowid,
-          ),
-        ));
-}
+class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
+  $$UsersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
-class $$UsersTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $UsersTable> {
-  $$UsersTableFilterComposer(super.$state);
-  ColumnFilters<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<String> get email => $state.composableBuilder(
-      column: $state.table.email,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get displayName => $composableBuilder(
+    column: $table.displayName,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<String> get displayName => $state.composableBuilder(
-      column: $state.table.displayName,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get avatarUrl => $state.composableBuilder(
-      column: $state.table.avatarUrl,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get avatarUrl => $composableBuilder(
+    column: $table.avatarUrl,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<UserRole, UserRole, int> get role =>
-      $state.composableBuilder(
-          column: $state.table.role,
-          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
-              column,
-              joinBuilders: joinBuilders));
+      $composableBuilder(
+        column: $table.role,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
-  ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
-      column: $state.table.createdAt,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<DateTime> get updatedAt => $state.composableBuilder(
-      column: $state.table.updatedAt,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$UsersTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $UsersTable> {
-  $$UsersTableOrderingComposer(super.$state);
-  ColumnOrderings<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+    extends Composer<_$AppDatabase, $UsersTable> {
+  $$UsersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<String> get email => $state.composableBuilder(
-      column: $state.table.email,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<String> get displayName => $state.composableBuilder(
-      column: $state.table.displayName,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get displayName => $composableBuilder(
+    column: $table.displayName,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<String> get avatarUrl => $state.composableBuilder(
-      column: $state.table.avatarUrl,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get avatarUrl => $composableBuilder(
+    column: $table.avatarUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<int> get role => $state.composableBuilder(
-      column: $state.table.role,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
-      column: $state.table.createdAt,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<DateTime> get updatedAt => $state.composableBuilder(
-      column: $state.table.updatedAt,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
-typedef $$QuestsTableCreateCompanionBuilder = QuestsCompanion Function({
-  required String id,
-  required String title,
-  Value<String?> description,
-  required double latitude,
-  required double longitude,
-  Value<double> radiusMeters,
-  required String createdBy,
-  Value<bool> published,
-  Value<QuestDifficulty?> difficulty,
-  Value<LocationType?> locationType,
-  required DateTime createdAt,
-  required DateTime updatedAt,
-  Value<DateTime?> syncedAt,
-  Value<int> rowid,
-});
-typedef $$QuestsTableUpdateCompanionBuilder = QuestsCompanion Function({
-  Value<String> id,
-  Value<String> title,
-  Value<String?> description,
-  Value<double> latitude,
-  Value<double> longitude,
-  Value<double> radiusMeters,
-  Value<String> createdBy,
-  Value<bool> published,
-  Value<QuestDifficulty?> difficulty,
-  Value<LocationType?> locationType,
-  Value<DateTime> createdAt,
-  Value<DateTime> updatedAt,
-  Value<DateTime?> syncedAt,
-  Value<int> rowid,
-});
+class $$UsersTableAnnotationComposer
+    extends Composer<_$AppDatabase, $UsersTable> {
+  $$UsersTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
 
-class $$QuestsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $QuestsTable,
-    Quest,
-    $$QuestsTableFilterComposer,
-    $$QuestsTableOrderingComposer,
-    $$QuestsTableCreateCompanionBuilder,
-    $$QuestsTableUpdateCompanionBuilder> {
-  $$QuestsTableTableManager(_$AppDatabase db, $QuestsTable table)
-      : super(TableManagerState(
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
+
+  GeneratedColumn<String> get displayName => $composableBuilder(
+    column: $table.displayName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get avatarUrl =>
+      $composableBuilder(column: $table.avatarUrl, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<UserRole, int> get role =>
+      $composableBuilder(column: $table.role, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$UsersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $UsersTable,
+          User,
+          $$UsersTableFilterComposer,
+          $$UsersTableOrderingComposer,
+          $$UsersTableAnnotationComposer,
+          $$UsersTableCreateCompanionBuilder,
+          $$UsersTableUpdateCompanionBuilder,
+          (User, BaseReferences<_$AppDatabase, $UsersTable, User>),
+          User,
+          PrefetchHooks Function()
+        > {
+  $$UsersTableTableManager(_$AppDatabase db, $UsersTable table)
+    : super(
+        TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$QuestsTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$QuestsTableOrderingComposer(ComposerState(db, table)),
-          updateCompanionCallback: ({
-            Value<String> id = const Value.absent(),
-            Value<String> title = const Value.absent(),
-            Value<String?> description = const Value.absent(),
-            Value<double> latitude = const Value.absent(),
-            Value<double> longitude = const Value.absent(),
-            Value<double> radiusMeters = const Value.absent(),
-            Value<String> createdBy = const Value.absent(),
-            Value<bool> published = const Value.absent(),
-            Value<QuestDifficulty?> difficulty = const Value.absent(),
-            Value<LocationType?> locationType = const Value.absent(),
-            Value<DateTime> createdAt = const Value.absent(),
-            Value<DateTime> updatedAt = const Value.absent(),
-            Value<DateTime?> syncedAt = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              QuestsCompanion(
-            id: id,
-            title: title,
-            description: description,
-            latitude: latitude,
-            longitude: longitude,
-            radiusMeters: radiusMeters,
-            createdBy: createdBy,
-            published: published,
-            difficulty: difficulty,
-            locationType: locationType,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            syncedAt: syncedAt,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String id,
-            required String title,
-            Value<String?> description = const Value.absent(),
-            required double latitude,
-            required double longitude,
-            Value<double> radiusMeters = const Value.absent(),
-            required String createdBy,
-            Value<bool> published = const Value.absent(),
-            Value<QuestDifficulty?> difficulty = const Value.absent(),
-            Value<LocationType?> locationType = const Value.absent(),
-            required DateTime createdAt,
-            required DateTime updatedAt,
-            Value<DateTime?> syncedAt = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              QuestsCompanion.insert(
-            id: id,
-            title: title,
-            description: description,
-            latitude: latitude,
-            longitude: longitude,
-            radiusMeters: radiusMeters,
-            createdBy: createdBy,
-            published: published,
-            difficulty: difficulty,
-            locationType: locationType,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            syncedAt: syncedAt,
-            rowid: rowid,
-          ),
-        ));
+          createFilteringComposer: () =>
+              $$UsersTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$UsersTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$UsersTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> email = const Value.absent(),
+                Value<String> displayName = const Value.absent(),
+                Value<String?> avatarUrl = const Value.absent(),
+                Value<UserRole> role = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UsersCompanion(
+                id: id,
+                email: email,
+                displayName: displayName,
+                avatarUrl: avatarUrl,
+                role: role,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String email,
+                required String displayName,
+                Value<String?> avatarUrl = const Value.absent(),
+                required UserRole role,
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => UsersCompanion.insert(
+                id: id,
+                email: email,
+                displayName: displayName,
+                avatarUrl: avatarUrl,
+                role: role,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
 }
 
+typedef $$UsersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $UsersTable,
+      User,
+      $$UsersTableFilterComposer,
+      $$UsersTableOrderingComposer,
+      $$UsersTableAnnotationComposer,
+      $$UsersTableCreateCompanionBuilder,
+      $$UsersTableUpdateCompanionBuilder,
+      (User, BaseReferences<_$AppDatabase, $UsersTable, User>),
+      User,
+      PrefetchHooks Function()
+    >;
+typedef $$QuestsTableCreateCompanionBuilder =
+    QuestsCompanion Function({
+      required String id,
+      required String title,
+      Value<String?> description,
+      required double latitude,
+      required double longitude,
+      Value<double> radiusMeters,
+      required String createdBy,
+      Value<bool> published,
+      Value<QuestDifficulty?> difficulty,
+      Value<LocationType?> locationType,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$QuestsTableUpdateCompanionBuilder =
+    QuestsCompanion Function({
+      Value<String> id,
+      Value<String> title,
+      Value<String?> description,
+      Value<double> latitude,
+      Value<double> longitude,
+      Value<double> radiusMeters,
+      Value<String> createdBy,
+      Value<bool> published,
+      Value<QuestDifficulty?> difficulty,
+      Value<LocationType?> locationType,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+
 class $$QuestsTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $QuestsTable> {
-  $$QuestsTableFilterComposer(super.$state);
-  ColumnFilters<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+    extends Composer<_$AppDatabase, $QuestsTable> {
+  $$QuestsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<String> get title => $state.composableBuilder(
-      column: $state.table.title,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<String> get description => $state.composableBuilder(
-      column: $state.table.description,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<double> get latitude => $state.composableBuilder(
-      column: $state.table.latitude,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<double> get longitude => $state.composableBuilder(
-      column: $state.table.longitude,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<double> get radiusMeters => $state.composableBuilder(
-      column: $state.table.radiusMeters,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<double> get radiusMeters => $composableBuilder(
+    column: $table.radiusMeters,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<String> get createdBy => $state.composableBuilder(
-      column: $state.table.createdBy,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<bool> get published => $state.composableBuilder(
-      column: $state.table.published,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<bool> get published => $composableBuilder(
+    column: $table.published,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<QuestDifficulty?, QuestDifficulty, int>
-      get difficulty => $state.composableBuilder(
-          column: $state.table.difficulty,
-          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
-              column,
-              joinBuilders: joinBuilders));
+  get difficulty => $composableBuilder(
+    column: $table.difficulty,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<LocationType?, LocationType, int>
-      get locationType => $state.composableBuilder(
-          column: $state.table.locationType,
-          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
-              column,
-              joinBuilders: joinBuilders));
+  get locationType => $composableBuilder(
+    column: $table.locationType,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
-  ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
-      column: $state.table.createdAt,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<DateTime> get updatedAt => $state.composableBuilder(
-      column: $state.table.updatedAt,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<DateTime> get syncedAt => $state.composableBuilder(
-      column: $state.table.syncedAt,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$QuestsTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $QuestsTable> {
-  $$QuestsTableOrderingComposer(super.$state);
-  ColumnOrderings<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+    extends Composer<_$AppDatabase, $QuestsTable> {
+  $$QuestsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<String> get title => $state.composableBuilder(
-      column: $state.table.title,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<String> get description => $state.composableBuilder(
-      column: $state.table.description,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<double> get latitude => $state.composableBuilder(
-      column: $state.table.latitude,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<double> get longitude => $state.composableBuilder(
-      column: $state.table.longitude,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<double> get radiusMeters => $state.composableBuilder(
-      column: $state.table.radiusMeters,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<double> get radiusMeters => $composableBuilder(
+    column: $table.radiusMeters,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<String> get createdBy => $state.composableBuilder(
-      column: $state.table.createdBy,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<bool> get published => $state.composableBuilder(
-      column: $state.table.published,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<bool> get published => $composableBuilder(
+    column: $table.published,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<int> get difficulty => $state.composableBuilder(
-      column: $state.table.difficulty,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get difficulty => $composableBuilder(
+    column: $table.difficulty,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<int> get locationType => $state.composableBuilder(
-      column: $state.table.locationType,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get locationType => $composableBuilder(
+    column: $table.locationType,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
-      column: $state.table.createdAt,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<DateTime> get updatedAt => $state.composableBuilder(
-      column: $state.table.updatedAt,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<DateTime> get syncedAt => $state.composableBuilder(
-      column: $state.table.syncedAt,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
-typedef $$QuestAttemptsTableCreateCompanionBuilder = QuestAttemptsCompanion
-    Function({
-  required String id,
-  required String questId,
-  required String userId,
-  required DateTime startedAt,
-  Value<DateTime?> completedAt,
-  Value<DateTime?> abandonedAt,
-  required AttemptStatus status,
-  Value<int?> durationSeconds,
-  Value<double?> distanceWalked,
-  Value<bool> synced,
-  Value<int> rowid,
-});
-typedef $$QuestAttemptsTableUpdateCompanionBuilder = QuestAttemptsCompanion
-    Function({
-  Value<String> id,
-  Value<String> questId,
-  Value<String> userId,
-  Value<DateTime> startedAt,
-  Value<DateTime?> completedAt,
-  Value<DateTime?> abandonedAt,
-  Value<AttemptStatus> status,
-  Value<int?> durationSeconds,
-  Value<double?> distanceWalked,
-  Value<bool> synced,
-  Value<int> rowid,
-});
+class $$QuestsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $QuestsTable> {
+  $$QuestsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
 
-class $$QuestAttemptsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $QuestAttemptsTable,
-    QuestAttempt,
-    $$QuestAttemptsTableFilterComposer,
-    $$QuestAttemptsTableOrderingComposer,
-    $$QuestAttemptsTableCreateCompanionBuilder,
-    $$QuestAttemptsTableUpdateCompanionBuilder> {
-  $$QuestAttemptsTableTableManager(_$AppDatabase db, $QuestAttemptsTable table)
-      : super(TableManagerState(
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get latitude =>
+      $composableBuilder(column: $table.latitude, builder: (column) => column);
+
+  GeneratedColumn<double> get longitude =>
+      $composableBuilder(column: $table.longitude, builder: (column) => column);
+
+  GeneratedColumn<double> get radiusMeters => $composableBuilder(
+    column: $table.radiusMeters,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<bool> get published =>
+      $composableBuilder(column: $table.published, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<QuestDifficulty?, int> get difficulty =>
+      $composableBuilder(
+        column: $table.difficulty,
+        builder: (column) => column,
+      );
+
+  GeneratedColumnWithTypeConverter<LocationType?, int> get locationType =>
+      $composableBuilder(
+        column: $table.locationType,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$QuestsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $QuestsTable,
+          Quest,
+          $$QuestsTableFilterComposer,
+          $$QuestsTableOrderingComposer,
+          $$QuestsTableAnnotationComposer,
+          $$QuestsTableCreateCompanionBuilder,
+          $$QuestsTableUpdateCompanionBuilder,
+          (Quest, BaseReferences<_$AppDatabase, $QuestsTable, Quest>),
+          Quest,
+          PrefetchHooks Function()
+        > {
+  $$QuestsTableTableManager(_$AppDatabase db, $QuestsTable table)
+    : super(
+        TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$QuestAttemptsTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$QuestAttemptsTableOrderingComposer(ComposerState(db, table)),
-          updateCompanionCallback: ({
-            Value<String> id = const Value.absent(),
-            Value<String> questId = const Value.absent(),
-            Value<String> userId = const Value.absent(),
-            Value<DateTime> startedAt = const Value.absent(),
-            Value<DateTime?> completedAt = const Value.absent(),
-            Value<DateTime?> abandonedAt = const Value.absent(),
-            Value<AttemptStatus> status = const Value.absent(),
-            Value<int?> durationSeconds = const Value.absent(),
-            Value<double?> distanceWalked = const Value.absent(),
-            Value<bool> synced = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              QuestAttemptsCompanion(
-            id: id,
-            questId: questId,
-            userId: userId,
-            startedAt: startedAt,
-            completedAt: completedAt,
-            abandonedAt: abandonedAt,
-            status: status,
-            durationSeconds: durationSeconds,
-            distanceWalked: distanceWalked,
-            synced: synced,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String id,
-            required String questId,
-            required String userId,
-            required DateTime startedAt,
-            Value<DateTime?> completedAt = const Value.absent(),
-            Value<DateTime?> abandonedAt = const Value.absent(),
-            required AttemptStatus status,
-            Value<int?> durationSeconds = const Value.absent(),
-            Value<double?> distanceWalked = const Value.absent(),
-            Value<bool> synced = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              QuestAttemptsCompanion.insert(
-            id: id,
-            questId: questId,
-            userId: userId,
-            startedAt: startedAt,
-            completedAt: completedAt,
-            abandonedAt: abandonedAt,
-            status: status,
-            durationSeconds: durationSeconds,
-            distanceWalked: distanceWalked,
-            synced: synced,
-            rowid: rowid,
-          ),
-        ));
+          createFilteringComposer: () =>
+              $$QuestsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$QuestsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$QuestsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<double> latitude = const Value.absent(),
+                Value<double> longitude = const Value.absent(),
+                Value<double> radiusMeters = const Value.absent(),
+                Value<String> createdBy = const Value.absent(),
+                Value<bool> published = const Value.absent(),
+                Value<QuestDifficulty?> difficulty = const Value.absent(),
+                Value<LocationType?> locationType = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => QuestsCompanion(
+                id: id,
+                title: title,
+                description: description,
+                latitude: latitude,
+                longitude: longitude,
+                radiusMeters: radiusMeters,
+                createdBy: createdBy,
+                published: published,
+                difficulty: difficulty,
+                locationType: locationType,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String title,
+                Value<String?> description = const Value.absent(),
+                required double latitude,
+                required double longitude,
+                Value<double> radiusMeters = const Value.absent(),
+                required String createdBy,
+                Value<bool> published = const Value.absent(),
+                Value<QuestDifficulty?> difficulty = const Value.absent(),
+                Value<LocationType?> locationType = const Value.absent(),
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => QuestsCompanion.insert(
+                id: id,
+                title: title,
+                description: description,
+                latitude: latitude,
+                longitude: longitude,
+                radiusMeters: radiusMeters,
+                createdBy: createdBy,
+                published: published,
+                difficulty: difficulty,
+                locationType: locationType,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
 }
 
+typedef $$QuestsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $QuestsTable,
+      Quest,
+      $$QuestsTableFilterComposer,
+      $$QuestsTableOrderingComposer,
+      $$QuestsTableAnnotationComposer,
+      $$QuestsTableCreateCompanionBuilder,
+      $$QuestsTableUpdateCompanionBuilder,
+      (Quest, BaseReferences<_$AppDatabase, $QuestsTable, Quest>),
+      Quest,
+      PrefetchHooks Function()
+    >;
+typedef $$QuestAttemptsTableCreateCompanionBuilder =
+    QuestAttemptsCompanion Function({
+      required String id,
+      required String questId,
+      required String userId,
+      required DateTime startedAt,
+      Value<DateTime?> completedAt,
+      Value<DateTime?> abandonedAt,
+      required AttemptStatus status,
+      Value<int?> durationSeconds,
+      Value<double?> distanceWalked,
+      Value<bool> synced,
+      Value<int> rowid,
+    });
+typedef $$QuestAttemptsTableUpdateCompanionBuilder =
+    QuestAttemptsCompanion Function({
+      Value<String> id,
+      Value<String> questId,
+      Value<String> userId,
+      Value<DateTime> startedAt,
+      Value<DateTime?> completedAt,
+      Value<DateTime?> abandonedAt,
+      Value<AttemptStatus> status,
+      Value<int?> durationSeconds,
+      Value<double?> distanceWalked,
+      Value<bool> synced,
+      Value<int> rowid,
+    });
+
 class $$QuestAttemptsTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $QuestAttemptsTable> {
-  $$QuestAttemptsTableFilterComposer(super.$state);
-  ColumnFilters<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+    extends Composer<_$AppDatabase, $QuestAttemptsTable> {
+  $$QuestAttemptsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<String> get questId => $state.composableBuilder(
-      column: $state.table.questId,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get questId => $composableBuilder(
+    column: $table.questId,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<String> get userId => $state.composableBuilder(
-      column: $state.table.userId,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<DateTime> get startedAt => $state.composableBuilder(
-      column: $state.table.startedAt,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<DateTime> get completedAt => $state.composableBuilder(
-      column: $state.table.completedAt,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<DateTime> get abandonedAt => $state.composableBuilder(
-      column: $state.table.abandonedAt,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<DateTime> get abandonedAt => $composableBuilder(
+    column: $table.abandonedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<AttemptStatus, AttemptStatus, int>
-      get status => $state.composableBuilder(
-          column: $state.table.status,
-          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
-              column,
-              joinBuilders: joinBuilders));
+  get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
-  ColumnFilters<int> get durationSeconds => $state.composableBuilder(
-      column: $state.table.durationSeconds,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<int> get durationSeconds => $composableBuilder(
+    column: $table.durationSeconds,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<double> get distanceWalked => $state.composableBuilder(
-      column: $state.table.distanceWalked,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<double> get distanceWalked => $composableBuilder(
+    column: $table.distanceWalked,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<bool> get synced => $state.composableBuilder(
-      column: $state.table.synced,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$QuestAttemptsTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $QuestAttemptsTable> {
-  $$QuestAttemptsTableOrderingComposer(super.$state);
-  ColumnOrderings<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+    extends Composer<_$AppDatabase, $QuestAttemptsTable> {
+  $$QuestAttemptsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<String> get questId => $state.composableBuilder(
-      column: $state.table.questId,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get questId => $composableBuilder(
+    column: $table.questId,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<String> get userId => $state.composableBuilder(
-      column: $state.table.userId,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<DateTime> get startedAt => $state.composableBuilder(
-      column: $state.table.startedAt,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<DateTime> get completedAt => $state.composableBuilder(
-      column: $state.table.completedAt,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<DateTime> get abandonedAt => $state.composableBuilder(
-      column: $state.table.abandonedAt,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<DateTime> get abandonedAt => $composableBuilder(
+    column: $table.abandonedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<int> get status => $state.composableBuilder(
-      column: $state.table.status,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<int> get durationSeconds => $state.composableBuilder(
-      column: $state.table.durationSeconds,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get durationSeconds => $composableBuilder(
+    column: $table.durationSeconds,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<double> get distanceWalked => $state.composableBuilder(
-      column: $state.table.distanceWalked,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<double> get distanceWalked => $composableBuilder(
+    column: $table.distanceWalked,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<bool> get synced => $state.composableBuilder(
-      column: $state.table.synced,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
-typedef $$PathPointsTableCreateCompanionBuilder = PathPointsCompanion Function({
-  required String id,
-  required String attemptId,
-  required double latitude,
-  required double longitude,
-  required DateTime timestamp,
-  required double accuracy,
-  required double speed,
-  Value<bool> synced,
-  Value<int> rowid,
-});
-typedef $$PathPointsTableUpdateCompanionBuilder = PathPointsCompanion Function({
-  Value<String> id,
-  Value<String> attemptId,
-  Value<double> latitude,
-  Value<double> longitude,
-  Value<DateTime> timestamp,
-  Value<double> accuracy,
-  Value<double> speed,
-  Value<bool> synced,
-  Value<int> rowid,
-});
+class $$QuestAttemptsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $QuestAttemptsTable> {
+  $$QuestAttemptsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
 
-class $$PathPointsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $PathPointsTable,
-    PathPoint,
-    $$PathPointsTableFilterComposer,
-    $$PathPointsTableOrderingComposer,
-    $$PathPointsTableCreateCompanionBuilder,
-    $$PathPointsTableUpdateCompanionBuilder> {
-  $$PathPointsTableTableManager(_$AppDatabase db, $PathPointsTable table)
-      : super(TableManagerState(
+  GeneratedColumn<String> get questId =>
+      $composableBuilder(column: $table.questId, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get startedAt =>
+      $composableBuilder(column: $table.startedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get abandonedAt => $composableBuilder(
+    column: $table.abandonedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<AttemptStatus, int> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get durationSeconds => $composableBuilder(
+    column: $table.durationSeconds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get distanceWalked => $composableBuilder(
+    column: $table.distanceWalked,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+}
+
+class $$QuestAttemptsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $QuestAttemptsTable,
+          QuestAttempt,
+          $$QuestAttemptsTableFilterComposer,
+          $$QuestAttemptsTableOrderingComposer,
+          $$QuestAttemptsTableAnnotationComposer,
+          $$QuestAttemptsTableCreateCompanionBuilder,
+          $$QuestAttemptsTableUpdateCompanionBuilder,
+          (
+            QuestAttempt,
+            BaseReferences<_$AppDatabase, $QuestAttemptsTable, QuestAttempt>,
+          ),
+          QuestAttempt,
+          PrefetchHooks Function()
+        > {
+  $$QuestAttemptsTableTableManager(_$AppDatabase db, $QuestAttemptsTable table)
+    : super(
+        TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$PathPointsTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$PathPointsTableOrderingComposer(ComposerState(db, table)),
-          updateCompanionCallback: ({
-            Value<String> id = const Value.absent(),
-            Value<String> attemptId = const Value.absent(),
-            Value<double> latitude = const Value.absent(),
-            Value<double> longitude = const Value.absent(),
-            Value<DateTime> timestamp = const Value.absent(),
-            Value<double> accuracy = const Value.absent(),
-            Value<double> speed = const Value.absent(),
-            Value<bool> synced = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              PathPointsCompanion(
-            id: id,
-            attemptId: attemptId,
-            latitude: latitude,
-            longitude: longitude,
-            timestamp: timestamp,
-            accuracy: accuracy,
-            speed: speed,
-            synced: synced,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String id,
-            required String attemptId,
-            required double latitude,
-            required double longitude,
-            required DateTime timestamp,
-            required double accuracy,
-            required double speed,
-            Value<bool> synced = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              PathPointsCompanion.insert(
-            id: id,
-            attemptId: attemptId,
-            latitude: latitude,
-            longitude: longitude,
-            timestamp: timestamp,
-            accuracy: accuracy,
-            speed: speed,
-            synced: synced,
-            rowid: rowid,
-          ),
-        ));
+          createFilteringComposer: () =>
+              $$QuestAttemptsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$QuestAttemptsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$QuestAttemptsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> questId = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<DateTime> startedAt = const Value.absent(),
+                Value<DateTime?> completedAt = const Value.absent(),
+                Value<DateTime?> abandonedAt = const Value.absent(),
+                Value<AttemptStatus> status = const Value.absent(),
+                Value<int?> durationSeconds = const Value.absent(),
+                Value<double?> distanceWalked = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => QuestAttemptsCompanion(
+                id: id,
+                questId: questId,
+                userId: userId,
+                startedAt: startedAt,
+                completedAt: completedAt,
+                abandonedAt: abandonedAt,
+                status: status,
+                durationSeconds: durationSeconds,
+                distanceWalked: distanceWalked,
+                synced: synced,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String questId,
+                required String userId,
+                required DateTime startedAt,
+                Value<DateTime?> completedAt = const Value.absent(),
+                Value<DateTime?> abandonedAt = const Value.absent(),
+                required AttemptStatus status,
+                Value<int?> durationSeconds = const Value.absent(),
+                Value<double?> distanceWalked = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => QuestAttemptsCompanion.insert(
+                id: id,
+                questId: questId,
+                userId: userId,
+                startedAt: startedAt,
+                completedAt: completedAt,
+                abandonedAt: abandonedAt,
+                status: status,
+                durationSeconds: durationSeconds,
+                distanceWalked: distanceWalked,
+                synced: synced,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
 }
 
+typedef $$QuestAttemptsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $QuestAttemptsTable,
+      QuestAttempt,
+      $$QuestAttemptsTableFilterComposer,
+      $$QuestAttemptsTableOrderingComposer,
+      $$QuestAttemptsTableAnnotationComposer,
+      $$QuestAttemptsTableCreateCompanionBuilder,
+      $$QuestAttemptsTableUpdateCompanionBuilder,
+      (
+        QuestAttempt,
+        BaseReferences<_$AppDatabase, $QuestAttemptsTable, QuestAttempt>,
+      ),
+      QuestAttempt,
+      PrefetchHooks Function()
+    >;
+typedef $$PathPointsTableCreateCompanionBuilder =
+    PathPointsCompanion Function({
+      required String id,
+      required String attemptId,
+      required double latitude,
+      required double longitude,
+      required DateTime timestamp,
+      required double accuracy,
+      required double speed,
+      Value<bool> synced,
+      Value<int> rowid,
+    });
+typedef $$PathPointsTableUpdateCompanionBuilder =
+    PathPointsCompanion Function({
+      Value<String> id,
+      Value<String> attemptId,
+      Value<double> latitude,
+      Value<double> longitude,
+      Value<DateTime> timestamp,
+      Value<double> accuracy,
+      Value<double> speed,
+      Value<bool> synced,
+      Value<int> rowid,
+    });
+
 class $$PathPointsTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $PathPointsTable> {
-  $$PathPointsTableFilterComposer(super.$state);
-  ColumnFilters<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+    extends Composer<_$AppDatabase, $PathPointsTable> {
+  $$PathPointsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<String> get attemptId => $state.composableBuilder(
-      column: $state.table.attemptId,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get attemptId => $composableBuilder(
+    column: $table.attemptId,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<double> get latitude => $state.composableBuilder(
-      column: $state.table.latitude,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<double> get longitude => $state.composableBuilder(
-      column: $state.table.longitude,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<DateTime> get timestamp => $state.composableBuilder(
-      column: $state.table.timestamp,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<double> get accuracy => $state.composableBuilder(
-      column: $state.table.accuracy,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<double> get accuracy => $composableBuilder(
+    column: $table.accuracy,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<double> get speed => $state.composableBuilder(
-      column: $state.table.speed,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<double> get speed => $composableBuilder(
+    column: $table.speed,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<bool> get synced => $state.composableBuilder(
-      column: $state.table.synced,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$PathPointsTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $PathPointsTable> {
-  $$PathPointsTableOrderingComposer(super.$state);
-  ColumnOrderings<String> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+    extends Composer<_$AppDatabase, $PathPointsTable> {
+  $$PathPointsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<String> get attemptId => $state.composableBuilder(
-      column: $state.table.attemptId,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get attemptId => $composableBuilder(
+    column: $table.attemptId,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<double> get latitude => $state.composableBuilder(
-      column: $state.table.latitude,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<double> get longitude => $state.composableBuilder(
-      column: $state.table.longitude,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<DateTime> get timestamp => $state.composableBuilder(
-      column: $state.table.timestamp,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<double> get accuracy => $state.composableBuilder(
-      column: $state.table.accuracy,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<double> get accuracy => $composableBuilder(
+    column: $table.accuracy,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<double> get speed => $state.composableBuilder(
-      column: $state.table.speed,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<double> get speed => $composableBuilder(
+    column: $table.speed,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<bool> get synced => $state.composableBuilder(
-      column: $state.table.synced,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
-typedef $$SyncQueueTableCreateCompanionBuilder = SyncQueueCompanion Function({
-  Value<int> id,
-  required String targetTable,
-  required String recordId,
-  required String operation,
-  required String payload,
-  required DateTime createdAt,
-  Value<bool> processed,
-});
-typedef $$SyncQueueTableUpdateCompanionBuilder = SyncQueueCompanion Function({
-  Value<int> id,
-  Value<String> targetTable,
-  Value<String> recordId,
-  Value<String> operation,
-  Value<String> payload,
-  Value<DateTime> createdAt,
-  Value<bool> processed,
-});
+class $$PathPointsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PathPointsTable> {
+  $$PathPointsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
 
-class $$SyncQueueTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $SyncQueueTable,
-    SyncQueueData,
-    $$SyncQueueTableFilterComposer,
-    $$SyncQueueTableOrderingComposer,
-    $$SyncQueueTableCreateCompanionBuilder,
-    $$SyncQueueTableUpdateCompanionBuilder> {
-  $$SyncQueueTableTableManager(_$AppDatabase db, $SyncQueueTable table)
-      : super(TableManagerState(
+  GeneratedColumn<String> get attemptId =>
+      $composableBuilder(column: $table.attemptId, builder: (column) => column);
+
+  GeneratedColumn<double> get latitude =>
+      $composableBuilder(column: $table.latitude, builder: (column) => column);
+
+  GeneratedColumn<double> get longitude =>
+      $composableBuilder(column: $table.longitude, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get timestamp =>
+      $composableBuilder(column: $table.timestamp, builder: (column) => column);
+
+  GeneratedColumn<double> get accuracy =>
+      $composableBuilder(column: $table.accuracy, builder: (column) => column);
+
+  GeneratedColumn<double> get speed =>
+      $composableBuilder(column: $table.speed, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+}
+
+class $$PathPointsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PathPointsTable,
+          PathPoint,
+          $$PathPointsTableFilterComposer,
+          $$PathPointsTableOrderingComposer,
+          $$PathPointsTableAnnotationComposer,
+          $$PathPointsTableCreateCompanionBuilder,
+          $$PathPointsTableUpdateCompanionBuilder,
+          (
+            PathPoint,
+            BaseReferences<_$AppDatabase, $PathPointsTable, PathPoint>,
+          ),
+          PathPoint,
+          PrefetchHooks Function()
+        > {
+  $$PathPointsTableTableManager(_$AppDatabase db, $PathPointsTable table)
+    : super(
+        TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$SyncQueueTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$SyncQueueTableOrderingComposer(ComposerState(db, table)),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> targetTable = const Value.absent(),
-            Value<String> recordId = const Value.absent(),
-            Value<String> operation = const Value.absent(),
-            Value<String> payload = const Value.absent(),
-            Value<DateTime> createdAt = const Value.absent(),
-            Value<bool> processed = const Value.absent(),
-          }) =>
-              SyncQueueCompanion(
-            id: id,
-            targetTable: targetTable,
-            recordId: recordId,
-            operation: operation,
-            payload: payload,
-            createdAt: createdAt,
-            processed: processed,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String targetTable,
-            required String recordId,
-            required String operation,
-            required String payload,
-            required DateTime createdAt,
-            Value<bool> processed = const Value.absent(),
-          }) =>
-              SyncQueueCompanion.insert(
-            id: id,
-            targetTable: targetTable,
-            recordId: recordId,
-            operation: operation,
-            payload: payload,
-            createdAt: createdAt,
-            processed: processed,
-          ),
-        ));
+          createFilteringComposer: () =>
+              $$PathPointsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PathPointsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PathPointsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> attemptId = const Value.absent(),
+                Value<double> latitude = const Value.absent(),
+                Value<double> longitude = const Value.absent(),
+                Value<DateTime> timestamp = const Value.absent(),
+                Value<double> accuracy = const Value.absent(),
+                Value<double> speed = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PathPointsCompanion(
+                id: id,
+                attemptId: attemptId,
+                latitude: latitude,
+                longitude: longitude,
+                timestamp: timestamp,
+                accuracy: accuracy,
+                speed: speed,
+                synced: synced,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String attemptId,
+                required double latitude,
+                required double longitude,
+                required DateTime timestamp,
+                required double accuracy,
+                required double speed,
+                Value<bool> synced = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PathPointsCompanion.insert(
+                id: id,
+                attemptId: attemptId,
+                latitude: latitude,
+                longitude: longitude,
+                timestamp: timestamp,
+                accuracy: accuracy,
+                speed: speed,
+                synced: synced,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
 }
 
+typedef $$PathPointsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PathPointsTable,
+      PathPoint,
+      $$PathPointsTableFilterComposer,
+      $$PathPointsTableOrderingComposer,
+      $$PathPointsTableAnnotationComposer,
+      $$PathPointsTableCreateCompanionBuilder,
+      $$PathPointsTableUpdateCompanionBuilder,
+      (PathPoint, BaseReferences<_$AppDatabase, $PathPointsTable, PathPoint>),
+      PathPoint,
+      PrefetchHooks Function()
+    >;
+typedef $$SyncQueueTableCreateCompanionBuilder =
+    SyncQueueCompanion Function({
+      Value<int> id,
+      required String targetTable,
+      required String recordId,
+      required String operation,
+      required String payload,
+      required DateTime createdAt,
+      Value<bool> processed,
+    });
+typedef $$SyncQueueTableUpdateCompanionBuilder =
+    SyncQueueCompanion Function({
+      Value<int> id,
+      Value<String> targetTable,
+      Value<String> recordId,
+      Value<String> operation,
+      Value<String> payload,
+      Value<DateTime> createdAt,
+      Value<bool> processed,
+    });
+
 class $$SyncQueueTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $SyncQueueTable> {
-  $$SyncQueueTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+    extends Composer<_$AppDatabase, $SyncQueueTable> {
+  $$SyncQueueTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<String> get targetTable => $state.composableBuilder(
-      column: $state.table.targetTable,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get targetTable => $composableBuilder(
+    column: $table.targetTable,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<String> get recordId => $state.composableBuilder(
-      column: $state.table.recordId,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get recordId => $composableBuilder(
+    column: $table.recordId,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<String> get operation => $state.composableBuilder(
-      column: $state.table.operation,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get operation => $composableBuilder(
+    column: $table.operation,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<String> get payload => $state.composableBuilder(
-      column: $state.table.payload,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
-      column: $state.table.createdAt,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnFilters<bool> get processed => $state.composableBuilder(
-      column: $state.table.processed,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<bool> get processed => $composableBuilder(
+    column: $table.processed,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$SyncQueueTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $SyncQueueTable> {
-  $$SyncQueueTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+    extends Composer<_$AppDatabase, $SyncQueueTable> {
+  $$SyncQueueTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<String> get targetTable => $state.composableBuilder(
-      column: $state.table.targetTable,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get targetTable => $composableBuilder(
+    column: $table.targetTable,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<String> get recordId => $state.composableBuilder(
-      column: $state.table.recordId,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get recordId => $composableBuilder(
+    column: $table.recordId,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<String> get operation => $state.composableBuilder(
-      column: $state.table.operation,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get operation => $composableBuilder(
+    column: $table.operation,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<String> get payload => $state.composableBuilder(
-      column: $state.table.payload,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
-      column: $state.table.createdAt,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
-  ColumnOrderings<bool> get processed => $state.composableBuilder(
-      column: $state.table.processed,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<bool> get processed => $composableBuilder(
+    column: $table.processed,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
+
+class $$SyncQueueTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SyncQueueTable> {
+  $$SyncQueueTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get targetTable => $composableBuilder(
+    column: $table.targetTable,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get recordId =>
+      $composableBuilder(column: $table.recordId, builder: (column) => column);
+
+  GeneratedColumn<String> get operation =>
+      $composableBuilder(column: $table.operation, builder: (column) => column);
+
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get processed =>
+      $composableBuilder(column: $table.processed, builder: (column) => column);
+}
+
+class $$SyncQueueTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SyncQueueTable,
+          SyncQueueData,
+          $$SyncQueueTableFilterComposer,
+          $$SyncQueueTableOrderingComposer,
+          $$SyncQueueTableAnnotationComposer,
+          $$SyncQueueTableCreateCompanionBuilder,
+          $$SyncQueueTableUpdateCompanionBuilder,
+          (
+            SyncQueueData,
+            BaseReferences<_$AppDatabase, $SyncQueueTable, SyncQueueData>,
+          ),
+          SyncQueueData,
+          PrefetchHooks Function()
+        > {
+  $$SyncQueueTableTableManager(_$AppDatabase db, $SyncQueueTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncQueueTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncQueueTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SyncQueueTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> targetTable = const Value.absent(),
+                Value<String> recordId = const Value.absent(),
+                Value<String> operation = const Value.absent(),
+                Value<String> payload = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<bool> processed = const Value.absent(),
+              }) => SyncQueueCompanion(
+                id: id,
+                targetTable: targetTable,
+                recordId: recordId,
+                operation: operation,
+                payload: payload,
+                createdAt: createdAt,
+                processed: processed,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String targetTable,
+                required String recordId,
+                required String operation,
+                required String payload,
+                required DateTime createdAt,
+                Value<bool> processed = const Value.absent(),
+              }) => SyncQueueCompanion.insert(
+                id: id,
+                targetTable: targetTable,
+                recordId: recordId,
+                operation: operation,
+                payload: payload,
+                createdAt: createdAt,
+                processed: processed,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SyncQueueTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SyncQueueTable,
+      SyncQueueData,
+      $$SyncQueueTableFilterComposer,
+      $$SyncQueueTableOrderingComposer,
+      $$SyncQueueTableAnnotationComposer,
+      $$SyncQueueTableCreateCompanionBuilder,
+      $$SyncQueueTableUpdateCompanionBuilder,
+      (
+        SyncQueueData,
+        BaseReferences<_$AppDatabase, $SyncQueueTable, SyncQueueData>,
+      ),
+      SyncQueueData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;

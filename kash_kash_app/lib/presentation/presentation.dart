@@ -1,5 +1,3 @@
-/// Presentation layer exports
-library presentation;
 
 export 'providers/providers.dart';
 export 'screens/screens.dart';

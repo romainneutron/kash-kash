@@ -1,5 +1,3 @@
-/// Entities barrel export
-library entities;
 
 export 'user.dart';
 export 'quest.dart';

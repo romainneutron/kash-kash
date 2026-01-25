@@ -1,5 +1,3 @@
-/// Core module exports
-library core;
 
 export 'constants/constants.dart';
 export 'errors/errors.dart';

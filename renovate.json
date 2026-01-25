@@ -1,0 +1,56 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":preserveSemverRanges"
+  ],
+  "labels": ["dependencies"],
+  "reviewers": ["team:developers"],
+  "schedule": ["before 8am on Monday"],
+  "timezone": "UTC",
+  "packageRules": [
+    {
+      "description": "Flutter dependencies",
+      "matchManagers": ["pub"],
+      "groupName": "Flutter dependencies",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "Flutter major updates",
+      "matchManagers": ["pub"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "PHP dependencies",
+      "matchManagers": ["composer"],
+      "groupName": "PHP dependencies",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "PHP major updates",
+      "matchManagers": ["composer"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "GitHub Actions",
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions",
+      "automerge": true
+    },
+    {
+      "description": "Docker images",
+      "matchManagers": ["dockerfile"],
+      "groupName": "Docker images",
+      "automerge": false
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"]
+  }
+}

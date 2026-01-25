@@ -833,6 +833,22 @@ php bin/console sentry:test  # Backend
 - [x] No analyzer warnings
 - [ ] Sentry captures test error from Symfony
 - [ ] Sentry captures test error from Flutter
+- [x] GitHub Actions CI configured
+- [x] Renovate configured for dependency updates
+
+---
+
+## CI/CD & Automation
+
+### GitHub Actions
+- Flutter: analyze, test, coverage upload
+- Symfony: PHPUnit tests with PostgreSQL service, coverage upload
+
+### Renovate
+- Auto-merges minor/patch updates for Flutter and PHP dependencies
+- Weekly schedule (Monday mornings UTC)
+- Security vulnerability alerts enabled
+- Major updates require manual review
 
 ---
 
