@@ -825,12 +825,12 @@ php bin/console sentry:test  # Backend
 ```
 
 **Checklist**:
-- [ ] Flutter app compiles and runs
-- [ ] Can navigate between placeholder screens
-- [ ] Drift database initializes without errors
+- [x] Flutter app compiles and runs
+- [x] Can navigate between placeholder screens
+- [x] Drift database initializes without errors
 - [ ] Symfony API responds at /api
 - [ ] Database migrations run successfully
-- [ ] No analyzer warnings
+- [x] No analyzer warnings
 - [ ] Sentry captures test error from Symfony
 - [ ] Sentry captures test error from Flutter
 
