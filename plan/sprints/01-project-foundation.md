@@ -252,10 +252,10 @@ flutter test test/unit/data/datasources/local/database_test.dart
 Create all domain entities as immutable Dart classes.
 
 **Acceptance Criteria**:
-- [ ] User, Quest, QuestAttempt, Position, PathPoint, AnalyticsEvent entities
-- [ ] All enums defined
-- [ ] Entities are immutable (final fields)
-- [ ] `copyWith` methods where needed
+- [x] User, Quest, QuestAttempt, Position, PathPoint, AnalyticsEvent entities
+- [x] All enums defined
+- [x] Entities are immutable (final fields)
+- [x] `copyWith` methods where needed
 - [ ] Unit tests for entity creation
 
 **Entities**:
