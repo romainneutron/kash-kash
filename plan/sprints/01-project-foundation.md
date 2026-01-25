@@ -490,12 +490,12 @@ flutter run --dart-define=SENTRY_DSN=https://xxx@sentry.io/xxx
 Create Symfony project with Docker setup and required bundles.
 
 **Acceptance Criteria**:
-- [ ] Symfony 7 project created
-- [ ] Docker Compose with PHP 8.3, PostgreSQL 16, Nginx
-- [ ] API Platform installed and configured
-- [ ] JWT authentication bundle installed
-- [ ] OAuth2 client bundle installed
-- [ ] Sentry bundle installed
+- [x] Symfony 7 project created
+- [x] Docker Compose with PHP 8.3, PostgreSQL 16, Nginx
+- [x] API Platform installed and configured
+- [x] JWT authentication bundle installed
+- [x] OAuth2 client bundle installed
+- [x] Sentry bundle installed
 - [ ] Project runs with `docker compose up`
 
 **Commands**:

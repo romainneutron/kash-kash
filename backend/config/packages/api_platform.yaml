@@ -1,0 +1,13 @@
+api_platform:
+    title: Kash-Kash API
+    description: Geocaching game API
+    version: 1.0.0
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+    defaults:
+        stateless: true
+        cache_headers:
+            vary: ['Content-Type', 'Authorization']
+    swagger:
+        versions: [3]
