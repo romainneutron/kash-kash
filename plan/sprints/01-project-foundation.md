@@ -352,9 +352,9 @@ final router = GoRouter(
 Create app theme and core reusable widgets.
 
 **Acceptance Criteria**:
-- [ ] Light and dark themes defined
-- [ ] LoadingOverlay, ErrorView, OfflineBanner widgets
-- [ ] App colors defined (black, red, blue for gameplay)
+- [x] Light and dark themes defined
+- [x] LoadingOverlay, ErrorView, OfflineBanner widgets
+- [x] App colors defined (black, red, blue for gameplay)
 
 **Colors**:
 ```dart
