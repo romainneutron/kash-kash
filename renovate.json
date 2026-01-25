@@ -7,7 +7,7 @@
   ],
   "labels": ["dependencies"],
   "reviewers": ["team:developers"],
-  "schedule": ["before 8am on Monday"],
+  "schedule": ["before 9am", "before 5pm"],
   "timezone": "UTC",
   "packageRules": [
     {
