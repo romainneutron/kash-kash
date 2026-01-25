@@ -8,11 +8,15 @@ Kash-Kash is a geocaching mobile game where players search for GPS coordinates u
 
 ## Tech Stack
 
-- **Frontend**: Flutter 3.38.x with Dart 3.10.x, Riverpod 3.x, Drift, go_router
-- **Backend**: Symfony 8.0 + API Platform 4.x + PostgreSQL 16/PostGIS
-- **Runtime**: PHP 8.5
-- **Monitoring**: Sentry (errors), Aptabase (analytics)
-- **CI/CD**: GitHub Actions, Renovate (twice daily updates)
+| Component | Version | Notes |
+|-----------|---------|-------|
+| Flutter | 3.38.x | Local SDK in `./flutter/` (gitignored) |
+| Dart | 3.10.x | Comes with Flutter |
+| Symfony | 8.0 | API backend |
+| PHP | 8.5 | Required for Symfony 8 |
+| PostgreSQL | 16 | With PostGIS extension |
+| Doctrine Bundle | 3.0 | Required for Symfony 8 compatibility |
+| Riverpod | 3.x | State management with codegen |
 
 ## Project Structure
 
@@ -26,21 +30,37 @@ kash-kash/
 │       ├── infrastructure/  # GPS, sync, background services
 │       ├── presentation/    # Screens, widgets, providers, theme
 │       └── router/          # App navigation (go_router)
-├── backend/                 # Symfony API (to be created)
+├── backend/                 # Symfony API
+│   ├── src/Entity/          # Doctrine entities
+│   ├── config/              # Symfony configuration
+│   └── docker/              # Docker configuration
 ├── plan/                    # Sprint planning documents
 │   └── sprints/            # Individual sprint plans with checkboxes
 ├── flutter/                 # Local Flutter SDK (gitignored)
-└── Makefile                 # Common development commands
+├── .github/workflows/       # GitHub Actions CI
+├── renovate.json           # Renovate auto-update config
+└── Makefile                # Development commands
 ```
 
-## Key Commands
+## Key Commands (Makefile)
 
 ```bash
-make setup          # Install dependencies
-make gen            # Run code generation (Drift, Riverpod)
-make analyze        # Run Flutter analyzer
-make test           # Run tests
-make run            # Run app (web)
+# Quick reference - run `make help` for full list
+make pre-push        # RUN THIS BEFORE EVERY PUSH (Flutter only)
+make pre-push-full   # Full CI locally (requires Docker)
+
+# Flutter
+make setup           # Install dependencies
+make gen             # Code generation (Drift, Riverpod)
+make analyze         # Run analyzer
+make test            # Run tests
+make flutter-check   # Analyze + test
+
+# Backend (requires Docker)
+make backend-up      # Start containers
+make backend-install # Install Composer deps
+make backend-test    # Run PHPUnit
+make backend-check   # Full backend check
 ```
 
 ## Development Workflow
@@ -48,12 +68,29 @@ make run            # Run app (web)
 1. Check sprint plans in `plan/sprints/` for tasks
 2. Tasks have checkboxes `[ ]` to mark completion
 3. After completing a task, check the box `[x]`
-4. Commit frequently with descriptive messages
+4. Run `make pre-push` before committing
+5. Commit frequently with descriptive messages
+
+## Pre-Push Checklist (CRITICAL)
+
+**ALWAYS run before pushing:**
+
+```bash
+make pre-push  # Runs analyze + test for Flutter
+```
+
+**For backend changes (requires Docker):**
+
+```bash
+make pre-push-full  # Runs full CI locally
+```
+
+**NEVER push without local tests passing - GitHub Actions costs money.**
 
 ## Architecture Patterns
 
 - **Clean Architecture**: domain → data → presentation
-- **State Management**: Riverpod 2.x with code generation
+- **State Management**: Riverpod 3.x with code generation
 - **Error Handling**: `Either<Failure, T>` from fpdart
 - **Database**: Drift (SQLite) for local storage
 - **Navigation**: go_router with auth guards
@@ -71,6 +108,9 @@ Run: `make gen` or `make watch`
 Check `plan/sprints/` for detailed task breakdowns with acceptance criteria.
 Current sprint documents have checkboxes indicating completion status.
 
+**Current Sprint**: 1 (Project Foundation) - Complete
+**Next Sprint**: 2 (Authentication Flow)
+
 ## Conventions
 
 - Use Riverpod for all state management
@@ -79,30 +119,53 @@ Current sprint documents have checkboxes indicating completion status.
 - All screens are `ConsumerWidget` or `ConsumerStatefulWidget`
 - Commit after each completed task
 
-## Pre-Commit Checklist
-
-Before committing, always run locally:
-
-```bash
-# Flutter
-make analyze        # Must pass with no issues
-make test           # All tests must pass
-
-# Symfony (when backend changes)
-cd backend && composer install && vendor/bin/phpunit
-```
-
 ## CI/CD
 
-- **GitHub Actions**: Runs on push/PR to main
-  - Flutter: analyze → test → coverage
-  - Symfony: composer install → migrations → PHPUnit
-- **Renovate**: Checks twice daily (9am, 5pm UTC)
-  - Auto-merges minor/patch updates
-  - Major updates require manual review
+### GitHub Actions (`.github/workflows/ci.yml`)
+- **Flutter**: setup → gen → analyze → test → coverage
+- **Symfony**: composer install → schema:create → PHPUnit → coverage
+- Runs on push/PR to main branch
+
+### Renovate (`renovate.json`)
+- Checks twice daily (9am, 5pm UTC)
+- Auto-merges minor/patch updates for Flutter and PHP
+- Major updates require manual review
+- Security alerts enabled
 
 ## Troubleshooting
 
-- **Doctrine + Symfony 8**: Use doctrine-bundle ^3.0 (not ^2.x)
-- **Flutter CardTheme**: Use `CardThemeData` (not `CardTheme`) in Flutter 3.38+
-- **Library declarations**: Remove `library` statements (deprecated in Dart 3.10)
+### Doctrine Bundle + Symfony 8
+- Use `doctrine/doctrine-bundle: ^3.0` (not ^2.x)
+- Use `doctrine/doctrine-migrations-bundle: ^4.0`
+- Remove deprecated config options:
+  - `use_savepoints` (removed in 3.0)
+  - `auto_generate_proxy_classes` (always enabled)
+  - `enable_lazy_ghost_objects` (always enabled)
+  - `report_fields_where_declared` (removed)
+  - `validate_xml_mapping` (removed)
+
+### Flutter 3.38 Breaking Changes
+- Use `CardThemeData` instead of `CardTheme`
+- Remove `library` declarations (deprecated in Dart 3.10)
+- Remove dangling doc comments
+
+### Common Errors
+- "No migrations found" → Use `doctrine:schema:create` for fresh DB
+- Flutter analyzer on wrong dir → Run from `kash_kash_app/` not root
+
+## Local Development Setup
+
+### Flutter
+Flutter SDK is installed locally in `./flutter/` (gitignored).
+If missing, download from https://flutter.dev and extract to `./flutter/`.
+
+### Backend (Docker)
+```bash
+make backend-up       # Start containers
+make backend-install  # Install dependencies
+make backend-test     # Run tests
+```
+
+## Session Notes
+
+_Add any session-specific context here for continuity._
