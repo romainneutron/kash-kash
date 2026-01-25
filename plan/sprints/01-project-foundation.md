@@ -51,10 +51,10 @@ flutter build ios --debug --no-codesign
 Add all required dependencies to pubspec.yaml and configure them.
 
 **Acceptance Criteria**:
-- [ ] All dependencies added with compatible versions
-- [ ] `flutter pub get` succeeds without conflicts
-- [ ] Drift build_runner configuration in place
-- [ ] Riverpod ProviderScope added to main.dart
+- [x] All dependencies added with compatible versions
+- [x] `flutter pub get` succeeds without conflicts
+- [x] Drift build_runner configuration in place
+- [x] Riverpod ProviderScope added to main.dart
 
 **pubspec.yaml dependencies**:
 ```yaml
