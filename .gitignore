@@ -11,10 +11,10 @@
 # macOS
 .DS_Store
 
-# Environment files
-.env
+# Environment files (except backend/.env which contains defaults)
 .env.local
 .env.*.local
+!backend/.env
 
 # Logs
 *.log
