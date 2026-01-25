@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /home/neutron/Documents/workspace/kash-kash log --oneline)",
+      "Bash(flutter create:*)",
+      "Bash(wget:*)",
+      "Bash(tar xf:*)",
+      "Bash(./flutter/bin/flutter:*)",
+      "Bash(../flutter/bin/flutter pub:*)",
+      "Bash(../flutter/bin/flutter analyze:*)",
+      "Bash(git status:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nS1-T1: Initialize Flutter project with package name com.kashkash\n\n- Created Flutter project with `flutter create --org com.kashkash`\n- Set iOS minimum deployment target to 13.0\n- Set Android minSdk to 21, targetSdk to 34\n- Added root .gitignore to exclude local Flutter SDK\n- Project analyzes without issues\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(../flutter/bin/flutter test)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nS1-T2: Add Flutter core dependencies and configure Riverpod\n\n- Added all required dependencies: riverpod, drift, go_router, dio, etc.\n- Added monitoring packages: sentry_flutter, aptabase_flutter\n- Added dev dependencies: build_runner, drift_dev, riverpod_generator\n- Wrapped app with ProviderScope for Riverpod state management\n- Updated smoke test for new app structure\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nS1-T3: Create clean architecture folder structure\n\n- Created core/ with constants, errors, utils, extensions\n- Created domain/ with entities, repositories, usecases\n- Created data/ with datasources \\(local/remote\\), models, repositories\n- Created infrastructure/ with gps, sync, background\n- Created presentation/ with providers, screens, widgets, theme\n- Created router/\n- Added barrel export files for all modules\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(../flutter/bin/dart run build_runner build:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nS1-T4: Implement Drift database schema\n\n- Defined Users table with id, email, displayName, role\n- Defined Quests table with coordinates, difficulty, locationType\n- Defined QuestAttempts table with status tracking\n- Defined PathPoints table for GPS coordinates during gameplay\n- Defined SyncQueue table for offline sync operations\n- Generated Drift database code successfully\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nS1-T5: Create domain entities \\(User, Quest, QuestAttempt, PathPoint\\)\n\n- Added User entity with role enum \\(user, admin\\)\n- Added Quest entity with difficulty and locationType enums\n- Added QuestAttempt entity with status enum \\(inProgress, completed, abandoned\\)\n- Added PathPoint entity for GPS coordinates\n- All entities are immutable with copyWith methods\n- Exported via entities barrel file\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)",
+      "Bash(make:*)",
+      "Bash(/home/neutron/Documents/workspace/kash-kash/flutter/bin/flutter analyze:*)",
+      "Bash(cd:*)",
+      "Bash(/home/neutron/Documents/workspace/kash-kash/flutter/bin/flutter:*)",
+      "WebSearch",
+      "Bash(curl:*)",
+      "Bash(/home/neutron/Documents/workspace/kash-kash/flutter/bin/dart run build_runner build:*)",
+      "Bash(xargs:*)",
+      "Bash(git restore:*)",
+      "Bash(git push:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run watch:*)",
+      "Bash(gh run view:*)"
+    ]
+  }
+}
