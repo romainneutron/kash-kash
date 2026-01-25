@@ -8,9 +8,11 @@ Kash-Kash is a geocaching mobile game where players search for GPS coordinates u
 
 ## Tech Stack
 
-- **Frontend**: Flutter with Riverpod, Drift, go_router
-- **Backend**: Symfony 7 + API Platform + PostgreSQL/PostGIS
+- **Frontend**: Flutter 3.38.x with Dart 3.10.x, Riverpod 3.x, Drift, go_router
+- **Backend**: Symfony 8.0 + API Platform 4.x + PostgreSQL 16/PostGIS
+- **Runtime**: PHP 8.5
 - **Monitoring**: Sentry (errors), Aptabase (analytics)
+- **CI/CD**: GitHub Actions, Renovate (twice daily updates)
 
 ## Project Structure
 
@@ -76,3 +78,31 @@ Current sprint documents have checkboxes indicating completion status.
 - Repositories return `Either<Failure, T>`
 - All screens are `ConsumerWidget` or `ConsumerStatefulWidget`
 - Commit after each completed task
+
+## Pre-Commit Checklist
+
+Before committing, always run locally:
+
+```bash
+# Flutter
+make analyze        # Must pass with no issues
+make test           # All tests must pass
+
+# Symfony (when backend changes)
+cd backend && composer install && vendor/bin/phpunit
+```
+
+## CI/CD
+
+- **GitHub Actions**: Runs on push/PR to main
+  - Flutter: analyze → test → coverage
+  - Symfony: composer install → migrations → PHPUnit
+- **Renovate**: Checks twice daily (9am, 5pm UTC)
+  - Auto-merges minor/patch updates
+  - Major updates require manual review
+
+## Troubleshooting
+
+- **Doctrine + Symfony 8**: Use doctrine-bundle ^3.0 (not ^2.x)
+- **Flutter CardTheme**: Use `CardThemeData` (not `CardTheme`) in Flutter 3.38+
+- **Library declarations**: Remove `library` statements (deprecated in Dart 3.10)
