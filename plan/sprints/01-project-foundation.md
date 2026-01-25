@@ -557,9 +557,9 @@ volumes:
 Create Doctrine entities with API Platform attributes.
 
 **Acceptance Criteria**:
-- [ ] User, Quest, QuestAttempt, PathPoint, AnalyticsEvent entities
-- [ ] API Platform annotations for automatic API generation
-- [ ] Proper relationships defined
+- [x] User, Quest, QuestAttempt, PathPoint, AnalyticsEvent entities
+- [x] API Platform annotations for automatic API generation
+- [x] Proper relationships defined
 - [ ] Migrations generated and run
 
 **User Entity**:
