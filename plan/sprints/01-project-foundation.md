@@ -153,11 +153,11 @@ lib/
 Implement the complete Drift database schema with all tables and DAOs.
 
 **Acceptance Criteria**:
-- [ ] All 6 tables defined (users, quests, quest_attempts, path_points, analytics_events, sync_queue)
-- [ ] Foreign key relationships correctly defined
-- [ ] DAOs created for each table
-- [ ] Database class generated successfully
-- [ ] Database opens without errors
+- [x] All 6 tables defined (users, quests, quest_attempts, path_points, analytics_events, sync_queue)
+- [x] Foreign key relationships correctly defined
+- [x] DAOs created for each table
+- [x] Database class generated successfully
+- [x] Database opens without errors
 
 **Tables**:
 ```dart
