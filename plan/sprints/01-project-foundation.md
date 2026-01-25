@@ -20,11 +20,11 @@
 Create a new Flutter project with the correct package name, minimum SDK versions, and basic project structure.
 
 **Acceptance Criteria**:
-- [ ] Flutter project created with package name `com.kashkash.app`
-- [ ] Minimum iOS version set to 13.0
-- [ ] Minimum Android SDK set to 21, target SDK 34
-- [ ] Project compiles and runs on both iOS simulator and Android emulator
-- [ ] `.gitignore` properly configured for Flutter
+- [x] Flutter project created with package name `com.kashkash.app`
+- [x] Minimum iOS version set to 13.0
+- [x] Minimum Android SDK set to 21, target SDK 34
+- [x] Project compiles and runs on both iOS simulator and Android emulator
+- [x] `.gitignore` properly configured for Flutter
 
 **Commands**:
 ```bash
