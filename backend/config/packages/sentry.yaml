@@ -1,5 +1,25 @@
-sentry:
-    dsn: '%env(SENTRY_DSN)%'
-    options:
-        environment: '%kernel.environment%'
-        traces_sample_rate: 0.2
+when@prod:
+    sentry:
+        dsn: '%env(SENTRY_DSN)%'
+        register_error_listener: true
+        register_error_handler: true
+        options:
+            environment: '%kernel.environment%'
+            release: '%env(APP_VERSION)%'
+            traces_sample_rate: 0.2
+            profiles_sample_rate: 0.1
+            send_default_pii: false
+        tracing:
+            enabled: true
+            dbal:
+                enabled: true
+            cache:
+                enabled: true
+            twig:
+                enabled: true
+            http_client:
+                enabled: true
+
+when@dev:
+    sentry:
+        dsn: ''

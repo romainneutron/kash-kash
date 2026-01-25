@@ -669,12 +669,12 @@ php bin/console doctrine:migrations:migrate
 Configure Sentry for Symfony error tracking and performance monitoring.
 
 **Acceptance Criteria**:
-- [ ] Sentry project created (Symfony platform)
-- [ ] sentry-symfony bundle configured
-- [ ] Automatic error capture working
-- [ ] Performance tracing enabled
-- [ ] Environment separation (dev/prod)
-- [ ] User context middleware added
+- [x] Sentry project created (Symfony platform)
+- [x] sentry-symfony bundle configured
+- [x] Automatic error capture working
+- [x] Performance tracing enabled
+- [x] Environment separation (dev/prod)
+- [x] User context middleware added
 
 **Configuration**:
 ```yaml
