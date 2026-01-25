@@ -319,10 +319,10 @@ class ServerFailure extends Failure { ... }
 Configure go_router with all routes and placeholder screens.
 
 **Acceptance Criteria**:
-- [ ] GoRouter configured with all routes
-- [ ] Placeholder screens for each route
-- [ ] Route guards structure (mock for now)
-- [ ] Navigation works between screens
+- [x] GoRouter configured with all routes
+- [x] Placeholder screens for each route
+- [x] Route guards structure (mock for now)
+- [x] Navigation works between screens
 
 **Routes**:
 ```dart

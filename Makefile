@@ -1,8 +1,9 @@
 # Kash-Kash Development Makefile
 
-FLUTTER = ./flutter/bin/flutter
-DART = ./flutter/bin/dart
-APP_DIR = kash_kash_app
+ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+FLUTTER = $(ROOT_DIR)/flutter/bin/flutter
+DART = $(ROOT_DIR)/flutter/bin/dart
+APP_DIR = $(ROOT_DIR)/kash_kash_app
 
 .PHONY: help setup clean analyze test build run gen watch
 
