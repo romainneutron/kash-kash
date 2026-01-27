@@ -16,7 +16,7 @@ when@prod:
             cache:
                 enabled: true
             twig:
-                enabled: true
+                enabled: false
             http_client:
                 enabled: true
 
