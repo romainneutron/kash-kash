@@ -23,9 +23,9 @@ Configure Google OAuth provider in Symfony with KnpUOAuth2ClientBundle.
 **Acceptance Criteria**:
 - [ ] Google Cloud Console project created
 - [ ] OAuth 2.0 credentials configured (web application)
-- [ ] KnpUOAuth2Client configured for Google
-- [ ] Redirect URIs set correctly
-- [ ] Environment variables for client ID/secret
+- [x] KnpUOAuth2Client configured for Google
+- [x] Redirect URIs set correctly
+- [x] Environment variables for client ID/secret
 
 **Configuration**:
 ```yaml
@@ -63,9 +63,9 @@ Configure LexikJWTAuthenticationBundle for token-based authentication.
 
 **Acceptance Criteria**:
 - [ ] JWT keys generated (private/public)
-- [ ] Token TTL configured (1 hour access, 7 days refresh)
-- [ ] Refresh token endpoint working
-- [ ] Security firewall configured
+- [x] Token TTL configured (1 hour access, 7 days refresh)
+- [x] Refresh token endpoint working
+- [x] Security firewall configured
 
 **Commands**:
 ```bash
@@ -105,11 +105,11 @@ security:
 Create authentication controller handling Google OAuth flow and JWT issuance.
 
 **Acceptance Criteria**:
-- [ ] `/auth/google` initiates OAuth flow
-- [ ] Callback creates/updates user in database
-- [ ] Returns JWT access token and refresh token
-- [ ] Handles new user vs existing user
-- [ ] Returns user profile with token
+- [x] `/auth/google` initiates OAuth flow
+- [x] Callback creates/updates user in database
+- [x] Returns JWT access token and refresh token
+- [x] Handles new user vs existing user
+- [x] Returns user profile with token
 
 **Controller**:
 ```php

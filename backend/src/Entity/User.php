@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: \App\Repository\UserRepository::class)]
 #[ORM\Table(name: 'users')]
 #[ApiResource(
     operations: [

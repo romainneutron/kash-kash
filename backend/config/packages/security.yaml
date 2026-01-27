@@ -12,13 +12,23 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        auth_public:
+            pattern: ^/auth/(google|token)
+            stateless: true
+            security: false
+        auth_protected:
+            pattern: ^/auth
+            stateless: true
+            jwt: ~
         api:
             pattern: ^/api
             stateless: true
             jwt: ~
 
     access_control:
-        - { path: ^/api/auth, roles: PUBLIC_ACCESS }
+        - { path: ^/auth/google, roles: PUBLIC_ACCESS }
+        - { path: ^/auth/token, roles: PUBLIC_ACCESS }
+        - { path: ^/auth, roles: ROLE_USER }
         - { path: ^/api/admin, roles: ROLE_ADMIN }
         - { path: ^/api, roles: ROLE_USER }
 
