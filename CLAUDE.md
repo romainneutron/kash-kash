@@ -132,6 +132,13 @@ Current sprint documents have checkboxes indicating completion status.
 - Major updates require manual review
 - Security alerts enabled
 
+### Upsun Deployment
+- **Project**: `zbl4tfxlbq4ss`
+- **Console**: https://console.upsun.com/romain-neutron-private/zbl4tfxlbq4ss
+- **Config**: `.upsun/config.yaml`
+- **Auto-deploy**: Push to `main` triggers deployment
+- **Stack**: PHP 8.5 + PostgreSQL 16
+
 ## Troubleshooting
 
 ### Doctrine Bundle + Symfony 8

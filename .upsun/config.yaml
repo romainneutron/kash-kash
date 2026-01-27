@@ -1,0 +1,57 @@
+applications:
+  backend:
+    source:
+      root: backend
+
+    type: php:8.5
+
+    runtime:
+      extensions:
+        - apcu
+        - pdo_pgsql
+        - intl
+        - opcache
+
+    build:
+      flavor: none
+
+    dependencies:
+      php:
+        composer/composer: "^2"
+
+    hooks:
+      build: |
+        set -e
+        composer install --no-dev --optimize-autoloader --no-interaction
+      deploy: |
+        set -e
+        php bin/console cache:clear
+        php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+
+    web:
+      locations:
+        "/":
+          root: "public"
+          expires: 1h
+          passthru: "/index.php"
+
+    mounts:
+      "/var": { source: storage, source_path: var }
+      "/var/cache": { source: tmp, source_path: cache }
+      "/var/log": { source: tmp, source_path: log }
+
+    relationships:
+      database: "postgresql:postgresql"
+
+services:
+  postgresql:
+    type: postgresql:16
+
+routes:
+  "https://{default}/":
+    type: upstream
+    upstream: "backend:http"
+
+  "https://www.{default}/":
+    type: redirect
+    to: "https://{default}/"
