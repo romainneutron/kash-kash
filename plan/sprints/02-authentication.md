@@ -191,11 +191,11 @@ class AuthController extends AbstractController
 Create Dio-based API client with interceptors for authentication.
 
 **Acceptance Criteria**:
-- [ ] Dio client configured with base URL
-- [ ] Auth interceptor adds JWT to requests
-- [ ] Token refresh on 401 response
-- [ ] Error handling for network failures
-- [ ] Configurable via environment
+- [x] Dio client configured with base URL
+- [x] Auth interceptor adds JWT to requests
+- [x] Token refresh on 401 response
+- [x] Error handling for network failures
+- [x] Configurable via environment
 
 **Implementation**:
 ```dart
@@ -294,11 +294,11 @@ class AuthRemoteDataSource {
 Implement secure storage for tokens and session data.
 
 **Acceptance Criteria**:
-- [ ] Store access token securely
-- [ ] Store refresh token securely
-- [ ] Store user data for offline access
-- [ ] Clear all on logout
-- [ ] Platform-appropriate encryption
+- [x] Store access token securely
+- [x] Store refresh token securely
+- [x] Store user data for offline access
+- [x] Clear all on logout
+- [x] Platform-appropriate encryption
 
 **Implementation**:
 ```dart
