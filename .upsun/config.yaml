@@ -35,9 +35,9 @@ applications:
           passthru: "/index.php"
 
     mounts:
-      "/var": { source: storage, source_path: var }
-      "/var/cache": { source: tmp, source_path: cache }
-      "/var/log": { source: tmp, source_path: log }
+      "var":
+        source: "tmp"
+        source_path: "files/var"
 
     relationships:
       database: "postgresql:postgresql"
