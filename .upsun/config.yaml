@@ -43,6 +43,10 @@ applications:
     relationships:
       database: "postgresql:postgresql"
 
+    resources:
+      base_memory: 64
+      memory_ratio: 128
+
 services:
   postgresql:
     type: postgresql:16
