@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:kash_kash_app/presentation/providers/auth_provider.dart';
+import 'package:kash_kash_app/presentation/screens/login_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -16,29 +18,32 @@ abstract class AppRoutes {
   static const adminQuestCreate = '/admin/quests/new';
 }
 
-/// Auth state for redirects
-@riverpod
-class AuthState extends _$AuthState {
-  @override
-  bool build() => false; // Default: not authenticated
-}
-
 /// App router provider
 @riverpod
 GoRouter appRouter(Ref ref) {
-  final isAuthenticated = ref.watch(authStateProvider);
+  final authState = ref.watch(authProvider);
+  final isAuthenticated = authState.isAuthenticated;
+  final isAdmin = ref.watch(isAdminProvider);
 
   return GoRouter(
     initialLocation: AppRoutes.questList,
     debugLogDiagnostics: true,
     redirect: (context, state) {
       final isLoginRoute = state.matchedLocation == AppRoutes.login;
+      final isAdminRoute = state.matchedLocation.startsWith('/admin');
 
+      // If not authenticated and not on login page, redirect to login
       if (!isAuthenticated && !isLoginRoute) {
         return AppRoutes.login;
       }
 
+      // If authenticated and on login page, redirect to quest list
       if (isAuthenticated && isLoginRoute) {
+        return AppRoutes.questList;
+      }
+
+      // If trying to access admin routes without admin role, redirect to quest list
+      if (isAdminRoute && !isAdmin) {
         return AppRoutes.questList;
       }
 
@@ -48,7 +53,7 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.login,
         name: 'login',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Login'),
+        builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
         path: AppRoutes.questList,

@@ -48,7 +48,7 @@ final class SecureStorageProvider
   }
 }
 
-String _$secureStorageHash() => r'fdcf97f384e865e3e2cf8e4544c72da0d2bda7df';
+String _$secureStorageHash() => r'5c9908c0046ad0e39469ee7acbb5540397b36693';
 
 @ProviderFor(apiClient)
 final apiClientProvider = ApiClientProvider._();
@@ -89,4 +89,4 @@ final class ApiClientProvider
   }
 }
 
-String _$apiClientHash() => r'd93777c900033e54710badd67686288793754938';
+String _$apiClientHash() => r'e21de37fa1238bd613af95f55dcad8293a2c7a49';

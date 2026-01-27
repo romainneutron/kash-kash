@@ -21,8 +21,8 @@
 Configure Google OAuth provider in Symfony with KnpUOAuth2ClientBundle.
 
 **Acceptance Criteria**:
-- [ ] Google Cloud Console project created
-- [ ] OAuth 2.0 credentials configured (web application)
+- [x] Google Cloud Console project created
+- [x] OAuth 2.0 credentials configured (web application)
 - [x] KnpUOAuth2Client configured for Google
 - [x] Redirect URIs set correctly
 - [x] Environment variables for client ID/secret
@@ -62,7 +62,7 @@ connect_google_check:
 Configure LexikJWTAuthenticationBundle for token-based authentication.
 
 **Acceptance Criteria**:
-- [ ] JWT keys generated (private/public)
+- [x] JWT keys generated (private/public)
 - [x] Token TTL configured (1 hour access, 7 days refresh)
 - [x] Refresh token endpoint working
 - [x] Security firewall configured
@@ -254,11 +254,11 @@ class AuthInterceptor extends Interceptor {
 Create remote data source for authentication operations.
 
 **Acceptance Criteria**:
-- [ ] Initiate Google Sign-In via WebView or deep link
-- [ ] Handle OAuth callback and extract tokens
-- [ ] Get current user from /api/me
-- [ ] Refresh token functionality
-- [ ] Proper error handling
+- [x] Initiate Google Sign-In via WebView or deep link
+- [x] Handle OAuth callback and extract tokens
+- [x] Get current user from /api/me
+- [x] Refresh token functionality
+- [x] Proper error handling
 
 **Implementation**:
 ```dart
@@ -344,11 +344,11 @@ class SecureStorage {
 Implement AuthRepository combining remote and local data sources.
 
 **Acceptance Criteria**:
-- [ ] Sign in stores session in secure storage
-- [ ] Sign out clears session
-- [ ] getCurrentUser returns cached user when offline
-- [ ] Auth state changes exposed as Stream
-- [ ] Handles token expiry
+- [x] Sign in stores session in secure storage
+- [x] Sign out clears session
+- [x] getCurrentUser returns cached user when offline
+- [x] Auth state changes exposed as Stream
+- [x] Handles token expiry
 
 **Implementation**:
 ```dart
@@ -429,10 +429,10 @@ class AuthRepositoryImpl implements IAuthRepository {
 Create Riverpod providers for auth state management.
 
 **Acceptance Criteria**:
-- [ ] authStateProvider exposes current auth state
-- [ ] currentUserProvider exposes current user
-- [ ] isAdminProvider derived from user role
-- [ ] Loading and error states properly exposed
+- [x] authStateProvider exposes current auth state
+- [x] currentUserProvider exposes current user
+- [x] isAdminProvider derived from user role
+- [x] Loading and error states properly exposed
 
 **Implementation**:
 ```dart
@@ -488,12 +488,12 @@ bool isAdmin(IsAdminRef ref) {
 Build the complete login screen with Google Sign-In.
 
 **Acceptance Criteria**:
-- [ ] App logo and title displayed
-- [ ] "Sign in with Google" button styled correctly
-- [ ] Loading overlay during sign-in
-- [ ] Error messages displayed on failure
-- [ ] Successful sign-in navigates to quest list
-- [ ] Responsive for different device sizes
+- [x] App logo and title displayed
+- [x] "Sign in with Google" button styled correctly
+- [x] Loading overlay during sign-in
+- [x] Error messages displayed on failure
+- [x] Successful sign-in navigates to quest list
+- [x] Responsive for different device sizes
 
 **Implementation**:
 ```dart
@@ -555,10 +555,10 @@ class LoginScreen extends ConsumerWidget {
 Update router with real authentication guards.
 
 **Acceptance Criteria**:
-- [ ] Unauthenticated users redirected to /login
-- [ ] Authenticated users redirected away from /login
-- [ ] Non-admin users redirected away from /admin/*
-- [ ] Auth state changes trigger route reevaluation
+- [x] Unauthenticated users redirected to /login
+- [x] Authenticated users redirected away from /login
+- [x] Non-admin users redirected away from /admin/*
+- [x] Auth state changes trigger route reevaluation
 
 **Implementation**:
 ```dart

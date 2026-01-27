@@ -57,6 +57,8 @@ dependencies:
 
   # Authentication
   google_sign_in: ^7.2.0
+  webview_flutter: ^4.13.0
+  url_launcher: ^6.3.2
 
   # Maps (Admin)
   flutter_map: ^8.2.2
