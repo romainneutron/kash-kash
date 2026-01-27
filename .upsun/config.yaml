@@ -10,7 +10,6 @@ applications:
         - apcu
         - pdo_pgsql
         - intl
-        - opcache
 
     build:
       flavor: none
