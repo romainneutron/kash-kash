@@ -1,0 +1,7 @@
+# Upsun environment configuration
+# This file is sourced at deploy time to set environment variables
+
+# Build DATABASE_URL from Upsun relationship variables
+if [ -n "$DATABASE_HOST" ]; then
+    export DATABASE_URL="${DATABASE_SCHEME}://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_PATH}?serverVersion=16&charset=utf8"
+fi
