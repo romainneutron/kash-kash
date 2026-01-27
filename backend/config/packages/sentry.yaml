@@ -18,7 +18,7 @@ when@prod:
             twig:
                 enabled: false
             http_client:
-                enabled: true
+                enabled: false
 
 when@dev:
     sentry:
