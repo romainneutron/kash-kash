@@ -95,6 +95,9 @@ Future<Either<Failure, Position>> currentPosition(Ref ref) async {
 
 // ---------- Quest List State ----------
 
+/// State for the quest list screen.
+///
+/// Uses a sentinel value pattern for nullable field clearing.
 class QuestListState {
   final List<Quest> quests;
   final Position? userPosition;
@@ -115,21 +118,29 @@ class QuestListState {
   bool get isEmpty => quests.isEmpty;
   bool get hasError => error != null;
 
+  /// Creates a copy with the specified fields replaced.
+  ///
+  /// To explicitly clear nullable fields:
+  /// - Use [clearError] = true to set error to null
+  /// - Use [clearUserPosition] = true to set userPosition to null
   QuestListState copyWith({
     List<Quest>? quests,
     Position? userPosition,
+    bool clearUserPosition = false,
     DistanceFilter? filter,
     bool? isOffline,
     bool? isLoading,
     String? error,
+    bool clearError = false,
   }) {
     return QuestListState(
       quests: quests ?? this.quests,
-      userPosition: userPosition ?? this.userPosition,
+      userPosition:
+          clearUserPosition ? null : (userPosition ?? this.userPosition),
       filter: filter ?? this.filter,
       isOffline: isOffline ?? this.isOffline,
       isLoading: isLoading ?? this.isLoading,
-      error: error,
+      error: clearError ? null : (error ?? this.error),
     );
   }
 }
@@ -147,7 +158,7 @@ class QuestListNotifier extends _$QuestListNotifier {
 
   Future<void> _loadQuests() async {
     final currentSequence = ++_loadSequence;
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true, clearError: true);
 
     final gpsService = ref.read(gpsServiceProvider);
     final repository = ref.read(questRepositoryProvider);
