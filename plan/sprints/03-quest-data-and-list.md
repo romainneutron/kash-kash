@@ -646,12 +646,12 @@ class QuestCard extends StatelessWidget {
 Unit tests for Haversine distance calculation.
 
 **Acceptance Criteria**:
-- [ ] Paris to London ≈ 343 km (within 1km tolerance)
-- [ ] Same point = 0 meters exactly
-- [ ] Short distance (10m) accurate within 0.1m
-- [ ] Handles antipodal points
-- [ ] Handles coordinates at poles
-- [ ] Handles coordinates crossing date line
+- [x] Paris to London ≈ 343 km (within 1km tolerance)
+- [x] Same point = 0 meters exactly
+- [x] Short distance (10m) accurate within 0.1m
+- [x] Handles antipodal points
+- [x] Handles coordinates at poles
+- [x] Handles coordinates crossing date line
 
 **Test file**: `test/unit/core/utils/distance_calculator_test.dart`
 
@@ -680,12 +680,12 @@ expect(DistanceCalculator.haversine(48.8566, 2.3522, 48.8567, 2.3522),
 Test serialization and mapping for QuestModel.
 
 **Acceptance Criteria**:
-- [ ] fromJson parses all fields correctly
-- [ ] toJson produces valid JSON
-- [ ] toDomain creates correct Quest entity
-- [ ] toDrift creates correct Drift companion
-- [ ] Handles nullable fields (description, difficulty, locationType)
-- [ ] Handles missing distance_km field from API
+- [x] fromJson parses all fields correctly
+- [x] toJson produces valid JSON
+- [x] toDomain creates correct Quest entity
+- [x] toDrift creates correct Drift companion
+- [x] Handles nullable fields (description, difficulty, locationType)
+- [x] Handles missing distance_km field from API
 
 **Test file**: `test/unit/data/models/quest_model_test.dart`
 
