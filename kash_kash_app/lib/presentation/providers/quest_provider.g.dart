@@ -180,12 +180,76 @@ final class GpsServiceProvider
 
 String _$gpsServiceHash() => r'0ba352c3b46fa9ffe34b5577e60bdd7dc9ee5192';
 
+/// Reactive connectivity provider that watches for network changes.
+
+@ProviderFor(ConnectivityNotifier)
+final connectivityProvider = ConnectivityNotifierProvider._();
+
+/// Reactive connectivity provider that watches for network changes.
+final class ConnectivityNotifierProvider
+    extends $NotifierProvider<ConnectivityNotifier, bool> {
+  /// Reactive connectivity provider that watches for network changes.
+  ConnectivityNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'connectivityProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$connectivityNotifierHash();
+
+  @$internal
+  @override
+  ConnectivityNotifier create() => ConnectivityNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$connectivityNotifierHash() =>
+    r'9322ad6426c4179d465c6e0d4eebe4e88dd94f0e';
+
+/// Reactive connectivity provider that watches for network changes.
+
+abstract class _$ConnectivityNotifier extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+/// Legacy provider for backwards compatibility.
+
 @ProviderFor(isOnline)
 final isOnlineProvider = IsOnlineProvider._();
+
+/// Legacy provider for backwards compatibility.
 
 final class IsOnlineProvider
     extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
     with $FutureModifier<bool>, $FutureProvider<bool> {
+  /// Legacy provider for backwards compatibility.
   IsOnlineProvider._()
     : super(
         from: null,
@@ -211,7 +275,7 @@ final class IsOnlineProvider
   }
 }
 
-String _$isOnlineHash() => r'b993bbadf15b5af8a838ce3333fedb3e51d90a6a';
+String _$isOnlineHash() => r'3273a77fd71655e925bdc26506c02590f68ffc89';
 
 @ProviderFor(questRepository)
 final questRepositoryProvider = QuestRepositoryProvider._();
@@ -386,7 +450,7 @@ final class QuestListNotifierProvider
   }
 }
 
-String _$questListNotifierHash() => r'e2b1c5f09346099af293e0cb0b1a2d8d41394bc4';
+String _$questListNotifierHash() => r'8e0319b1c0b4304abd4172db82aae3adc2b54d37';
 
 abstract class _$QuestListNotifier extends $Notifier<QuestListState> {
   QuestListState build();

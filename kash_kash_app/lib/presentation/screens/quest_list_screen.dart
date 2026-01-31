@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kash_kash_app/core/utils/distance_calculator.dart';
 import 'package:kash_kash_app/domain/entities/quest.dart';
@@ -106,11 +105,11 @@ class QuestListScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(vertical: 8),
         itemCount: state.quests.length,
         itemBuilder: (context, index) {
-          final quest = state.quests[index];
+          final questWithDistance = state.quests[index];
           return _QuestCard(
-            quest: quest,
-            userPosition: state.userPosition,
-            onTap: () => context.push('/quest/${quest.id}/play'),
+            quest: questWithDistance.quest,
+            distanceMeters: questWithDistance.distanceMeters,
+            onTap: () => context.push('/quest/${questWithDistance.quest.id}/play'),
           );
         },
       ),
@@ -160,25 +159,17 @@ class _DistanceFilterTabs extends StatelessWidget {
 /// Quest card widget.
 class _QuestCard extends StatelessWidget {
   final Quest quest;
-  final Position? userPosition;
+  final double distanceMeters;
   final VoidCallback onTap;
 
   const _QuestCard({
     required this.quest,
-    required this.userPosition,
+    required this.distanceMeters,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final double? distance = userPosition != null
-        ? DistanceCalculator.haversine(
-            userPosition!.latitude,
-            userPosition!.longitude,
-            quest.latitude,
-            quest.longitude,
-          )
-        : null;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -204,9 +195,7 @@ class _QuestCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  distance != null
-                      ? DistanceCalculator.formatDistance(distance)
-                      : 'Distance unavailable',
+                  DistanceCalculator.formatDistance(distanceMeters),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w500,

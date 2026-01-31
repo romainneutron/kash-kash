@@ -55,3 +55,20 @@ class LocationFailure extends Failure {
 class SyncFailure extends Failure {
   const SyncFailure([super.message = 'Sync failed']);
 }
+
+/// Base exception for data layer errors (thrown by data sources, caught by repositories)
+abstract class AppException implements Exception {
+  final String message;
+
+  const AppException(this.message);
+
+  @override
+  String toString() => '$runtimeType: $message';
+}
+
+/// Server/API exception for empty or invalid responses
+class ServerException extends AppException {
+  final int? statusCode;
+
+  const ServerException(super.message, {this.statusCode});
+}

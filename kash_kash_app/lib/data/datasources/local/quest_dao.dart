@@ -40,7 +40,14 @@ class QuestDao extends DatabaseAccessor<AppDatabase> with _$QuestDaoMixin {
   }
 
   /// Batch insert or update multiple quests.
-  Future<void> batchUpsert(List<Quest> questList) async {
+  ///
+  /// Set [markAsSynced] to true when data is fetched from remote and should
+  /// be marked as synchronized. Set to false when caching local changes that
+  /// still need to be synced to the server.
+  Future<void> batchUpsert(
+    List<Quest> questList, {
+    bool markAsSynced = false,
+  }) async {
     await batch((batch) {
       for (final quest in questList) {
         batch.insert(
@@ -58,7 +65,7 @@ class QuestDao extends DatabaseAccessor<AppDatabase> with _$QuestDaoMixin {
               difficulty: Value(quest.difficulty),
               locationType: Value(quest.locationType),
               updatedAt: Value(quest.updatedAt),
-              syncedAt: Value(DateTime.now()),
+              syncedAt: markAsSynced ? Value(DateTime.now()) : const Value.absent(),
             ),
           ),
         );

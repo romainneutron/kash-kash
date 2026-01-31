@@ -55,7 +55,12 @@
       "Bash(./vendor/bin/phpunit:*)",
       "Bash(docker:*)",
       "Bash(tee:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(git show:*)",
+      "Bash(while read hash msg)",
+      "Bash(do echo \"=== $msg ===\")",
+      "Bash(done)"
     ]
   }
 }

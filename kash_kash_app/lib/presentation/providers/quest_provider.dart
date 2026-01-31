@@ -1,8 +1,10 @@
+import 'package:async/async.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:kash_kash_app/core/errors/failures.dart';
+import 'package:kash_kash_app/core/utils/distance_calculator.dart';
 import 'package:kash_kash_app/data/datasources/local/database.dart' show AppDatabase;
 import 'package:kash_kash_app/data/datasources/local/quest_dao.dart';
 import 'package:kash_kash_app/data/datasources/remote/quest_remote_data_source.dart';
@@ -39,10 +41,32 @@ GpsService gpsService(Ref ref) {
   return GpsService();
 }
 
+/// Reactive connectivity provider that watches for network changes.
+@Riverpod(keepAlive: true)
+class ConnectivityNotifier extends _$ConnectivityNotifier {
+  @override
+  bool build() {
+    // Initialize with current state
+    _checkConnectivity();
+    // Watch for changes
+    final subscription = Connectivity().onConnectivityChanged.listen((result) {
+      state = !result.contains(ConnectivityResult.none);
+    });
+    ref.onDispose(() => subscription.cancel());
+    return true; // Assume online initially
+  }
+
+  Future<void> _checkConnectivity() async {
+    final result = await Connectivity().checkConnectivity();
+    state = !result.contains(ConnectivityResult.none);
+  }
+}
+
+/// Legacy provider for backwards compatibility.
 @riverpod
 Future<bool> isOnline(Ref ref) async {
-  final result = await Connectivity().checkConnectivity();
-  return !result.contains(ConnectivityResult.none);
+  // Use the reactive notifier's current state
+  return ref.watch(connectivityProvider);
 }
 
 @Riverpod(keepAlive: true)
@@ -95,11 +119,22 @@ Future<Either<Failure, Position>> currentPosition(Ref ref) async {
 
 // ---------- Quest List State ----------
 
+/// A quest with pre-calculated distance from user.
+class QuestWithDistance {
+  final Quest quest;
+  final double distanceMeters;
+
+  const QuestWithDistance({
+    required this.quest,
+    required this.distanceMeters,
+  });
+}
+
 /// State for the quest list screen.
 ///
 /// Uses a sentinel value pattern for nullable field clearing.
 class QuestListState {
-  final List<Quest> quests;
+  final List<QuestWithDistance> quests;
   final Position? userPosition;
   final DistanceFilter filter;
   final bool isOffline;
@@ -124,7 +159,7 @@ class QuestListState {
   /// - Use [clearError] = true to set error to null
   /// - Use [clearUserPosition] = true to set userPosition to null
   QuestListState copyWith({
-    List<Quest>? quests,
+    List<QuestWithDistance>? quests,
     Position? userPosition,
     bool clearUserPosition = false,
     DistanceFilter? filter,
@@ -147,34 +182,42 @@ class QuestListState {
 
 @riverpod
 class QuestListNotifier extends _$QuestListNotifier {
-  /// Sequence number to prevent race conditions when multiple loads occur.
-  int _loadSequence = 0;
+  /// Cancelable operation to cancel in-flight requests when new ones start.
+  CancelableOperation<void>? _loadOperation;
 
   @override
   QuestListState build() {
+    ref.onDispose(() => _loadOperation?.cancel());
     _loadQuests();
     return const QuestListState(isLoading: true);
   }
 
   Future<void> _loadQuests() async {
-    final currentSequence = ++_loadSequence;
+    // Cancel any in-flight operation
+    await _loadOperation?.cancel();
+
     state = state.copyWith(isLoading: true, clearError: true);
 
+    _loadOperation = CancelableOperation.fromFuture(
+      _doLoadQuests(),
+      onCancel: () {
+        // Silently handle cancellation
+      },
+    );
+
+    await _loadOperation!.valueOrCancellation();
+  }
+
+  Future<void> _doLoadQuests() async {
     final gpsService = ref.read(gpsServiceProvider);
     final repository = ref.read(questRepositoryProvider);
     final filter = ref.read(distanceFilterProvider);
-    final isOnline = await ref.read(isOnlineProvider.future);
-
-    // Abort if a newer request has started
-    if (currentSequence != _loadSequence) return;
+    final isOnline = ref.read(connectivityProvider);
 
     // Get current position
     final positionResult = await gpsService.getCurrentPosition();
 
-    // Abort if a newer request has started
-    if (currentSequence != _loadSequence) return;
-
-    // Handle position result using pattern matching for proper async handling
+    // Handle position result
     if (positionResult.isLeft()) {
       final failure = positionResult.getLeft().toNullable()!;
       state = state.copyWith(
@@ -194,9 +237,6 @@ class QuestListNotifier extends _$QuestListNotifier {
       radiusKm: filter.kilometers,
     );
 
-    // Abort if a newer request has started
-    if (currentSequence != _loadSequence) return;
-
     if (questsResult.isLeft()) {
       final failure = questsResult.getLeft().toNullable()!;
       state = state.copyWith(
@@ -207,8 +247,19 @@ class QuestListNotifier extends _$QuestListNotifier {
       );
     } else {
       final quests = questsResult.getRight().toNullable()!;
+      // Pre-calculate distances to avoid recalculating on every UI rebuild
+      final questsWithDistance = quests.map((quest) {
+        final distance = DistanceCalculator.haversine(
+          position.latitude,
+          position.longitude,
+          quest.latitude,
+          quest.longitude,
+        );
+        return QuestWithDistance(quest: quest, distanceMeters: distance);
+      }).toList();
+
       state = state.copyWith(
-        quests: quests,
+        quests: questsWithDistance,
         userPosition: position,
         filter: filter,
         isOffline: !isOnline,

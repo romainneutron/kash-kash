@@ -75,7 +75,7 @@ void main() {
             .thenAnswer((_) async => [testDriftQuest]);
         when(() => mockRemoteDataSource.getPublishedQuests())
             .thenAnswer((_) async => [testQuestModel]);
-        when(() => mockDao.batchUpsert(any())).thenAnswer((_) async {});
+        when(() => mockDao.batchUpsert(any(), markAsSynced: any(named: 'markAsSynced'))).thenAnswer((_) async {});
 
         final result = await repository.getPublishedQuests();
 
@@ -88,7 +88,7 @@ void main() {
           },
         );
         verify(() => mockRemoteDataSource.getPublishedQuests()).called(1);
-        verify(() => mockDao.batchUpsert(any())).called(1);
+        verify(() => mockDao.batchUpsert(any(), markAsSynced: any(named: 'markAsSynced'))).called(1);
       });
 
       test('should return cached data when remote fails but cache available',
@@ -226,7 +226,7 @@ void main() {
               lng: any(named: 'lng'),
               radiusKm: any(named: 'radiusKm'),
             )).thenAnswer((_) async => [testQuestModel]);
-        when(() => mockDao.batchUpsert(any())).thenAnswer((_) async {});
+        when(() => mockDao.batchUpsert(any(), markAsSynced: any(named: 'markAsSynced'))).thenAnswer((_) async {});
 
         final result = await repository.getNearbyQuests(
           latitude: 48.8566,
@@ -434,12 +434,12 @@ void main() {
           ),
         ];
 
-        when(() => mockDao.batchUpsert(any())).thenAnswer((_) async {});
+        when(() => mockDao.batchUpsert(any(), markAsSynced: any(named: 'markAsSynced'))).thenAnswer((_) async {});
 
         final result = await repository.batchUpsert(quests);
 
         expect(result.isRight(), true);
-        verify(() => mockDao.batchUpsert(any())).called(1);
+        verify(() => mockDao.batchUpsert(any(), markAsSynced: any(named: 'markAsSynced'))).called(1);
       });
 
       test('should return CacheFailure on error', () async {

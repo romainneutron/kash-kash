@@ -20,6 +20,12 @@ class QuestRepositoryImpl implements IQuestRepository {
   final QuestRemoteDataSource _remoteDataSource;
   final Future<bool> Function() _isOnline;
 
+  /// Maximum number of retry attempts for transient failures.
+  static const int _maxRetries = 1;
+
+  /// Delay between retry attempts.
+  static const Duration _retryDelay = Duration(milliseconds: 500);
+
   QuestRepositoryImpl({
     required QuestDao questDao,
     required QuestRemoteDataSource remoteDataSource,
@@ -28,39 +34,58 @@ class QuestRepositoryImpl implements IQuestRepository {
         _remoteDataSource = remoteDataSource,
         _isOnline = isOnline;
 
+  /// Execute an operation with retry on transient failures.
+  Future<T> _withRetry<T>(Future<T> Function() operation) async {
+    for (var attempt = 0; attempt <= _maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (e) {
+        final isLastAttempt = attempt == _maxRetries;
+        if (isLastAttempt) rethrow;
+
+        // Only retry on likely transient errors (timeouts, connection issues)
+        final errorStr = e.toString().toLowerCase();
+        final isTransient = errorStr.contains('timeout') ||
+            errorStr.contains('connection') ||
+            errorStr.contains('socket');
+
+        if (!isTransient) rethrow;
+
+        await Future.delayed(_retryDelay);
+      }
+    }
+    throw StateError('Unreachable');
+  }
+
   @override
   Future<Either<Failure, List<domain.Quest>>> getPublishedQuests() async {
     try {
       // Try to get cached quests first
       final cachedQuests = await _questDao.getAllPublished();
 
-      // Try to fetch fresh data from remote
+      // Try to fetch fresh data from remote with retry
       if (await _isOnline()) {
         try {
-          final remoteQuests = await _remoteDataSource.getPublishedQuests();
-          await _questDao.batchUpsert(remoteQuests.map((q) => q.toDrift()).toList());
-
-          // Return fresh data
-          final freshQuests = await _questDao.getAllPublished();
-          return Right(
-            freshQuests.map((q) => QuestModel.fromDrift(q).toDomain()).toList(),
+          final remoteQuests = await _withRetry(
+            () => _remoteDataSource.getPublishedQuests(),
           );
+          await _questDao.batchUpsert(
+            remoteQuests.map((q) => q.toDrift()).toList(),
+            markAsSynced: true,
+          );
+
+          final freshQuests = await _questDao.getAllPublished();
+          return Right(_toDomainList(freshQuests));
         } catch (e) {
-          // Failed to fetch remote, return cached data if available
           debugPrint('Remote fetch failed, falling back to cache: $e');
           if (cachedQuests.isNotEmpty) {
-            return Right(
-              cachedQuests.map((q) => QuestModel.fromDrift(q).toDomain()).toList(),
-            );
+            return Right(_toDomainList(cachedQuests));
           }
           rethrow;
         }
       }
 
-      // Offline - return cached data
-      return Right(
-        cachedQuests.map((q) => QuestModel.fromDrift(q).toDomain()).toList(),
-      );
+      return Right(_toDomainList(cachedQuests));
     } on NetworkFailure catch (e) {
       return Left(e);
     } catch (e) {
@@ -84,15 +109,20 @@ class QuestRepositoryImpl implements IQuestRepository {
         radiusKm,
       );
 
-      // Try to fetch fresh data from remote
+      // Try to fetch fresh data from remote with retry
       if (await _isOnline()) {
         try {
-          final remoteQuests = await _remoteDataSource.getNearbyQuests(
-            lat: latitude,
-            lng: longitude,
-            radiusKm: radiusKm,
+          final remoteQuests = await _withRetry(
+            () => _remoteDataSource.getNearbyQuests(
+              lat: latitude,
+              lng: longitude,
+              radiusKm: radiusKm,
+            ),
           );
-          await _questDao.batchUpsert(remoteQuests.map((q) => q.toDrift()).toList());
+          await _questDao.batchUpsert(
+            remoteQuests.map((q) => q.toDrift()).toList(),
+            markAsSynced: true,
+          );
 
           // Return remote quests with distance (they come pre-filtered)
           return Right(
@@ -123,10 +153,12 @@ class QuestRepositoryImpl implements IQuestRepository {
       final cached = await _questDao.getById(id);
       final isOnline = await _isOnline();
 
-      // Try to fetch from remote if online
+      // Try to fetch from remote if online with retry
       if (isOnline) {
         try {
-          final remote = await _remoteDataSource.getQuestById(id);
+          final remote = await _withRetry(
+            () => _remoteDataSource.getQuestById(id),
+          );
           await _questDao.upsert(remote.toDrift());
           return Right(remote.toDomain());
         } catch (e) {
@@ -135,9 +167,8 @@ class QuestRepositoryImpl implements IQuestRepository {
         }
       }
 
-      // Return cached if available
       if (cached != null) {
-        return Right(QuestModel.fromDrift(cached).toDomain());
+        return Right(_toDomain(cached));
       }
 
       return const Left(CacheFailure('Quest not found'));
@@ -206,26 +237,23 @@ class QuestRepositoryImpl implements IQuestRepository {
       if (await _isOnline()) {
         try {
           final remoteQuests = await _remoteDataSource.getPublishedQuests();
-          await _questDao.batchUpsert(remoteQuests.map((q) => q.toDrift()).toList());
+          await _questDao.batchUpsert(
+            remoteQuests.map((q) => q.toDrift()).toList(),
+            markAsSynced: true,
+          );
 
           final freshQuests = await _questDao.getAll();
-          return Right(
-            freshQuests.map((q) => QuestModel.fromDrift(q).toDomain()).toList(),
-          );
+          return Right(_toDomainList(freshQuests));
         } catch (e) {
           debugPrint('Remote getAllQuests failed, falling back to cache: $e');
           if (cachedQuests.isNotEmpty) {
-            return Right(
-              cachedQuests.map((q) => QuestModel.fromDrift(q).toDomain()).toList(),
-            );
+            return Right(_toDomainList(cachedQuests));
           }
           rethrow;
         }
       }
 
-      return Right(
-        cachedQuests.map((q) => QuestModel.fromDrift(q).toDomain()).toList(),
-      );
+      return Right(_toDomainList(cachedQuests));
     } catch (e) {
       return Left(NetworkFailure('Failed to get quests: $e'));
     }
@@ -244,6 +272,13 @@ class QuestRepositoryImpl implements IQuestRepository {
     }
   }
 
+  /// Convert Drift quest to domain entity.
+  domain.Quest _toDomain(Quest quest) => QuestModel.fromDrift(quest).toDomain();
+
+  /// Convert list of Drift quests to domain entities.
+  List<domain.Quest> _toDomainList(List<Quest> quests) =>
+      quests.map(_toDomain).toList();
+
   /// Filter quests by distance from user location.
   List<domain.Quest> _filterByDistance(
     List<Quest> quests,
@@ -253,25 +288,20 @@ class QuestRepositoryImpl implements IQuestRepository {
   ) {
     final radiusMeters = radiusKm * 1000;
 
-    // Calculate distance once and store with quest
-    final withDistance = <(domain.Quest, double)>[];
+    final withDistance = quests
+        .map((quest) {
+          final distance = DistanceCalculator.haversine(
+            lat,
+            lng,
+            quest.latitude,
+            quest.longitude,
+          );
+          return (quest, distance);
+        })
+        .where((entry) => entry.$2 <= radiusMeters)
+        .toList()
+      ..sort((a, b) => a.$2.compareTo(b.$2));
 
-    for (final quest in quests) {
-      final distance = DistanceCalculator.haversine(
-        lat,
-        lng,
-        quest.latitude,
-        quest.longitude,
-      );
-
-      if (distance <= radiusMeters) {
-        withDistance.add((QuestModel.fromDrift(quest).toDomain(), distance));
-      }
-    }
-
-    // Sort by cached distance
-    withDistance.sort((a, b) => a.$2.compareTo(b.$2));
-
-    return withDistance.map((e) => e.$1).toList();
+    return withDistance.map((e) => _toDomain(e.$1)).toList();
   }
 }

@@ -161,41 +161,31 @@ class QuestModel {
     );
   }
 
-  static domain.QuestDifficulty? _parseDifficulty(String? value) {
+  /// Parse enum from string, returning null for unknown values.
+  static T? _parseEnum<T extends Enum>(
+    String? value,
+    List<T> values,
+    String typeName,
+  ) {
     if (value == null) return null;
-    for (final e in domain.QuestDifficulty.values) {
+    for (final e in values) {
       if (e.name == value) return e;
     }
-    debugPrint('Unknown difficulty value: $value, defaulting to easy');
-    return domain.QuestDifficulty.easy;
+    debugPrint('Unknown $typeName value: $value');
+    return null;
   }
 
-  static domain.LocationType? _parseLocationType(String? value) {
-    if (value == null) return null;
-    for (final e in domain.LocationType.values) {
-      if (e.name == value) return e;
-    }
-    debugPrint('Unknown location type value: $value, defaulting to city');
-    return domain.LocationType.city;
-  }
+  static domain.QuestDifficulty? _parseDifficulty(String? value) =>
+      _parseEnum(value, domain.QuestDifficulty.values, 'difficulty');
 
-  static db.QuestDifficulty? _parseDriftDifficulty(String? value) {
-    if (value == null) return null;
-    for (final e in db.QuestDifficulty.values) {
-      if (e.name == value) return e;
-    }
-    debugPrint('Unknown difficulty value: $value, defaulting to easy');
-    return db.QuestDifficulty.easy;
-  }
+  static domain.LocationType? _parseLocationType(String? value) =>
+      _parseEnum(value, domain.LocationType.values, 'location type');
 
-  static db.LocationType? _parseDriftLocationType(String? value) {
-    if (value == null) return null;
-    for (final e in db.LocationType.values) {
-      if (e.name == value) return e;
-    }
-    debugPrint('Unknown location type value: $value, defaulting to city');
-    return db.LocationType.city;
-  }
+  static db.QuestDifficulty? _parseDriftDifficulty(String? value) =>
+      _parseEnum(value, db.QuestDifficulty.values, 'difficulty');
+
+  static db.LocationType? _parseDriftLocationType(String? value) =>
+      _parseEnum(value, db.LocationType.values, 'location type');
 
   QuestModel copyWith({
     String? id,

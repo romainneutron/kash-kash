@@ -13,6 +13,30 @@ enum LocationPermissionStatus {
 
 /// Service wrapper for GPS operations with permission handling.
 class GpsService {
+  /// Default cache duration for position data.
+  static const Duration defaultCacheTtl = Duration(seconds: 30);
+
+  /// Cached position and timestamp.
+  Position? _cachedPosition;
+  DateTime? _cacheTimestamp;
+
+  /// Cache TTL (configurable for testing).
+  final Duration cacheTtl;
+
+  GpsService({this.cacheTtl = defaultCacheTtl});
+
+  /// Clear the position cache.
+  void clearCache() {
+    _cachedPosition = null;
+    _cacheTimestamp = null;
+  }
+
+  /// Check if cached position is still valid.
+  bool get _isCacheValid {
+    if (_cachedPosition == null || _cacheTimestamp == null) return false;
+    return DateTime.now().difference(_cacheTimestamp!) < cacheTtl;
+  }
+
   /// Check if location services are enabled.
   Future<bool> isLocationServiceEnabled() async {
     return Geolocator.isLocationServiceEnabled();
@@ -48,12 +72,21 @@ class GpsService {
 
   /// Get current position.
   ///
+  /// Returns cached position if available and valid, otherwise fetches fresh.
+  /// Set [forceRefresh] to true to bypass the cache.
+  ///
   /// Returns a [LocationFailure] if permission is denied or location
   /// services are disabled.
   Future<Either<Failure, Position>> getCurrentPosition({
     LocationAccuracy accuracy = LocationAccuracy.high,
     Duration? timeout,
+    bool forceRefresh = false,
   }) async {
+    // Return cached position if valid and not forcing refresh
+    if (!forceRefresh && _isCacheValid) {
+      return Right(_cachedPosition!);
+    }
+
     try {
       final hasLocationPermission = await hasPermission();
       if (!hasLocationPermission) {
@@ -69,6 +102,10 @@ class GpsService {
           timeLimit: timeout,
         ),
       );
+
+      // Update cache
+      _cachedPosition = position;
+      _cacheTimestamp = DateTime.now();
 
       return Right(position);
     } on LocationServiceDisabledException {
