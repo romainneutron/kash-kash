@@ -20,11 +20,11 @@
 Create models and data layer for quest attempts.
 
 **Acceptance Criteria**:
-- [ ] QuestAttemptModel with serialization
-- [ ] Drift DAO for attempts
-- [ ] Create, update, get operations
-- [ ] Get active attempt for user
-- [ ] Get attempts history
+- [x] QuestAttemptModel with serialization
+- [x] Drift DAO for attempts
+- [x] Create, update, get operations
+- [x] Get active attempt for user
+- [x] Get attempts history
 
 **Implementation**:
 ```dart
@@ -68,12 +68,12 @@ class AttemptDao extends DatabaseAccessor<AppDatabase> with _$AttemptDaoMixin {
 Implement path point storage for recording user movement.
 
 **Acceptance Criteria**:
-- [ ] PathPointModel with serialization
-- [ ] Drift DAO for path points
-- [ ] Add path point with attempt ID
-- [ ] Get all points for attempt
-- [ ] Calculate total distance from path
-- [ ] Batch insert for performance
+- [x] PathPointModel with serialization
+- [x] Drift DAO for path points
+- [x] Add path point with attempt ID
+- [x] Get all points for attempt
+- [x] Calculate total distance from path
+- [x] Batch insert for performance
 
 **Implementation**:
 ```dart
@@ -121,11 +121,11 @@ class PathPointDao extends DatabaseAccessor<AppDatabase> with _$PathPointDaoMixi
 Detect if user is moving or stationary based on GPS speed.
 
 **Acceptance Criteria**:
-- [ ] Detect stationary (speed < threshold)
-- [ ] Detect moving (speed >= threshold)
-- [ ] Configurable threshold (default 0.5 m/s)
-- [ ] Smoothing to avoid flickering
-- [ ] Expose as stream
+- [x] Detect stationary (speed < threshold)
+- [x] Detect moving (speed >= threshold)
+- [x] Configurable threshold (default 0.5 m/s)
+- [x] Smoothing to avoid flickering
+- [x] Expose as stream
 
 **Implementation**:
 ```dart
@@ -188,10 +188,10 @@ class MovementDetectorTransformer
 Detect if user is getting closer or farther from target.
 
 **Acceptance Criteria**:
-- [ ] Compare current vs previous distance
-- [ ] Return gettingCloser or gettingFarther
-- [ ] Handle equal distance (no change)
-- [ ] Minimum movement threshold (2m)
+- [x] Compare current vs previous distance
+- [x] Return gettingCloser or gettingFarther
+- [x] Handle equal distance (no change)
+- [x] Minimum movement threshold (2m)
 
 **Implementation**:
 ```dart
@@ -250,11 +250,11 @@ class DirectionDetector {
 Central state manager orchestrating all gameplay logic.
 
 **Acceptance Criteria**:
-- [ ] Manages GameplayState enum
-- [ ] Consumes GPS, movement, direction
-- [ ] Emits state changes as stream
-- [ ] Detects win condition (within radius)
-- [ ] Clean lifecycle management
+- [x] Manages GameplayState enum
+- [x] Consumes GPS, movement, direction
+- [x] Emits state changes as stream
+- [x] Detects win condition (within radius)
+- [x] Clean lifecycle management
 
 **Implementation**:
 ```dart
@@ -378,10 +378,10 @@ class GameStateManager {
 Use case for starting a new quest attempt.
 
 **Acceptance Criteria**:
-- [ ] Creates new QuestAttempt
-- [ ] Sets status to inProgress
-- [ ] Records start time
-- [ ] Prevents double-start
+- [x] Creates new QuestAttempt
+- [x] Sets status to inProgress
+- [x] Records start time
+- [x] Prevents double-start
 
 **Implementation**:
 ```dart
@@ -433,11 +433,11 @@ class StartQuestUseCase {
 Use case for successfully completing a quest.
 
 **Acceptance Criteria**:
-- [ ] Updates status to completed
-- [ ] Records completion time
-- [ ] Calculates duration
-- [ ] Calculates distance walked
-- [ ] Triggers analytics event
+- [x] Updates status to completed
+- [x] Records completion time
+- [x] Calculates duration
+- [x] Calculates distance walked
+- [ ] Triggers analytics event (deferred to analytics sprint)
 
 **Implementation**:
 ```dart
@@ -492,10 +492,10 @@ class CompleteQuestUseCase {
 Use case for abandoning an in-progress quest.
 
 **Acceptance Criteria**:
-- [ ] Updates status to abandoned
-- [ ] Records abandonment time
-- [ ] Calculates partial duration
-- [ ] Triggers analytics
+- [x] Updates status to abandoned
+- [x] Records abandonment time
+- [x] Calculates partial duration
+- [ ] Triggers analytics (deferred to analytics sprint)
 
 **Implementation**:
 ```dart
@@ -546,12 +546,12 @@ class AbandonQuestUseCase {
 Riverpod provider for active quest screen state.
 
 **Acceptance Criteria**:
-- [ ] Initializes quest and attempt
-- [ ] Exposes gameplay state
-- [ ] Exposes elapsed time
-- [ ] Handles start/abandon/win
-- [ ] Records path points
-- [ ] Sets Sentry context for quest/attempt
+- [x] Initializes quest and attempt
+- [x] Exposes gameplay state
+- [x] Exposes elapsed time
+- [x] Handles start/abandon/win
+- [x] Records path points
+- [ ] Sets Sentry context for quest/attempt (deferred to monitoring sprint)
 
 **Implementation**:
 ```dart
@@ -692,11 +692,11 @@ class ActiveQuestNotifier extends _$ActiveQuestNotifier {
 Full-screen animated color background for gameplay.
 
 **Acceptance Criteria**:
-- [ ] BLACK for stationary
-- [ ] RED for getting closer
-- [ ] BLUE for getting farther
-- [ ] Smooth color transitions
-- [ ] Full screen, no chrome
+- [x] BLACK for stationary
+- [x] RED for getting closer
+- [x] BLUE for getting farther
+- [x] Smooth color transitions
+- [x] Full screen, no chrome
 
 **Implementation**:
 ```dart
@@ -735,10 +735,10 @@ class GameBackground extends StatelessWidget {
 Celebration overlay when user wins.
 
 **Acceptance Criteria**:
-- [ ] Celebratory animation
-- [ ] "You Found It!" message
-- [ ] Stats display (time, distance)
-- [ ] Done button
+- [x] Celebratory animation
+- [x] "You Found It!" message
+- [x] Stats display (time, distance)
+- [x] Done button
 
 **Implementation**:
 ```dart
@@ -805,13 +805,13 @@ class WinOverlay extends StatelessWidget {
 Complete active quest screen combining all components.
 
 **Acceptance Criteria**:
-- [ ] Full-screen game background
-- [ ] Subtle back/abandon button
-- [ ] Optional elapsed time
-- [ ] Win overlay on completion
-- [ ] GPS error handling
-- [ ] Prevent screen sleep
-- [ ] Confirmation for abandon
+- [x] Full-screen game background
+- [x] Subtle back/abandon button
+- [x] Optional elapsed time
+- [x] Win overlay on completion
+- [x] GPS error handling
+- [x] Prevent screen sleep
+- [x] Confirmation for abandon
 
 **Implementation**:
 ```dart
@@ -936,12 +936,12 @@ class _ActiveQuestScreenState extends ConsumerState<ActiveQuestScreen> {
 Unit tests for movement detection logic.
 
 **Acceptance Criteria**:
-- [ ] Speed < 0.5 m/s → stationary
-- [ ] Speed >= 0.5 m/s → moving
-- [ ] Smoothing prevents single-reading state flicker
-- [ ] Requires 2+ of 3 readings to change state
-- [ ] Reset clears reading history
-- [ ] Custom threshold works correctly
+- [x] Speed < 0.5 m/s → stationary
+- [x] Speed >= 0.5 m/s → moving
+- [x] Smoothing prevents single-reading state flicker
+- [x] Requires 2+ of 3 readings to change state
+- [x] Reset clears reading history
+- [x] Custom threshold works correctly
 
 **Test file**: `test/unit/infrastructure/gps/movement_detector_test.dart`
 
@@ -955,12 +955,12 @@ Unit tests for movement detection logic.
 Unit tests for direction detection logic.
 
 **Acceptance Criteria**:
-- [ ] Moving toward target → gettingCloser
-- [ ] Moving away from target → gettingFarther
-- [ ] Movement < 2m → noChange (within threshold)
-- [ ] First reading → noChange (no previous distance)
-- [ ] Reset clears previous distance
-- [ ] currentDistance property returns correct value
+- [x] Moving toward target → gettingCloser
+- [x] Moving away from target → gettingFarther
+- [x] Movement < 2m → noChange (within threshold)
+- [x] First reading → noChange (no previous distance)
+- [x] Reset clears previous distance
+- [x] currentDistance property returns correct value
 
 **Test file**: `test/unit/infrastructure/gps/direction_detector_test.dart`
 
@@ -974,14 +974,14 @@ Unit tests for direction detection logic.
 Integration tests for the game state orchestrator.
 
 **Acceptance Criteria**:
-- [ ] Starts in initializing state
-- [ ] Transitions to stationary when not moving
-- [ ] Transitions to gettingCloser when approaching target
-- [ ] Transitions to gettingFarther when moving away
-- [ ] Transitions to won when within radius
-- [ ] Expands effective radius when GPS accuracy is poor
-- [ ] Handles GPS errors gracefully (transitions to error state)
-- [ ] dispose cancels GPS subscription
+- [x] Starts in initializing state
+- [x] Transitions to stationary when not moving
+- [x] Transitions to gettingCloser when approaching target
+- [x] Transitions to gettingFarther when moving away
+- [x] Transitions to won when within radius
+- [x] Expands effective radius when GPS accuracy is poor
+- [x] Handles GPS errors gracefully (transitions to error state)
+- [x] dispose cancels GPS subscription
 
 **Test file**: `test/unit/infrastructure/gps/game_state_manager_test.dart`
 
@@ -1006,13 +1006,13 @@ when(() => mockGpsService.watchPosition()).thenAnswer(
 Unit tests for gameplay use cases.
 
 **Acceptance Criteria**:
-- [ ] StartQuestUseCase creates attempt with inProgress status
-- [ ] StartQuestUseCase prevents double-start (returns error)
-- [ ] CompleteQuestUseCase updates status to completed
-- [ ] CompleteQuestUseCase calculates duration correctly
-- [ ] CompleteQuestUseCase calculates distance walked
-- [ ] AbandonQuestUseCase updates status to abandoned
-- [ ] All use cases track analytics events
+- [x] StartQuestUseCase creates attempt with inProgress status
+- [x] StartQuestUseCase prevents double-start (returns error)
+- [x] CompleteQuestUseCase updates status to completed
+- [x] CompleteQuestUseCase calculates duration correctly
+- [x] CompleteQuestUseCase calculates distance walked
+- [x] AbandonQuestUseCase updates status to abandoned
+- [ ] All use cases track analytics events (deferred to analytics sprint)
 
 **Test files**:
 ```
@@ -1032,12 +1032,12 @@ test/unit/domain/usecases/
 Test Drift DAO for attempt operations.
 
 **Acceptance Criteria**:
-- [ ] create inserts new attempt
-- [ ] getActiveForUser returns in-progress attempt
-- [ ] getActiveForUser returns null when no active attempt
-- [ ] getHistoryForUser returns completed/abandoned attempts
-- [ ] getHistoryForUser excludes in-progress attempts
-- [ ] update modifies existing attempt
+- [x] create inserts new attempt
+- [x] getActiveForUser returns in-progress attempt
+- [x] getActiveForUser returns null when no active attempt
+- [x] getHistoryForUser returns completed/abandoned attempts
+- [x] getHistoryForUser excludes in-progress attempts
+- [x] update modifies existing attempt
 
 **Test file**: `test/unit/data/datasources/local/attempt_dao_test.dart`
 
