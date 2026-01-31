@@ -48,7 +48,12 @@
       "Bash(wc:*)",
       "Bash(dart run build_runner build:*)",
       "Bash(./flutter/bin/dart run build_runner build:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "mcp__plugin_serena_serena__list_dir",
+      "Bash(flutter test:*)",
+      "Bash(../flutter/bin/flutter test:*)",
+      "Bash(./vendor/bin/phpunit:*)",
+      "Bash(docker:*)"
     ]
   }
 }
