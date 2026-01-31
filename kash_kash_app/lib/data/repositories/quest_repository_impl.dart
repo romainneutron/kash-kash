@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kash_kash_app/core/errors/failures.dart';
 import 'package:kash_kash_app/core/utils/distance_calculator.dart';
@@ -44,8 +45,9 @@ class QuestRepositoryImpl implements IQuestRepository {
           return Right(
             freshQuests.map((q) => QuestModel.fromDrift(q).toDomain()).toList(),
           );
-        } catch (_) {
+        } catch (e) {
           // Failed to fetch remote, return cached data if available
+          debugPrint('Remote fetch failed, falling back to cache: $e');
           if (cachedQuests.isNotEmpty) {
             return Right(
               cachedQuests.map((q) => QuestModel.fromDrift(q).toDomain()).toList(),
@@ -96,8 +98,9 @@ class QuestRepositoryImpl implements IQuestRepository {
           return Right(
             remoteQuests.map((q) => q.toDomain()).toList(),
           );
-        } catch (_) {
+        } catch (e) {
           // Failed to fetch remote, return filtered cached data
+          debugPrint('Remote nearby fetch failed, falling back to cache: $e');
           if (filteredCached.isNotEmpty) {
             return Right(filteredCached);
           }
@@ -126,8 +129,9 @@ class QuestRepositoryImpl implements IQuestRepository {
           final remote = await _remoteDataSource.getQuestById(id);
           await _questDao.upsert(remote.toDrift());
           return Right(remote.toDomain());
-        } catch (_) {
+        } catch (e) {
           // Failed to fetch remote, fall through to cached
+          debugPrint('Remote getQuestById failed, trying cache: $e');
         }
       }
 
@@ -208,7 +212,8 @@ class QuestRepositoryImpl implements IQuestRepository {
           return Right(
             freshQuests.map((q) => QuestModel.fromDrift(q).toDomain()).toList(),
           );
-        } catch (_) {
+        } catch (e) {
+          debugPrint('Remote getAllQuests failed, falling back to cache: $e');
           if (cachedQuests.isNotEmpty) {
             return Right(
               cachedQuests.map((q) => QuestModel.fromDrift(q).toDomain()).toList(),

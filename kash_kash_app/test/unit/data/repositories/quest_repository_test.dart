@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:kash_kash_app/core/errors/failures.dart';
 import 'package:kash_kash_app/data/datasources/local/database.dart' as db;
 import 'package:kash_kash_app/data/datasources/local/quest_dao.dart';

@@ -386,7 +386,7 @@ final class QuestListNotifierProvider
   }
 }
 
-String _$questListNotifierHash() => r'6f0eca5ebc38525d65da4c4ddb9ddc9fdf1e6c3d';
+String _$questListNotifierHash() => r'e2b1c5f09346099af293e0cb0b1a2d8d41394bc4';
 
 abstract class _$QuestListNotifier extends $Notifier<QuestListState> {
   QuestListState build();

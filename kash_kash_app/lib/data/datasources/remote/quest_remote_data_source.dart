@@ -14,7 +14,10 @@ class QuestRemoteDataSource {
         await _apiClient.get<Map<String, dynamic>>('/api/quests');
 
     // Handle API Platform's hydra response format
-    final data = response.data!;
+    final data = response.data;
+    if (data == null) {
+      throw Exception('Empty response from API');
+    }
     final List<dynamic> items = data['hydra:member'] ?? data['data'] ?? [];
 
     return items
@@ -41,7 +44,10 @@ class QuestRemoteDataSource {
     );
 
     // Handle different API response formats
-    final data = response.data!;
+    final data = response.data;
+    if (data == null) {
+      throw Exception('Empty response from API');
+    }
     final List<dynamic> items =
         data['hydra:member'] ?? data['data'] ?? data['quests'] ?? [];
 
@@ -54,7 +60,11 @@ class QuestRemoteDataSource {
   Future<QuestModel> getQuestById(String id) async {
     final response =
         await _apiClient.get<Map<String, dynamic>>('/api/quests/$id');
-    return QuestModel.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw Exception('Empty response from API');
+    }
+    return QuestModel.fromJson(data);
   }
 
   /// Create a new quest (admin only).
@@ -63,7 +73,11 @@ class QuestRemoteDataSource {
       '/api/quests',
       data: quest.toJson(),
     );
-    return QuestModel.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw Exception('Empty response from API');
+    }
+    return QuestModel.fromJson(data);
   }
 
   /// Update an existing quest (admin only).
@@ -72,7 +86,11 @@ class QuestRemoteDataSource {
       '/api/quests/${quest.id}',
       data: quest.toJson(),
     );
-    return QuestModel.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw Exception('Empty response from API');
+    }
+    return QuestModel.fromJson(data);
   }
 
   /// Delete a quest (admin only).
@@ -85,7 +103,11 @@ class QuestRemoteDataSource {
     final response = await _apiClient.post<Map<String, dynamic>>(
       '/api/quests/$id/publish',
     );
-    return QuestModel.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw Exception('Empty response from API');
+    }
+    return QuestModel.fromJson(data);
   }
 
   /// Unpublish a quest (admin only).
@@ -93,6 +115,10 @@ class QuestRemoteDataSource {
     final response = await _apiClient.post<Map<String, dynamic>>(
       '/api/quests/$id/unpublish',
     );
-    return QuestModel.fromJson(response.data!);
+    final data = response.data;
+    if (data == null) {
+      throw Exception('Empty response from API');
+    }
+    return QuestModel.fromJson(data);
   }
 }

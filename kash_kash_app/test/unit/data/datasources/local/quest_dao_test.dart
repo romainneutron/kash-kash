@@ -3,8 +3,8 @@
 // To run: apt-get install libsqlite3-dev
 @TestOn('vm')
 @Skip('Requires libsqlite3.so - run with: apt-get install libsqlite3-dev')
+library;
 
-import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kash_kash_app/data/datasources/local/database.dart';
 import 'package:kash_kash_app/data/datasources/local/quest_dao.dart';

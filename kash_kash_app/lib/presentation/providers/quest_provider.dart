@@ -174,47 +174,47 @@ class QuestListNotifier extends _$QuestListNotifier {
     // Abort if a newer request has started
     if (currentSequence != _loadSequence) return;
 
-    await positionResult.fold(
-      (failure) async {
-        if (currentSequence != _loadSequence) return;
-        state = state.copyWith(
-          isLoading: false,
-          error: failure.message,
-          isOffline: !isOnline,
-        );
-      },
-      (position) async {
-        // Fetch nearby quests
-        final questsResult = await repository.getNearbyQuests(
-          latitude: position.latitude,
-          longitude: position.longitude,
-          radiusKm: filter.kilometers,
-        );
+    // Handle position result using pattern matching for proper async handling
+    if (positionResult.isLeft()) {
+      final failure = positionResult.getLeft().toNullable()!;
+      state = state.copyWith(
+        isLoading: false,
+        error: failure.message,
+        isOffline: !isOnline,
+      );
+      return;
+    }
 
-        // Abort if a newer request has started
-        if (currentSequence != _loadSequence) return;
+    final position = positionResult.getRight().toNullable()!;
 
-        questsResult.fold(
-          (failure) {
-            state = state.copyWith(
-              isLoading: false,
-              error: failure.message,
-              userPosition: position,
-              isOffline: !isOnline,
-            );
-          },
-          (quests) {
-            state = state.copyWith(
-              quests: quests,
-              userPosition: position,
-              filter: filter,
-              isOffline: !isOnline,
-              isLoading: false,
-            );
-          },
-        );
-      },
+    // Fetch nearby quests
+    final questsResult = await repository.getNearbyQuests(
+      latitude: position.latitude,
+      longitude: position.longitude,
+      radiusKm: filter.kilometers,
     );
+
+    // Abort if a newer request has started
+    if (currentSequence != _loadSequence) return;
+
+    if (questsResult.isLeft()) {
+      final failure = questsResult.getLeft().toNullable()!;
+      state = state.copyWith(
+        isLoading: false,
+        error: failure.message,
+        userPosition: position,
+        isOffline: !isOnline,
+      );
+    } else {
+      final quests = questsResult.getRight().toNullable()!;
+      state = state.copyWith(
+        quests: quests,
+        userPosition: position,
+        filter: filter,
+        isOffline: !isOnline,
+        isLoading: false,
+      );
+    }
   }
 
   Future<void> refresh() async {
