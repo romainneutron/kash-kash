@@ -6,6 +6,8 @@
 
 **Prerequisites**: Sprint 3 completed (quest list working, GPS service working)
 
+**Commit Convention**: All commits in this sprint MUST be prefixed with `sprint #4 - `
+
 ---
 
 ## Tasks

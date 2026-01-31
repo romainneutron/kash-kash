@@ -5,6 +5,8 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import 'attempt_dao.dart';
+import 'path_point_dao.dart';
 import 'quest_dao.dart';
 
 part 'database.g.dart';
@@ -100,7 +102,7 @@ class SyncQueue extends Table {
 
 @DriftDatabase(
   tables: [Users, Quests, QuestAttempts, PathPoints, SyncQueue],
-  daos: [QuestDao],
+  daos: [QuestDao, AttemptDao, PathPointDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());

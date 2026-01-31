@@ -2864,6 +2864,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PathPointsTable pathPoints = $PathPointsTable(this);
   late final $SyncQueueTable syncQueue = $SyncQueueTable(this);
   late final QuestDao questDao = QuestDao(this as AppDatabase);
+  late final AttemptDao attemptDao = AttemptDao(this as AppDatabase);
+  late final PathPointDao pathPointDao = PathPointDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();

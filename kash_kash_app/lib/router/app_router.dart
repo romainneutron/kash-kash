@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:kash_kash_app/presentation/providers/auth_provider.dart';
+import 'package:kash_kash_app/presentation/screens/active_quest_screen.dart';
 import 'package:kash_kash_app/presentation/screens/login_screen.dart';
 import 'package:kash_kash_app/presentation/screens/quest_list_screen.dart';
 import 'package:kash_kash_app/presentation/widgets/error_boundary.dart';
@@ -77,7 +78,7 @@ GoRouter appRouter(Ref ref) {
         name: 'activeQuest',
         builder: (context, state) {
           final questId = state.pathParameters['id']!;
-          return _PlaceholderScreen(title: 'Playing: $questId');
+          return ActiveQuestScreen(questId: questId);
         },
       ),
       GoRoute(
