@@ -29,11 +29,27 @@ class QuestRemoteDataSource {
   }
 
   /// Fetch quests near a specific location.
+  ///
+  /// Throws [ArgumentError] if coordinates are invalid:
+  /// - latitude must be between -90 and 90
+  /// - longitude must be between -180 and 180
+  /// - radiusKm must be positive
   Future<List<QuestModel>> getNearbyQuests({
     required double lat,
     required double lng,
     required double radiusKm,
   }) async {
+    // Validate inputs
+    if (lat < -90 || lat > 90) {
+      throw ArgumentError.value(lat, 'lat', 'Latitude must be between -90 and 90');
+    }
+    if (lng < -180 || lng > 180) {
+      throw ArgumentError.value(lng, 'lng', 'Longitude must be between -180 and 180');
+    }
+    if (radiusKm <= 0) {
+      throw ArgumentError.value(radiusKm, 'radiusKm', 'Radius must be positive');
+    }
+
     final response = await _apiClient.get<Map<String, dynamic>>(
       QuestEndpoints.nearby,
       queryParameters: {

@@ -187,37 +187,50 @@ class QuestModel {
   static db.LocationType? _parseDriftLocationType(String? value) =>
       _parseEnum(value, db.LocationType.values, 'location type');
 
+  /// Creates a copy with the specified fields replaced.
+  ///
+  /// To explicitly clear nullable fields:
+  /// - Use [clearDescription] = true to set description to null
+  /// - Use [clearDifficulty] = true to set difficulty to null
+  /// - Use [clearLocationType] = true to set locationType to null
+  /// - Use [clearSyncedAt] = true to set syncedAt to null
+  /// - Use [clearDistanceKm] = true to set distanceKm to null
   QuestModel copyWith({
     String? id,
     String? title,
     String? description,
+    bool clearDescription = false,
     double? latitude,
     double? longitude,
     double? radiusMeters,
     String? createdBy,
     bool? published,
     String? difficulty,
+    bool clearDifficulty = false,
     String? locationType,
+    bool clearLocationType = false,
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? syncedAt,
+    bool clearSyncedAt = false,
     double? distanceKm,
+    bool clearDistanceKm = false,
   }) {
     return QuestModel(
       id: id ?? this.id,
       title: title ?? this.title,
-      description: description ?? this.description,
+      description: clearDescription ? null : (description ?? this.description),
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       radiusMeters: radiusMeters ?? this.radiusMeters,
       createdBy: createdBy ?? this.createdBy,
       published: published ?? this.published,
-      difficulty: difficulty ?? this.difficulty,
-      locationType: locationType ?? this.locationType,
+      difficulty: clearDifficulty ? null : (difficulty ?? this.difficulty),
+      locationType: clearLocationType ? null : (locationType ?? this.locationType),
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      syncedAt: syncedAt ?? this.syncedAt,
-      distanceKm: distanceKm ?? this.distanceKm,
+      syncedAt: clearSyncedAt ? null : (syncedAt ?? this.syncedAt),
+      distanceKm: clearDistanceKm ? null : (distanceKm ?? this.distanceKm),
     );
   }
 }

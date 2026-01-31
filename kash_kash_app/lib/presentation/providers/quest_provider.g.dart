@@ -181,14 +181,20 @@ final class GpsServiceProvider
 String _$gpsServiceHash() => r'0ba352c3b46fa9ffe34b5577e60bdd7dc9ee5192';
 
 /// Reactive connectivity provider that watches for network changes.
+///
+/// Uses AsyncNotifier to properly handle initial connectivity check.
 
 @ProviderFor(ConnectivityNotifier)
 final connectivityProvider = ConnectivityNotifierProvider._();
 
 /// Reactive connectivity provider that watches for network changes.
+///
+/// Uses AsyncNotifier to properly handle initial connectivity check.
 final class ConnectivityNotifierProvider
-    extends $NotifierProvider<ConnectivityNotifier, bool> {
+    extends $AsyncNotifierProvider<ConnectivityNotifier, bool> {
   /// Reactive connectivity provider that watches for network changes.
+  ///
+  /// Uses AsyncNotifier to properly handle initial connectivity check.
   ConnectivityNotifierProvider._()
     : super(
         from: null,
@@ -206,32 +212,26 @@ final class ConnectivityNotifierProvider
   @$internal
   @override
   ConnectivityNotifier create() => ConnectivityNotifier();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
 }
 
 String _$connectivityNotifierHash() =>
-    r'9322ad6426c4179d465c6e0d4eebe4e88dd94f0e';
+    r'4d296b012be0bc9cadb08a0e7f29adcbf1aedacd';
 
 /// Reactive connectivity provider that watches for network changes.
+///
+/// Uses AsyncNotifier to properly handle initial connectivity check.
 
-abstract class _$ConnectivityNotifier extends $Notifier<bool> {
-  bool build();
+abstract class _$ConnectivityNotifier extends $AsyncNotifier<bool> {
+  FutureOr<bool> build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<bool, bool>;
+    final ref = this.ref as $Ref<AsyncValue<bool>, bool>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<bool, bool>,
-              bool,
+              AnyNotifier<AsyncValue<bool>, bool>,
+              AsyncValue<bool>,
               Object?,
               Object?
             >;
@@ -275,7 +275,7 @@ final class IsOnlineProvider
   }
 }
 
-String _$isOnlineHash() => r'3273a77fd71655e925bdc26506c02590f68ffc89';
+String _$isOnlineHash() => r'6d2d491257bd62104d36382d09daad75d9ffa90d';
 
 @ProviderFor(questRepository)
 final questRepositoryProvider = QuestRepositoryProvider._();
@@ -283,11 +283,11 @@ final questRepositoryProvider = QuestRepositoryProvider._();
 final class QuestRepositoryProvider
     extends
         $FunctionalProvider<
-          QuestRepositoryImpl,
-          QuestRepositoryImpl,
-          QuestRepositoryImpl
+          IQuestRepository,
+          IQuestRepository,
+          IQuestRepository
         >
-    with $Provider<QuestRepositoryImpl> {
+    with $Provider<IQuestRepository> {
   QuestRepositoryProvider._()
     : super(
         from: null,
@@ -304,25 +304,24 @@ final class QuestRepositoryProvider
 
   @$internal
   @override
-  $ProviderElement<QuestRepositoryImpl> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<IQuestRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  QuestRepositoryImpl create(Ref ref) {
+  IQuestRepository create(Ref ref) {
     return questRepository(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(QuestRepositoryImpl value) {
+  Override overrideWithValue(IQuestRepository value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<QuestRepositoryImpl>(value),
+      providerOverride: $SyncValueProvider<IQuestRepository>(value),
     );
   }
 }
 
-String _$questRepositoryHash() => r'c6e88461b71b81287062728ed4ad8efe9b6b5f89';
+String _$questRepositoryHash() => r'd2e198d2641ec3a634ac511d709f10ef0c0c0075';
 
 @ProviderFor(DistanceFilterNotifier)
 final distanceFilterProvider = DistanceFilterNotifierProvider._();
@@ -335,7 +334,7 @@ final class DistanceFilterNotifierProvider
         argument: null,
         retry: null,
         name: r'distanceFilterProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -357,7 +356,7 @@ final class DistanceFilterNotifierProvider
 }
 
 String _$distanceFilterNotifierHash() =>
-    r'8ffd7bb93ee4a1dbc83eb37d4fee65920832c9ac';
+    r'4b19370be9b6dfcde7677abb40a1142f453a25be';
 
 abstract class _$DistanceFilterNotifier extends $Notifier<DistanceFilter> {
   DistanceFilter build();
@@ -450,7 +449,7 @@ final class QuestListNotifierProvider
   }
 }
 
-String _$questListNotifierHash() => r'8e0319b1c0b4304abd4172db82aae3adc2b54d37';
+String _$questListNotifierHash() => r'48959a12f0b05ebfb67c9f7cb79c90cac92bafb5';
 
 abstract class _$QuestListNotifier extends $Notifier<QuestListState> {
   QuestListState build();

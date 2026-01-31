@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -19,6 +21,9 @@ class GpsService {
   /// Cached position and timestamp.
   Position? _cachedPosition;
   DateTime? _cacheTimestamp;
+
+  /// In-flight position fetch to prevent concurrent GPS requests.
+  Completer<Either<Failure, Position>>? _pendingFetch;
 
   /// Cache TTL (configurable for testing).
   final Duration cacheTtl;
@@ -75,6 +80,9 @@ class GpsService {
   /// Returns cached position if available and valid, otherwise fetches fresh.
   /// Set [forceRefresh] to true to bypass the cache.
   ///
+  /// Uses a Completer to prevent concurrent GPS requests, which would waste
+  /// battery. If a fetch is already in progress, callers wait for that result.
+  ///
   /// Returns a [LocationFailure] if permission is denied or location
   /// services are disabled.
   Future<Either<Failure, Position>> getCurrentPosition({
@@ -87,6 +95,33 @@ class GpsService {
       return Right(_cachedPosition!);
     }
 
+    // If a fetch is already in progress, wait for it
+    if (_pendingFetch != null) {
+      return _pendingFetch!.future;
+    }
+
+    // Start a new fetch
+    _pendingFetch = Completer<Either<Failure, Position>>();
+
+    try {
+      final result = await _doGetCurrentPosition(accuracy, timeout);
+      _pendingFetch!.complete(result);
+      return result;
+    } catch (e) {
+      final failure = Left<Failure, Position>(
+        LocationFailure('Failed to get location: $e'),
+      );
+      _pendingFetch!.complete(failure);
+      return failure;
+    } finally {
+      _pendingFetch = null;
+    }
+  }
+
+  Future<Either<Failure, Position>> _doGetCurrentPosition(
+    LocationAccuracy accuracy,
+    Duration? timeout,
+  ) async {
     try {
       final hasLocationPermission = await hasPermission();
       if (!hasLocationPermission) {
@@ -112,8 +147,6 @@ class GpsService {
       return const Left(LocationFailure('Location services are disabled'));
     } on PermissionDeniedException catch (e) {
       return Left(LocationFailure('Permission denied: ${e.message}'));
-    } catch (e) {
-      return Left(LocationFailure('Failed to get location: $e'));
     }
   }
 

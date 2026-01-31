@@ -10,6 +10,7 @@ import 'package:kash_kash_app/data/datasources/local/quest_dao.dart';
 import 'package:kash_kash_app/data/datasources/remote/quest_remote_data_source.dart';
 import 'package:kash_kash_app/data/repositories/quest_repository_impl.dart';
 import 'package:kash_kash_app/domain/entities/quest.dart';
+import 'package:kash_kash_app/domain/repositories/quest_repository.dart';
 import 'package:kash_kash_app/infrastructure/gps/gps_service.dart';
 import 'package:kash_kash_app/presentation/providers/api_provider.dart';
 
@@ -42,35 +43,35 @@ GpsService gpsService(Ref ref) {
 }
 
 /// Reactive connectivity provider that watches for network changes.
+///
+/// Uses AsyncNotifier to properly handle initial connectivity check.
 @Riverpod(keepAlive: true)
 class ConnectivityNotifier extends _$ConnectivityNotifier {
   @override
-  bool build() {
-    // Initialize with current state
-    _checkConnectivity();
+  Future<bool> build() async {
+    // Check initial connectivity state
+    final result = await Connectivity().checkConnectivity();
+    final isOnline = !result.contains(ConnectivityResult.none);
+
     // Watch for changes
     final subscription = Connectivity().onConnectivityChanged.listen((result) {
-      state = !result.contains(ConnectivityResult.none);
+      state = AsyncData(!result.contains(ConnectivityResult.none));
     });
     ref.onDispose(() => subscription.cancel());
-    return true; // Assume online initially
-  }
 
-  Future<void> _checkConnectivity() async {
-    final result = await Connectivity().checkConnectivity();
-    state = !result.contains(ConnectivityResult.none);
+    return isOnline;
   }
 }
 
 /// Legacy provider for backwards compatibility.
 @riverpod
 Future<bool> isOnline(Ref ref) async {
-  // Use the reactive notifier's current state
-  return ref.watch(connectivityProvider);
+  // Use the reactive notifier's current state (now async)
+  return ref.watch(connectivityProvider.future);
 }
 
 @Riverpod(keepAlive: true)
-QuestRepositoryImpl questRepository(Ref ref) {
+IQuestRepository questRepository(Ref ref) {
   final questDao = ref.watch(questDaoProvider);
   final remoteDataSource = ref.watch(questRemoteDataSourceProvider);
 
@@ -101,7 +102,7 @@ extension DistanceFilterValue on DistanceFilter {
       };
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class DistanceFilterNotifier extends _$DistanceFilterNotifier {
   @override
   DistanceFilter build() => DistanceFilter.km5;
@@ -212,7 +213,7 @@ class QuestListNotifier extends _$QuestListNotifier {
     final gpsService = ref.read(gpsServiceProvider);
     final repository = ref.read(questRepositoryProvider);
     final filter = ref.read(distanceFilterProvider);
-    final isOnline = ref.read(connectivityProvider);
+    final isOnline = await ref.read(connectivityProvider.future);
 
     // Get current position
     final positionResult = await gpsService.getCurrentPosition();

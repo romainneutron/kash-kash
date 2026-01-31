@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kash_kash_app/core/errors/failures.dart';
@@ -35,6 +39,9 @@ class QuestRepositoryImpl implements IQuestRepository {
         _isOnline = isOnline;
 
   /// Execute an operation with retry on transient failures.
+  ///
+  /// Only retries on network-related errors (socket, timeout, connection).
+  /// Does not retry on validation or server errors.
   Future<T> _withRetry<T>(Future<T> Function() operation) async {
     for (var attempt = 0; attempt <= _maxRetries; attempt++) {
       try {
@@ -43,18 +50,41 @@ class QuestRepositoryImpl implements IQuestRepository {
         final isLastAttempt = attempt == _maxRetries;
         if (isLastAttempt) rethrow;
 
-        // Only retry on likely transient errors (timeouts, connection issues)
-        final errorStr = e.toString().toLowerCase();
-        final isTransient = errorStr.contains('timeout') ||
-            errorStr.contains('connection') ||
-            errorStr.contains('socket');
-
+        // Only retry on transient network errors (by exception type)
+        final isTransient = _isTransientError(e);
         if (!isTransient) rethrow;
 
         await Future.delayed(_retryDelay);
       }
     }
     throw StateError('Unreachable');
+  }
+
+  /// Check if an error is transient and should be retried.
+  bool _isTransientError(Object error) {
+    // Socket/connection errors
+    if (error is SocketException) return true;
+
+    // Timeout errors
+    if (error is TimeoutException) return true;
+
+    // Dio-specific errors
+    if (error is DioException) {
+      switch (error.type) {
+        case DioExceptionType.connectionTimeout:
+        case DioExceptionType.sendTimeout:
+        case DioExceptionType.receiveTimeout:
+        case DioExceptionType.connectionError:
+          return true;
+        case DioExceptionType.badResponse:
+        case DioExceptionType.badCertificate:
+        case DioExceptionType.cancel:
+        case DioExceptionType.unknown:
+          return false;
+      }
+    }
+
+    return false;
   }
 
   @override
