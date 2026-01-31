@@ -1,9 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:kash_kash_app/data/repositories/auth_repository_impl.dart';
-import 'package:kash_kash_app/data/datasources/remote/auth_remote_data_source.dart';
-import 'package:kash_kash_app/infrastructure/storage/secure_storage.dart';
-import 'package:kash_kash_app/data/models/user_model.dart';
 import 'package:kash_kash_app/domain/entities/user.dart';
 import 'package:kash_kash_app/core/errors/failures.dart';
 

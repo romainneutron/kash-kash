@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:kash_kash_app/presentation/providers/auth_provider.dart';
 import 'package:kash_kash_app/presentation/screens/login_screen.dart';
+import 'package:kash_kash_app/presentation/screens/quest_list_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -58,7 +59,7 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.questList,
         name: 'questList',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Nearby Quests'),
+        builder: (context, state) => const QuestListScreen(),
       ),
       GoRoute(
         path: AppRoutes.questDetail,

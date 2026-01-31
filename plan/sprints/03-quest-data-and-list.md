@@ -6,6 +6,8 @@
 
 **Prerequisites**: Sprint 2 completed (authentication working)
 
+**Commit Convention**: All commits in this sprint MUST be prefixed with `sprint #3 - `
+
 ---
 
 ## Tasks
@@ -80,11 +82,11 @@ public function nearby(
 Create data layer models for Quest with mappers.
 
 **Acceptance Criteria**:
-- [ ] QuestModel with fromJson/toJson
-- [ ] Mapper to/from domain entity
-- [ ] Mapper to/from Drift model
-- [ ] Handles nullable fields
-- [ ] Unit tests for mappers
+- [x] QuestModel with fromJson/toJson
+- [x] Mapper to/from domain entity
+- [x] Mapper to/from Drift model
+- [x] Handles nullable fields
+- [x] Unit tests for mappers
 
 **Implementation**:
 ```dart
@@ -150,11 +152,11 @@ class QuestModel {
 Implement Drift DAO for quests with CRUD and queries.
 
 **Acceptance Criteria**:
-- [ ] Insert/update/delete quest
-- [ ] Get all published quests
-- [ ] Get quest by ID
-- [ ] Watch quests stream (reactive)
-- [ ] Batch upsert for sync
+- [x] Insert/update/delete quest
+- [x] Get all published quests
+- [x] Get quest by ID
+- [x] Watch quests stream (reactive)
+- [x] Batch upsert for sync
 - [ ] Unit tests with in-memory DB
 
 **Implementation**:
@@ -213,10 +215,10 @@ class QuestDao extends DatabaseAccessor<AppDatabase> with _$QuestDaoMixin {
 Implement API calls for quest operations.
 
 **Acceptance Criteria**:
-- [ ] Fetch all published quests
-- [ ] Fetch nearby quests with distance
-- [ ] Proper error handling
-- [ ] Returns QuestModel list
+- [x] Fetch all published quests
+- [x] Fetch nearby quests with distance
+- [x] Proper error handling
+- [x] Returns QuestModel list
 
 **Implementation**:
 ```dart
@@ -263,10 +265,10 @@ class QuestRemoteDataSource {
 Implement offline-first quest repository.
 
 **Acceptance Criteria**:
-- [ ] Returns cached data immediately
-- [ ] Fetches from remote in background when online
-- [ ] Updates local cache with remote data
-- [ ] Handles offline gracefully
+- [x] Returns cached data immediately
+- [x] Fetches from remote in background when online
+- [x] Updates local cache with remote data
+- [x] Handles offline gracefully
 - [ ] Reactive stream of quests
 
 **Implementation**:
@@ -348,9 +350,9 @@ class QuestRepositoryImpl implements IQuestRepository {
 Implement Haversine formula for GPS distance calculation.
 
 **Acceptance Criteria**:
-- [ ] Returns distance in meters
-- [ ] Handles edge cases
-- [ ] Unit tests with known distances
+- [x] Returns distance in meters
+- [x] Handles edge cases
+- [x] Unit tests with known distances
 
 **Implementation**:
 ```dart
@@ -399,11 +401,11 @@ expect(DistanceCalculator.haversine(48.8566, 2.3522, 48.8566, 2.3522),
 Create GPS service wrapper with permission handling.
 
 **Acceptance Criteria**:
-- [ ] Check location permissions
-- [ ] Request permissions
-- [ ] Get current location
-- [ ] Stream location updates
-- [ ] Handle GPS disabled
+- [x] Check location permissions
+- [x] Request permissions
+- [x] Get current location
+- [x] Stream location updates
+- [x] Handle GPS disabled
 
 **Implementation**:
 ```dart
@@ -467,10 +469,10 @@ class GpsService {
 Create Riverpod provider for quest list state.
 
 **Acceptance Criteria**:
-- [ ] Manages distance filter (2, 5, 10, 20 km)
-- [ ] Combines user location with quest data
-- [ ] Handles loading/error states
-- [ ] Shows offline indicator
+- [x] Manages distance filter (2, 5, 10, 20 km)
+- [x] Combines user location with quest data
+- [x] Handles loading/error states
+- [x] Shows offline indicator
 
 **Implementation**:
 ```dart
@@ -532,13 +534,13 @@ class DistanceFilterNotifier extends _$DistanceFilterNotifier {
 Build quest list screen with filter tabs and cards.
 
 **Acceptance Criteria**:
-- [ ] Distance filter tabs (2, 5, 10, 20 km)
-- [ ] Quest cards with title, distance, difficulty
-- [ ] Pull-to-refresh
-- [ ] Empty state
-- [ ] Loading skeleton
-- [ ] Offline banner
-- [ ] Navigate to quest detail
+- [x] Distance filter tabs (2, 5, 10, 20 km)
+- [x] Quest cards with title, distance, difficulty
+- [x] Pull-to-refresh
+- [x] Empty state
+- [x] Loading skeleton
+- [x] Offline banner
+- [x] Navigate to quest detail
 
 **Implementation**:
 ```dart

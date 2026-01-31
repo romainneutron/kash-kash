@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:kash_kash_app/main.dart';
 import 'package:kash_kash_app/presentation/providers/auth_provider.dart';
+import 'package:kash_kash_app/presentation/providers/quest_provider.dart';
 
 void main() {
   testWidgets('App initializes with login screen when not authenticated',
@@ -34,6 +35,9 @@ void main() {
           authProvider.overrideWith(
             () => _AuthenticatedAuthNotifier(),
           ),
+          questListProvider.overrideWith(
+            () => _MockQuestListNotifier(),
+          ),
         ],
         child: const KashKashApp(),
       ),
@@ -59,5 +63,16 @@ class _AuthenticatedAuthNotifier extends AuthNotifier {
   @override
   AuthState build() {
     return const AuthState(status: AuthStatus.authenticated);
+  }
+}
+
+/// Mock quest list notifier that returns empty state (no GPS calls)
+class _MockQuestListNotifier extends QuestListNotifier {
+  @override
+  QuestListState build() {
+    return const QuestListState(
+      isLoading: false,
+      quests: [],
+    );
   }
 }

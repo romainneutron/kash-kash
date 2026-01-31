@@ -5,6 +5,8 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import 'quest_dao.dart';
+
 part 'database.g.dart';
 
 /// User roles
@@ -96,7 +98,10 @@ class SyncQueue extends Table {
   BoolColumn get processed => boolean().withDefault(const Constant(false))();
 }
 
-@DriftDatabase(tables: [Users, Quests, QuestAttempts, PathPoints, SyncQueue])
+@DriftDatabase(
+  tables: [Users, Quests, QuestAttempts, PathPoints, SyncQueue],
+  daos: [QuestDao],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 

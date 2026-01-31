@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:dio/dio.dart';
 import 'package:kash_kash_app/data/datasources/remote/api/auth_interceptor.dart';
-import 'package:kash_kash_app/infrastructure/storage/secure_storage.dart';
 
 import '../../../../../helpers/mocks.dart';
 

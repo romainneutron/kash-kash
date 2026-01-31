@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kash_kash_app/domain/entities/path_point.dart';
 
 import '../../../helpers/fakes.dart';
 

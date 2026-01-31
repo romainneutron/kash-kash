@@ -53,7 +53,9 @@
       "Bash(flutter test:*)",
       "Bash(../flutter/bin/flutter test:*)",
       "Bash(./vendor/bin/phpunit:*)",
-      "Bash(docker:*)"
+      "Bash(docker:*)",
+      "Bash(tee:*)",
+      "Bash(echo:*)"
     ]
   }
 }
