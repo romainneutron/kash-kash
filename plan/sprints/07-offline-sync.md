@@ -727,6 +727,154 @@ void main() {
 
 ---
 
+### S7-T10: ConnectivityService Tests
+**Type**: test
+**Dependencies**: S7-T1
+
+**Description**:
+Test connectivity monitoring service.
+
+**Acceptance Criteria**:
+- [ ] isOnline returns true when connected
+- [ ] isOnline returns false when no connection
+- [ ] onlineStream emits on connectivity change
+- [ ] Stream debounces rapid changes
+- [ ] Handles WiFi and cellular correctly
+
+**Test file**: `test/unit/infrastructure/sync/connectivity_service_test.dart`
+
+---
+
+### S7-T11: SyncQueueDao Tests
+**Type**: test
+**Dependencies**: S7-T2
+
+**Description**:
+Test sync queue database operations.
+
+**Acceptance Criteria**:
+- [ ] enqueue adds operation to queue
+- [ ] getPending returns unprocessed items
+- [ ] getPending respects limit
+- [ ] markProcessed updates item status
+- [ ] cleanupOld removes old processed items
+- [ ] Items returned in FIFO order
+
+**Test file**: `test/unit/data/datasources/local/sync_queue_dao_test.dart`
+
+---
+
+### S7-T12: Symfony Sync Endpoints Tests
+**Type**: test
+**Dependencies**: S7-T3
+
+**Description**:
+Functional tests for sync API endpoints.
+
+**Acceptance Criteria**:
+- [ ] POST /api/sync/pull returns records since timestamp
+- [ ] Pull only returns published quests to regular users
+- [ ] POST /api/sync/push creates new records
+- [ ] Push merges existing records (last-write-wins)
+- [ ] Batch path points insertion works
+- [ ] Returns correct status for each record
+- [ ] Handles partial failures gracefully
+
+**Test file**: `backend/tests/Functional/Controller/SyncControllerTest.php`
+
+---
+
+### S7-T13: Offline Gameplay Test
+**Type**: qa
+**Dependencies**: S7-T4
+
+**Description**:
+Test complete offline gameplay and sync cycle.
+
+**Acceptance Criteria**:
+- [ ] Start app online, load quest list
+- [ ] Enable airplane mode
+- [ ] Start and complete a quest
+- [ ] Quest appears in history (local)
+- [ ] Disable airplane mode
+- [ ] Sync icon animates
+- [ ] Verify data appears on server (check via API or admin panel)
+- [ ] No data lost
+
+---
+
+### S7-T14: Sync Status UI Test
+**Type**: qa
+**Dependencies**: S7-T6
+
+**Description**:
+Test sync status indicator in UI.
+
+**Acceptance Criteria**:
+- [ ] Idle state shows cloud-done icon
+- [ ] Syncing state shows spinner
+- [ ] Error state shows cloud-off icon with color
+- [ ] Tap to manual sync works
+- [ ] Long press shows last sync time
+- [ ] States transition correctly
+
+---
+
+### S7-T15: Conflict Scenario Test
+**Type**: qa
+**Dependencies**: S7-T4
+
+**Description**:
+Test conflict resolution with last-write-wins.
+
+**Acceptance Criteria**:
+- [ ] Create attempt on device A
+- [ ] Go offline on device A
+- [ ] Modify same attempt on server (simulate device B)
+- [ ] Come online on device A
+- [ ] Verify last-write-wins (latest timestamp wins)
+- [ ] No data corruption
+
+**Note**: Requires server access or second device to create conflict.
+
+---
+
+### S7-T16: Background Sync Test
+**Type**: qa
+**Dependencies**: S7-T7
+
+**Description**:
+Test sync when app is in background.
+
+**Acceptance Criteria**:
+- [ ] Complete quest while online
+- [ ] Put app in background
+- [ ] Wait for background sync interval (15+ min on Android)
+- [ ] Check server for synced data
+- [ ] App doesn't crash from background execution
+
+**Note**: iOS background sync is limited. Focus on Android testing.
+
+---
+
+### S7-T17: Network Interruption Test
+**Type**: qa
+**Dependencies**: S7-T4
+
+**Description**:
+Test sync behavior when network is interrupted.
+
+**Acceptance Criteria**:
+- [ ] Start sync with pending data
+- [ ] Disable network mid-sync
+- [ ] Sync shows error state
+- [ ] Re-enable network
+- [ ] Sync retries automatically (or on manual trigger)
+- [ ] All data eventually syncs
+- [ ] No data lost or duplicated
+
+---
+
 ## Sprint 7 Validation
 
 ```bash

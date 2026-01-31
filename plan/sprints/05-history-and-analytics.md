@@ -474,6 +474,134 @@ AppBar(
 
 ---
 
+## Testing & QA Tasks
+
+### S5-T7: AttemptRepository Tests
+**Type**: test
+**Dependencies**: S5-T2
+
+**Description**:
+Test attempt repository history and sync marking.
+
+**Acceptance Criteria**:
+- [ ] getHistory returns all user attempts
+- [ ] Results sorted by date descending
+- [ ] Completed and abandoned attempts included
+- [ ] In-progress attempts excluded from history
+- [ ] getUnsyncedAttempts returns only unsynced
+- [ ] Works fully offline with cached data
+
+**Test file**: `test/unit/data/repositories/attempt_repository_test.dart`
+
+---
+
+### S5-T8: HistoryProvider Tests
+**Type**: test
+**Dependencies**: S5-T3
+
+**Description**:
+Test Riverpod provider for history state management.
+
+**Acceptance Criteria**:
+- [ ] Default filter is "all"
+- [ ] Filter change triggers rebuild
+- [ ] Completed filter shows only completed
+- [ ] Abandoned filter shows only abandoned
+- [ ] Quest details loaded for each attempt
+
+**Test file**: `test/unit/presentation/providers/quest_history_provider_test.dart`
+
+---
+
+### S5-T9: Symfony Attempt Endpoints Tests
+**Type**: test
+**Dependencies**: S5-T5
+
+**Description**:
+Functional tests for attempt API endpoints.
+
+**Acceptance Criteria**:
+- [ ] POST /api/attempts creates attempt
+- [ ] PUT /api/attempts/{id} updates attempt
+- [ ] GET /api/attempts lists user's attempts
+- [ ] POST /api/attempts/{id}/path batch uploads path points
+- [ ] Cannot access other user's attempts
+- [ ] Validates required fields
+
+**Test file**: `backend/tests/Functional/Controller/AttemptControllerTest.php`
+
+---
+
+### S5-T10: History Screen Test
+**Type**: qa
+**Dependencies**: S5-T4
+
+**Description**:
+Manually test history screen functionality.
+
+**Acceptance Criteria**:
+- [ ] Complete a quest - appears in history with ✓ status
+- [ ] Abandon a quest - appears in history with ⚠ status
+- [ ] Duration displayed correctly (Xm Ys format)
+- [ ] Distance displayed correctly (m or km)
+- [ ] Date format is readable
+- [ ] Pull-to-refresh works
+- [ ] Empty state shown for new users
+
+---
+
+### S5-T11: History Filter Test
+**Type**: qa
+**Dependencies**: S5-T4
+
+**Description**:
+Test history filtering functionality.
+
+**Acceptance Criteria**:
+- [ ] "All" filter shows all attempts
+- [ ] "Completed" filter shows only completed
+- [ ] "Abandoned" filter shows only abandoned
+- [ ] Filter chips are visually distinct when selected
+- [ ] Filter persists during session
+- [ ] Empty state if no matching attempts
+
+---
+
+### S5-T12: Aptabase Dashboard Check
+**Type**: qa
+**Dependencies**: S5-T1
+
+**Description**:
+Verify analytics events appear in Aptabase dashboard.
+
+**Acceptance Criteria**:
+- [ ] quest_started events appear in Aptabase
+- [ ] quest_completed events appear with duration/distance
+- [ ] quest_abandoned events appear
+- [ ] No PII (email, user ID, name) in events
+- [ ] Events attributed to correct app version
+- [ ] Dashboard shows meaningful metrics
+
+**Note**: May take a few minutes for events to appear in dashboard.
+
+---
+
+### S5-T13: Long History Test
+**Type**: qa
+**Dependencies**: S5-T4
+
+**Description**:
+Test performance with many history items.
+
+**Acceptance Criteria**:
+- [ ] Add 20+ attempts (mix of completed/abandoned)
+- [ ] History screen loads quickly (<2s)
+- [ ] Scrolling is smooth (60fps)
+- [ ] Memory usage reasonable
+- [ ] Pull-to-refresh still responsive
+
+---
+
 ## Sprint 5 Validation
 
 ```bash

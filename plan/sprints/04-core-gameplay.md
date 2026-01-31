@@ -924,6 +924,231 @@ class _ActiveQuestScreenState extends ConsumerState<ActiveQuestScreen> {
 
 ---
 
+## Testing & QA Tasks
+
+### S4-T13: MovementDetector Tests
+**Type**: test
+**Dependencies**: S4-T3
+
+**Description**:
+Unit tests for movement detection logic.
+
+**Acceptance Criteria**:
+- [ ] Speed < 0.5 m/s → stationary
+- [ ] Speed >= 0.5 m/s → moving
+- [ ] Smoothing prevents single-reading state flicker
+- [ ] Requires 2+ of 3 readings to change state
+- [ ] Reset clears reading history
+- [ ] Custom threshold works correctly
+
+**Test file**: `test/unit/infrastructure/gps/movement_detector_test.dart`
+
+---
+
+### S4-T14: DirectionDetector Tests
+**Type**: test
+**Dependencies**: S4-T4
+
+**Description**:
+Unit tests for direction detection logic.
+
+**Acceptance Criteria**:
+- [ ] Moving toward target → gettingCloser
+- [ ] Moving away from target → gettingFarther
+- [ ] Movement < 2m → noChange (within threshold)
+- [ ] First reading → noChange (no previous distance)
+- [ ] Reset clears previous distance
+- [ ] currentDistance property returns correct value
+
+**Test file**: `test/unit/infrastructure/gps/direction_detector_test.dart`
+
+---
+
+### S4-T15: GameStateManager Tests
+**Type**: test
+**Dependencies**: S4-T5
+
+**Description**:
+Integration tests for the game state orchestrator.
+
+**Acceptance Criteria**:
+- [ ] Starts in initializing state
+- [ ] Transitions to stationary when not moving
+- [ ] Transitions to gettingCloser when approaching target
+- [ ] Transitions to gettingFarther when moving away
+- [ ] Transitions to won when within radius
+- [ ] Expands effective radius when GPS accuracy is poor
+- [ ] Handles GPS errors gracefully (transitions to error state)
+- [ ] dispose cancels GPS subscription
+
+**Test file**: `test/unit/infrastructure/gps/game_state_manager_test.dart`
+
+**Mock setup**:
+```dart
+final mockGpsService = MockGpsService();
+when(() => mockGpsService.watchPosition()).thenAnswer(
+  (_) => Stream.fromIterable([
+    FakePosition(lat: 48.8566, lng: 2.3522, speed: 0),
+    FakePosition(lat: 48.8567, lng: 2.3523, speed: 1.5),
+  ]),
+);
+```
+
+---
+
+### S4-T16: UseCase Tests
+**Type**: test
+**Dependencies**: S4-T6, S4-T7, S4-T8
+
+**Description**:
+Unit tests for gameplay use cases.
+
+**Acceptance Criteria**:
+- [ ] StartQuestUseCase creates attempt with inProgress status
+- [ ] StartQuestUseCase prevents double-start (returns error)
+- [ ] CompleteQuestUseCase updates status to completed
+- [ ] CompleteQuestUseCase calculates duration correctly
+- [ ] CompleteQuestUseCase calculates distance walked
+- [ ] AbandonQuestUseCase updates status to abandoned
+- [ ] All use cases track analytics events
+
+**Test files**:
+```
+test/unit/domain/usecases/
+├── start_quest_test.dart
+├── complete_quest_test.dart
+└── abandon_quest_test.dart
+```
+
+---
+
+### S4-T17: AttemptDao Tests
+**Type**: test
+**Dependencies**: S4-T1
+
+**Description**:
+Test Drift DAO for attempt operations.
+
+**Acceptance Criteria**:
+- [ ] create inserts new attempt
+- [ ] getActiveForUser returns in-progress attempt
+- [ ] getActiveForUser returns null when no active attempt
+- [ ] getHistoryForUser returns completed/abandoned attempts
+- [ ] getHistoryForUser excludes in-progress attempts
+- [ ] update modifies existing attempt
+
+**Test file**: `test/unit/data/datasources/local/attempt_dao_test.dart`
+
+---
+
+### S4-T18: Outdoor Gameplay Test
+**Type**: qa
+**Dependencies**: S4-T12
+
+**Description**:
+Full gameplay test outdoors with real GPS.
+
+**Acceptance Criteria**:
+- [ ] Create a test quest at a known outdoor location
+- [ ] Start quest from ~100m away
+- [ ] Walk toward target - screen turns RED
+- [ ] Walk away from target - screen turns BLUE
+- [ ] Stop moving - screen turns BLACK (within 2-3 seconds)
+- [ ] Reach target - win overlay appears
+- [ ] Stats (time, distance) are reasonable and accurate
+
+**Test locations**:
+- [ ] Open park (good GPS accuracy)
+- [ ] Urban area (building interference)
+- [ ] Near trees (partial GPS obstruction)
+
+---
+
+### S4-T19: Color Feedback Test
+**Type**: qa
+**Dependencies**: S4-T10
+
+**Description**:
+Verify color transitions are visually clear.
+
+**Acceptance Criteria**:
+- [ ] BLACK is pure black (#000000)
+- [ ] RED is clearly red (not orange/pink)
+- [ ] BLUE is clearly blue (not purple/cyan)
+- [ ] Color transitions are smooth (300ms animation)
+- [ ] Colors visible in bright sunlight
+- [ ] No color flashing/flickering during normal movement
+
+---
+
+### S4-T20: Win Detection Test
+**Type**: qa
+**Dependencies**: S4-T5
+
+**Description**:
+Test win detection at target location.
+
+**Acceptance Criteria**:
+- [ ] Win triggers when within ~3m of target
+- [ ] Win overlay appears immediately
+- [ ] Celebration animation plays
+- [ ] Stats displayed correctly
+- [ ] "Done" button navigates to quest list
+- [ ] GPS tracking stops after win
+
+---
+
+### S4-T21: Abandon Flow Test
+**Type**: qa
+**Dependencies**: S4-T12
+
+**Description**:
+Test quest abandonment flow.
+
+**Acceptance Criteria**:
+- [ ] Abandon button visible during gameplay
+- [ ] Tapping abandon shows confirmation dialog
+- [ ] Canceling returns to gameplay
+- [ ] Confirming navigates to quest list
+- [ ] Abandoned quest appears in history
+- [ ] Partial duration recorded
+
+---
+
+### S4-T22: Battery/Performance Test
+**Type**: qa
+**Dependencies**: S4-T12
+
+**Description**:
+Monitor battery and performance during gameplay.
+
+**Acceptance Criteria**:
+- [ ] Play 15-minute quest, note battery drain
+- [ ] Battery drain < 5% for 15 minutes (acceptable)
+- [ ] No jank during color transitions (maintain 60fps)
+- [ ] Memory usage stable over time (no leaks)
+- [ ] App doesn't crash during extended play
+- [ ] No excessive heat generation
+
+**Tools**: Flutter DevTools, Android Profiler, Xcode Instruments
+
+---
+
+### S4-T23: Screen Wake Test
+**Type**: qa
+**Dependencies**: S4-T12
+
+**Description**:
+Verify screen stays on during active gameplay.
+
+**Acceptance Criteria**:
+- [ ] Screen doesn't dim during gameplay
+- [ ] Screen doesn't turn off during gameplay
+- [ ] Wakelock releases when leaving gameplay screen
+- [ ] Wakelock releases when app goes to background
+
+---
+
 ## Sprint 4 Validation
 
 ```bash

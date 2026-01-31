@@ -832,6 +832,157 @@ class AdminQuestRemoteDataSource {
 
 ---
 
+## Testing & QA Tasks
+
+### S6-T9: QuestForm Validation Tests
+**Type**: test
+**Dependencies**: S6-T4
+
+**Description**:
+Test quest form validation logic.
+
+**Acceptance Criteria**:
+- [ ] Title is required (empty shows error)
+- [ ] Description is optional
+- [ ] Radius has valid bounds (1-20m)
+- [ ] Difficulty selection works
+- [ ] Location type selection works
+- [ ] Form validation returns correct status
+
+**Test file**: `test/unit/presentation/widgets/quest_form_test.dart`
+
+---
+
+### S6-T10: QuestEditProvider Tests
+**Type**: test
+**Dependencies**: S6-T5
+
+**Description**:
+Test quest edit provider state management.
+
+**Acceptance Criteria**:
+- [ ] Create mode initializes with empty state
+- [ ] Edit mode loads existing quest data
+- [ ] updateForm updates provider state
+- [ ] updateLocation updates provider state
+- [ ] save creates quest in create mode
+- [ ] save updates quest in edit mode
+- [ ] Validation errors returned correctly
+
+**Test file**: `test/unit/presentation/providers/quest_edit_provider_test.dart`
+
+---
+
+### S6-T11: Symfony Admin Endpoints Tests
+**Type**: test
+**Dependencies**: S6-T7
+
+**Description**:
+Functional tests for admin quest management endpoints.
+
+**Acceptance Criteria**:
+- [ ] POST /api/quests requires ROLE_ADMIN
+- [ ] PUT /api/quests/{id} requires ROLE_ADMIN
+- [ ] DELETE /api/quests/{id} requires ROLE_ADMIN
+- [ ] GET /api/admin/quests returns all quests (including unpublished)
+- [ ] Non-admin gets 403 Forbidden on admin endpoints
+- [ ] Regular GET /api/quests only returns published
+
+**Test file**: `backend/tests/Functional/Controller/AdminQuestControllerTest.php`
+
+---
+
+### S6-T12: Admin Role Test
+**Type**: qa
+**Dependencies**: S6-T2, S2-T10
+
+**Description**:
+Verify admin role protection works correctly.
+
+**Acceptance Criteria**:
+- [ ] Regular user cannot see admin icon in app bar
+- [ ] Regular user navigating to /admin/quests is redirected
+- [ ] Admin user sees admin icon in app bar
+- [ ] Admin user can access /admin/quests
+- [ ] Backend returns 403 for non-admin on admin endpoints
+
+**Test accounts needed**: One regular user, one admin user.
+
+---
+
+### S6-T13: Quest Creation Test
+**Type**: qa
+**Dependencies**: S6-T6
+
+**Description**:
+Manually test complete quest creation flow.
+
+**Acceptance Criteria**:
+- [ ] Navigate to Create Quest screen
+- [ ] Tap on map to place marker
+- [ ] Coordinates display updates
+- [ ] Fill in title (required)
+- [ ] Select difficulty and location type
+- [ ] Adjust radius slider (1-20m)
+- [ ] Save creates quest
+- [ ] New quest appears in admin list (unpublished)
+- [ ] Publish quest, verify it appears in user quest list
+
+---
+
+### S6-T14: Quest Edit Test
+**Type**: qa
+**Dependencies**: S6-T6
+
+**Description**:
+Test quest editing functionality.
+
+**Acceptance Criteria**:
+- [ ] Open existing quest for editing
+- [ ] All fields pre-populated correctly
+- [ ] Map shows existing location
+- [ ] Change title and save
+- [ ] Move marker and save
+- [ ] Changes persist after refresh
+- [ ] Changes visible in user quest list
+
+---
+
+### S6-T15: Map Picker Usability Test
+**Type**: qa
+**Dependencies**: S6-T3
+
+**Description**:
+Test map picker user experience.
+
+**Acceptance Criteria**:
+- [ ] Map loads with OSM tiles
+- [ ] Tap to place marker works
+- [ ] Marker is clearly visible
+- [ ] Zoom in/out works
+- [ ] "Center on me" button works
+- [ ] Coordinates display accurate
+- [ ] Map responsive on both iOS and Android
+
+---
+
+### S6-T16: Publish Toggle Test
+**Type**: qa
+**Dependencies**: S6-T2
+
+**Description**:
+Test quest publish/unpublish functionality.
+
+**Acceptance Criteria**:
+- [ ] New quest created as unpublished
+- [ ] Unpublished quest NOT visible in user quest list
+- [ ] Toggle publish switch in admin list
+- [ ] Published quest appears in user quest list
+- [ ] Unpublish quest removes from user quest list
+- [ ] Toggle state persists across app restart
+
+---
+
 ## Sprint 6 Validation
 
 ```bash

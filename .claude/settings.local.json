@@ -47,7 +47,8 @@
       "Bash(find:*)",
       "Bash(wc:*)",
       "Bash(dart run build_runner build:*)",
-      "Bash(./flutter/bin/dart run build_runner build:*)"
+      "Bash(./flutter/bin/dart run build_runner build:*)",
+      "Bash(grep:*)"
     ]
   }
 }

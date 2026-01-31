@@ -838,6 +838,156 @@ php bin/console sentry:test  # Backend
 
 ---
 
+---
+
+## Testing & QA Tasks
+
+### S1-T13: Entity Unit Tests
+**Type**: test
+**Dependencies**: S1-T5
+
+**Description**:
+Create unit tests for all domain entities.
+
+**Acceptance Criteria**:
+- [ ] All domain entities can be instantiated with valid data
+- [ ] `copyWith` creates correct copies with modified fields
+- [ ] Enum values serialize/deserialize correctly
+- [ ] Entity equality works correctly
+
+**Test files**:
+```
+test/unit/domain/entities/
+├── user_test.dart
+├── quest_test.dart
+├── quest_attempt_test.dart
+└── path_point_test.dart
+```
+
+---
+
+### S1-T14: Drift Database Tests
+**Type**: test
+**Dependencies**: S1-T4
+
+**Description**:
+Test Drift database initialization and basic operations.
+
+**Acceptance Criteria**:
+- [ ] Database opens without errors
+- [ ] All tables created correctly
+- [ ] Basic CRUD operations work for each table
+- [ ] In-memory database works for testing
+
+**Test file**: `test/unit/data/datasources/local/database_test.dart`
+
+---
+
+### S1-T15: Failure Classes Tests
+**Type**: test
+**Dependencies**: S1-T6
+
+**Description**:
+Test all failure type classes.
+
+**Acceptance Criteria**:
+- [ ] All failure types instantiate with messages
+- [ ] Sealed class hierarchy works correctly
+- [ ] toString/equality behave as expected
+
+**Test file**: `test/unit/core/errors/failures_test.dart`
+
+---
+
+### S1-T16: Setup Flutter CI
+**Type**: infrastructure
+**Dependencies**: S1-T2
+
+**Description**:
+Configure GitHub Actions workflow for Flutter.
+
+**Acceptance Criteria**:
+- [ ] `.github/workflows/ci.yml` created
+- [ ] Flutter analyze runs on push/PR to main
+- [ ] Flutter test runs with coverage
+- [ ] Workflow caches Flutter SDK and pub cache
+- [ ] Code generation runs before tests
+
+**Implementation**: See `TESTING-AND-CICD-PLAN.md` for workflow template.
+
+---
+
+### S1-T17: Setup Symfony CI
+**Type**: infrastructure
+**Dependencies**: S1-T10
+
+**Description**:
+Configure GitHub Actions workflow for Symfony.
+
+**Acceptance Criteria**:
+- [ ] Symfony workflow in `.github/workflows/ci.yml`
+- [ ] PostgreSQL service container configured
+- [ ] PostGIS extension available
+- [ ] PHPUnit runs with coverage
+- [ ] Composer dependencies cached
+
+---
+
+### S1-T18: Verify CI Pipeline
+**Type**: qa
+**Dependencies**: S1-T16, S1-T17
+
+**Description**:
+Verify the complete CI pipeline works end-to-end.
+
+**Acceptance Criteria**:
+- [ ] Push test commit to branch
+- [ ] Both Flutter and Symfony jobs run
+- [ ] All checks pass (or fail correctly on intentional errors)
+- [ ] Coverage reports generated
+- [ ] Workflow completes in reasonable time (<10 min)
+
+---
+
+### S1-T19: Manual Smoke Test
+**Type**: qa
+**Dependencies**: S1-T7, S1-T8
+
+**Description**:
+Manual verification that the app skeleton works.
+
+**Acceptance Criteria**:
+- [ ] App launches without crash on iOS
+- [ ] App launches without crash on Android
+- [ ] All placeholder screens accessible via navigation
+- [ ] No analyzer warnings in console
+- [ ] Theme applies correctly (colors, fonts)
+
+**Checklist**:
+- [ ] /login screen loads
+- [ ] /quests screen loads
+- [ ] /history screen loads
+- [ ] /admin/quests screen loads
+- [ ] Back navigation works
+- [ ] Dark/light mode works (if implemented)
+
+---
+
+### S1-T20: Device Matrix Test
+**Type**: qa
+**Dependencies**: S1-T1
+
+**Description**:
+Test on multiple device types to catch platform-specific issues early.
+
+**Acceptance Criteria**:
+- [ ] Test on iOS simulator (iPhone 15 or similar)
+- [ ] Test on Android emulator (Pixel 7 or similar)
+- [ ] App compiles for both platforms
+- [ ] No platform-specific crashes
+
+---
+
 ## CI/CD & Automation
 
 ### GitHub Actions

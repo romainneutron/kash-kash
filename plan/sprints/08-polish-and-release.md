@@ -169,49 +169,55 @@ String _getStateDescription(GameplayState state) {
 
 ---
 
-### S8-T4: Unit & Widget Tests
+### S8-T4: Widget Tests
 **Type**: test
 **Dependencies**: All features
 
 **Description**:
-Comprehensive test coverage.
+Widget tests for critical UI components. Note: Unit tests should already be written in earlier sprints. This task focuses on widget/UI tests.
 
 **Acceptance Criteria**:
-- [ ] Domain layer: 80%+ coverage
-- [ ] Data layer: 70%+ coverage
-- [ ] Critical widgets tested
-- [ ] Edge cases covered
+- [ ] LoginScreen: loading, error, success states
+- [ ] QuestListScreen: empty, loading, populated states
+- [ ] QuestCard: renders correctly with data
+- [ ] GameBackground: correct colors for each state
+- [ ] HistoryCard: displays attempt info correctly
+- [ ] WinOverlay: shows stats and animation
 
 **Test structure**:
 ```
-test/
-├── unit/
-│   ├── domain/
-│   │   ├── usecases/
-│   │   │   ├── start_quest_test.dart
-│   │   │   ├── complete_quest_test.dart
-│   │   │   └── ...
-│   │   └── entities/
-│   ├── data/
-│   │   ├── repositories/
-│   │   └── datasources/
-│   └── core/
-│       └── utils/
-│           └── distance_calculator_test.dart
-├── widget/
-│   ├── screens/
-│   │   ├── login_screen_test.dart
-│   │   ├── quest_list_screen_test.dart
-│   │   └── active_quest_screen_test.dart
-│   └── widgets/
-└── integration/
-    └── gameplay_flow_test.dart
+test/widget/
+├── screens/
+│   ├── login_screen_test.dart
+│   ├── quest_list_screen_test.dart
+│   ├── active_quest_screen_test.dart
+│   └── quest_history_screen_test.dart
+└── widgets/
+    ├── quest_card_test.dart
+    ├── game_background_test.dart
+    ├── win_overlay_test.dart
+    └── history_card_test.dart
+```
+
+**Example test**:
+```dart
+testWidgets('GameBackground shows red when getting closer', (tester) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      home: GameBackground(state: GameplayState.gettingCloser),
+    ),
+  );
+
+  final container = tester.widget<AnimatedContainer>(
+    find.byType(AnimatedContainer),
+  );
+  expect((container.decoration as BoxDecoration).color, AppColors.red);
+});
 ```
 
 **Commands**:
 ```bash
 flutter test --coverage
-flutter test --coverage --coverage-path=coverage/lcov.info
 genhtml coverage/lcov.info -o coverage/html
 open coverage/html/index.html
 ```
@@ -313,6 +319,246 @@ class QuestControllerTest extends ApiTestCase
 **Run**:
 ```bash
 php bin/phpunit
+```
+
+---
+
+## Human Testing & QA Tasks
+
+### S8-T11: Full Regression Test
+**Type**: qa
+**Dependencies**: All previous sprints
+
+**Description**:
+Complete end-to-end testing of all features.
+
+**Checklist**:
+
+**Authentication**:
+- [ ] Sign in with Google (new account)
+- [ ] Sign in with Google (existing account)
+- [ ] Session persists across app restart
+- [ ] Sign out clears session
+- [ ] Offline auth with cached credentials
+
+**Quest List**:
+- [ ] List loads with distances
+- [ ] Distance filter tabs work (2, 5, 10, 20 km)
+- [ ] Pull-to-refresh fetches new data
+- [ ] Works offline with cached quests
+- [ ] Empty state when no quests nearby
+
+**Gameplay**:
+- [ ] Start quest shows black screen
+- [ ] Walking toward target → RED
+- [ ] Walking away from target → BLUE
+- [ ] Standing still → BLACK
+- [ ] Win detection at ~3m
+- [ ] Win overlay shows correct stats
+- [ ] Abandon with confirmation works
+- [ ] Screen stays awake during play
+
+**History**:
+- [ ] Completed quests appear
+- [ ] Abandoned quests appear
+- [ ] Filters work correctly
+- [ ] Stats displayed correctly
+
+**Admin** (as admin user):
+- [ ] Create quest with map picker
+- [ ] Edit existing quest
+- [ ] Delete quest with confirmation
+- [ ] Publish/unpublish toggle
+- [ ] Non-admin blocked from admin routes
+
+**Sync**:
+- [ ] Offline changes sync when online
+- [ ] Sync status indicator works
+- [ ] Manual sync trigger works
+
+**Error Handling**:
+- [ ] Network errors show friendly messages
+- [ ] GPS errors handled gracefully
+- [ ] App recovers from errors without crash
+
+---
+
+### S8-T12: Device Matrix Test
+**Type**: qa
+**Dependencies**: All features
+
+**Description**:
+Test on multiple device types and OS versions.
+
+**Device Matrix**:
+
+| Device | OS Version | Status | Notes |
+|--------|------------|--------|-------|
+| iPhone 15 Pro | iOS 17 | [ ] | |
+| iPhone SE (2nd gen) | iOS 16 | [ ] | Small screen |
+| iPhone 12 | iOS 15 | [ ] | Minimum supported |
+| iPad Air | iPadOS 17 | [ ] | Tablet layout |
+| Pixel 8 | Android 14 | [ ] | |
+| Samsung Galaxy S21 | Android 13 | [ ] | |
+| OnePlus Nord | Android 12 | [ ] | |
+| Budget Android | Android 10 | [ ] | Performance check |
+
+**For each device check**:
+- [ ] App installs and launches
+- [ ] GPS works correctly
+- [ ] Performance acceptable (60fps gameplay)
+- [ ] UI renders correctly (no overflow/clipping)
+- [ ] Text readable on all screen sizes
+
+---
+
+### S8-T13: Accessibility Audit
+**Type**: qa
+**Dependencies**: S8-T3
+
+**Description**:
+Verify app is accessible to users with disabilities.
+
+**Acceptance Criteria**:
+- [ ] All interactive elements have semantic labels
+- [ ] Screen reader (VoiceOver/TalkBack) can navigate app
+- [ ] Color contrast meets WCAG AA guidelines
+- [ ] Touch targets minimum 48x48 dp
+- [ ] Gameplay states announced to screen reader
+- [ ] No information conveyed by color alone
+
+**Tools**:
+- iOS: Accessibility Inspector
+- Android: Accessibility Scanner
+- Manual: Test with VoiceOver/TalkBack enabled
+
+---
+
+### S8-T14: Performance Profiling
+**Type**: qa
+**Dependencies**: S8-T2
+
+**Description**:
+Profile app performance and fix any issues.
+
+**Acceptance Criteria**:
+- [ ] App startup < 3 seconds cold start
+- [ ] Quest list scroll at 60fps
+- [ ] Gameplay color transitions at 60fps
+- [ ] No memory leaks over extended use (30min)
+- [ ] Battery drain acceptable (<5% per 15min gameplay)
+
+**Tools**:
+- Flutter DevTools (Performance tab)
+- Android Studio Profiler
+- Xcode Instruments
+
+**Profile scenarios**:
+- [ ] App startup
+- [ ] Quest list scrolling (50+ items)
+- [ ] 15-minute gameplay session
+- [ ] Background/foreground cycling
+
+---
+
+### S8-T15: Security Review
+**Type**: qa
+**Dependencies**: All features
+
+**Description**:
+Review app for security vulnerabilities.
+
+**Checklist**:
+- [ ] No secrets in git history
+- [ ] API keys not in compiled app (use env vars)
+- [ ] Tokens stored in secure storage (not SharedPreferences)
+- [ ] HTTPS used for all API calls
+- [ ] JWT tokens validated correctly
+- [ ] No debug logs in release build
+- [ ] ProGuard/R8 enabled for Android release
+
+**Tools**:
+- `git log -p | grep -i "secret\|password\|key"`
+- APK decompilation check
+
+---
+
+### S8-T16: Beta Tester Feedback
+**Type**: qa
+**Dependencies**: S8-T9
+
+**Description**:
+Distribute to beta testers and collect feedback.
+
+**Acceptance Criteria**:
+- [ ] Distribute via TestFlight (iOS)
+- [ ] Distribute via Internal/Closed Track (Android)
+- [ ] Minimum 5 testers complete at least one quest
+- [ ] Collect feedback via form or messages
+- [ ] Triage and prioritize issues
+- [ ] Fix showstopper bugs before public release
+
+**Feedback questions**:
+1. Did the app crash? When?
+2. Was the color feedback (red/blue/black) clear?
+3. How accurate was the win detection?
+4. What was confusing or frustrating?
+5. What would you improve?
+6. Would you recommend this to a friend?
+
+---
+
+### S8-T17: App Store Screenshots
+**Type**: qa
+**Dependencies**: S8-T7
+
+**Description**:
+Capture screenshots for store listings.
+
+**Required screenshots**:
+
+**iPhone 6.5" (required)**:
+- [ ] Login screen
+- [ ] Quest list with nearby quests
+- [ ] Gameplay (red/close state)
+- [ ] Win overlay
+- [ ] Quest history
+
+**iPhone 5.5" (required)**:
+- [ ] Same 5 screenshots
+
+**Android Phone**:
+- [ ] Same 5 screenshots
+
+**Optional**:
+- [ ] iPad screenshots
+- [ ] Android tablet screenshots
+
+---
+
+### S8-T18: CI Coverage Gate
+**Type**: infrastructure
+**Dependencies**: All test tasks
+
+**Description**:
+Enforce test coverage thresholds in CI.
+
+**Acceptance Criteria**:
+- [ ] CI fails if Flutter coverage < 70%
+- [ ] CI fails if Symfony coverage < 75%
+- [ ] Coverage badge in README
+- [ ] Coverage report uploaded to Codecov (or similar)
+
+**Implementation**:
+```yaml
+- name: Check coverage threshold
+  run: |
+    COVERAGE=$(lcov --summary coverage/lcov.info 2>&1 | grep "lines" | grep -oP '\d+\.\d+')
+    echo "Coverage: $COVERAGE%"
+    if (( $(echo "$COVERAGE < 70" | bc -l) )); then
+      echo "Coverage below 70% threshold!"
+      exit 1
+    fi
 ```
 
 ---
@@ -492,8 +738,14 @@ docs/
 ## Sprint 8 Validation
 
 **Pre-release checklist**:
-- [ ] All tests passing
-- [ ] No critical bugs
+- [ ] All automated tests passing (S8-T4, S8-T5, S8-T6)
+- [ ] Full regression test passed (S8-T11)
+- [ ] Device matrix tested (S8-T12)
+- [ ] Accessibility audit passed (S8-T13)
+- [ ] Performance profiling done (S8-T14)
+- [ ] Security review passed (S8-T15)
+- [ ] Beta tester feedback addressed (S8-T16)
+- [ ] No critical bugs outstanding
 - [ ] Performance acceptable (60fps gameplay)
 - [ ] Offline mode working
 - [ ] Sync working reliably
@@ -505,14 +757,16 @@ docs/
 - [ ] Sentry DSN configured for production (both Flutter and Symfony)
 - [ ] Sentry alerts configured (Slack/Email for critical errors)
 - [ ] Release health monitoring enabled in Sentry
+- [ ] CI coverage gate enforced (S8-T18)
 
 **Release checklist**:
 - [ ] Android AAB uploaded to Play Console
 - [ ] iOS archive uploaded to App Store Connect
 - [ ] Beta testers notified
 - [ ] Store listings complete
-- [ ] Screenshots uploaded
+- [ ] Screenshots uploaded (S8-T17)
 - [ ] Release notes written
+- [ ] Version tagged in git
 
 ---
 

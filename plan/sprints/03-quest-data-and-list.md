@@ -634,6 +634,220 @@ class QuestCard extends StatelessWidget {
 
 ---
 
+## Testing & QA Tasks
+
+### S3-T10: DistanceCalculator Tests
+**Type**: test
+**Dependencies**: S3-T6
+
+**Description**:
+Unit tests for Haversine distance calculation.
+
+**Acceptance Criteria**:
+- [ ] Paris to London ≈ 343 km (within 1km tolerance)
+- [ ] Same point = 0 meters exactly
+- [ ] Short distance (10m) accurate within 0.1m
+- [ ] Handles antipodal points
+- [ ] Handles coordinates at poles
+- [ ] Handles coordinates crossing date line
+
+**Test file**: `test/unit/core/utils/distance_calculator_test.dart`
+
+**Example test cases**:
+```dart
+// Paris to London: ~343 km
+expect(DistanceCalculator.haversine(48.8566, 2.3522, 51.5074, -0.1278),
+  closeTo(343000, 1000));
+
+// Same point: 0
+expect(DistanceCalculator.haversine(48.8566, 2.3522, 48.8566, 2.3522),
+  equals(0));
+
+// 10 meters apart
+expect(DistanceCalculator.haversine(48.8566, 2.3522, 48.8567, 2.3522),
+  closeTo(10, 1));
+```
+
+---
+
+### S3-T11: QuestModel Tests
+**Type**: test
+**Dependencies**: S3-T2
+
+**Description**:
+Test serialization and mapping for QuestModel.
+
+**Acceptance Criteria**:
+- [ ] fromJson parses all fields correctly
+- [ ] toJson produces valid JSON
+- [ ] toDomain creates correct Quest entity
+- [ ] toDrift creates correct Drift companion
+- [ ] Handles nullable fields (description, difficulty, locationType)
+- [ ] Handles missing distance_km field from API
+
+**Test file**: `test/unit/data/models/quest_model_test.dart`
+
+---
+
+### S3-T12: QuestDao Tests
+**Type**: test
+**Dependencies**: S3-T3
+
+**Description**:
+Test Drift DAO for quest operations with in-memory database.
+
+**Acceptance Criteria**:
+- [ ] getAllPublished returns only published quests
+- [ ] getById returns correct quest or null
+- [ ] upsert inserts new quest
+- [ ] upsert updates existing quest
+- [ ] batchUpsert handles multiple quests
+- [ ] watchAll stream emits on changes
+- [ ] deleteById removes quest
+
+**Test file**: `test/unit/data/datasources/local/quest_dao_test.dart`
+
+---
+
+### S3-T13: QuestRepository Tests
+**Type**: test
+**Dependencies**: S3-T5
+
+**Description**:
+Test offline-first quest repository behavior.
+
+**Acceptance Criteria**:
+- [ ] Returns cached data immediately
+- [ ] Fetches remote data when online
+- [ ] Updates cache with remote data
+- [ ] Returns cached data when offline
+- [ ] Handles network errors gracefully
+- [ ] Stream emits cached then remote data
+
+**Test file**: `test/unit/data/repositories/quest_repository_test.dart`
+
+---
+
+### S3-T14: Symfony NearbyQuests Tests
+**Type**: test
+**Dependencies**: S3-T1
+
+**Description**:
+Functional tests for the nearby quests endpoint.
+
+**Acceptance Criteria**:
+- [ ] Returns quests within specified radius
+- [ ] Excludes quests outside radius
+- [ ] Only returns published quests
+- [ ] Results sorted by distance ascending
+- [ ] Returns calculated distance_km for each quest
+- [ ] Handles edge cases (no quests, very large radius)
+
+**Test file**: `backend/tests/Functional/Controller/QuestControllerTest.php`
+
+---
+
+### S3-T15: Location Permission Test
+**Type**: qa
+**Dependencies**: S3-T7
+
+**Description**:
+Manually test location permission flows on both platforms.
+
+**Acceptance Criteria**:
+- [ ] First launch prompts for location permission
+- [ ] Granting permission shows quest list with distances
+- [ ] Denying permission shows appropriate error message
+- [ ] "Don't ask again" (Android) / "Never" (iOS) shows settings guidance
+- [ ] Opening settings and granting permission works
+
+**Test on**:
+- [ ] iOS (different permission model)
+- [ ] Android 13+ (granular permissions)
+
+---
+
+### S3-T16: Quest List Manual Test
+**Type**: qa
+**Dependencies**: S3-T9
+
+**Description**:
+Manually verify quest list screen functionality.
+
+**Acceptance Criteria**:
+- [ ] Quest list loads with distance from user location
+- [ ] Distance filter tabs work (2, 5, 10, 20 km)
+- [ ] Pull-to-refresh fetches new data from server
+- [ ] Empty state shows when no quests nearby
+- [ ] Loading skeleton shows during initial fetch
+- [ ] Quest card shows title, distance, difficulty badge
+
+**Prerequisites**: Create 5+ test quests at various distances from test location.
+
+---
+
+### S3-T17: Offline Quest List Test
+**Type**: qa
+**Dependencies**: S3-T5
+
+**Description**:
+Verify quest list works offline with cached data.
+
+**Acceptance Criteria**:
+- [ ] Load quest list while online
+- [ ] Enable airplane mode
+- [ ] Kill and restart app
+- [ ] Quest list shows cached quests
+- [ ] Distances still displayed correctly
+- [ ] Offline banner visible
+- [ ] Pull-to-refresh shows offline error
+
+---
+
+### S3-T18: GPS Accuracy Test
+**Type**: qa
+**Dependencies**: S3-T7
+
+**Description**:
+Test GPS behavior in different environments.
+
+**Acceptance Criteria**:
+- [ ] Good accuracy outdoors in open area
+- [ ] Reasonable accuracy in urban area with buildings
+- [ ] Degraded but functional indoors
+- [ ] Accuracy indicator (if shown) reflects reality
+
+**Test locations**:
+- [ ] Open park
+- [ ] Urban street
+- [ ] Inside building near window
+
+---
+
+### S3-T19: PostGIS Setup Verification
+**Type**: infrastructure
+**Dependencies**: S3-T1
+
+**Description**:
+Verify PostGIS works in Docker and CI environments.
+
+**Acceptance Criteria**:
+- [ ] PostGIS extension enabled in local Docker PostgreSQL
+- [ ] PostGIS available in CI PostgreSQL service
+- [ ] ST_DistanceSphere function works correctly
+- [ ] Nearby query returns correct results
+
+**Commands**:
+```bash
+# Verify in Docker
+docker compose exec db psql -U kashkash -c "SELECT PostGIS_Version();"
+
+# Test query
+docker compose exec db psql -U kashkash -c "SELECT ST_DistanceSphere(ST_MakePoint(2.35, 48.85), ST_MakePoint(2.36, 48.86));"
+```
+
+---
+
 ## Sprint 3 Validation
 
 ```bash

@@ -592,6 +592,191 @@ final routerProvider = Provider<GoRouter>((ref) {
 
 ---
 
+## Testing & QA Tasks
+
+### S2-T11: SecureStorage Tests
+**Type**: test
+**Dependencies**: S2-T6
+
+**Description**:
+Unit tests for secure token and user storage.
+
+**Acceptance Criteria**:
+- [ ] Tokens saved and retrieved correctly
+- [ ] User data cached and retrieved correctly
+- [ ] clearAll removes all data
+- [ ] Missing keys return null (not throw)
+- [ ] Invalid JSON in storage handled gracefully
+
+**Test file**: `test/unit/data/datasources/local/secure_storage_test.dart`
+
+---
+
+### S2-T12: AuthInterceptor Tests
+**Type**: test
+**Dependencies**: S2-T4
+
+**Description**:
+Test the Dio interceptor for authentication handling.
+
+**Acceptance Criteria**:
+- [ ] Adds Authorization header when token exists
+- [ ] Does not add header when no token
+- [ ] Triggers token refresh on 401 response
+- [ ] Queues concurrent requests during refresh
+- [ ] Retries original request after successful refresh
+- [ ] Propagates error when refresh fails
+- [ ] Handles network errors during refresh
+
+**Test file**: `test/unit/data/datasources/remote/api/auth_interceptor_test.dart`
+
+---
+
+### S2-T13: AuthRepository Tests
+**Type**: test
+**Dependencies**: S2-T7
+
+**Description**:
+Test authentication repository with mocked dependencies.
+
+**Acceptance Criteria**:
+- [ ] signInWithGoogle stores tokens on success
+- [ ] signInWithGoogle returns AuthFailure on error
+- [ ] signOut clears all stored data
+- [ ] getCurrentUser returns remote user when online
+- [ ] getCurrentUser returns cached user when offline
+- [ ] Auth state stream emits correct values
+
+**Test file**: `test/unit/data/repositories/auth_repository_test.dart`
+
+---
+
+### S2-T14: Symfony AuthController Tests
+**Type**: test
+**Dependencies**: S2-T3
+
+**Description**:
+Functional tests for authentication endpoints.
+
+**Acceptance Criteria**:
+- [ ] `/auth/google` redirects to Google OAuth
+- [ ] `/auth/google/callback` creates user if not exists
+- [ ] `/auth/google/callback` returns JWT tokens
+- [ ] `/auth/token/refresh` issues new access token
+- [ ] `/auth/token/refresh` rejects invalid refresh token
+- [ ] `/auth/me` returns current user data
+- [ ] `/auth/me` returns 401 without token
+
+**Test file**: `backend/tests/Functional/Controller/AuthControllerTest.php`
+
+---
+
+### S2-T15: Google OAuth Setup
+**Type**: infrastructure
+**Dependencies**: None
+
+**Description**:
+Configure Google Cloud Console for OAuth authentication.
+
+**Acceptance Criteria**:
+- [ ] Google Cloud Console project created
+- [ ] OAuth 2.0 credentials configured (Web application)
+- [ ] iOS OAuth client configured with bundle ID
+- [ ] Android OAuth client configured with SHA-1 fingerprint
+- [ ] Redirect URIs configured correctly
+- [ ] Credentials stored as environment variables (not in git)
+
+**Documentation**: Update README with OAuth setup instructions.
+
+---
+
+### S2-T16: Manual Auth Flow Test
+**Type**: qa
+**Dependencies**: S2-T9
+
+**Description**:
+Manually test the complete Google sign-in flow on real devices.
+
+**Acceptance Criteria**:
+- [ ] Tap "Sign in with Google" opens Google auth
+- [ ] Complete Google sign-in redirects back to app
+- [ ] User profile displayed after sign-in
+- [ ] Navigates to quest list after successful auth
+- [ ] Test with new Google account (creates user)
+- [ ] Test with existing Google account (finds user)
+
+**Test on**:
+- [ ] iOS device/simulator
+- [ ] Android device/emulator
+
+---
+
+### S2-T17: Session Persistence Test
+**Type**: qa
+**Dependencies**: S2-T7
+
+**Description**:
+Verify session persists across app restarts.
+
+**Acceptance Criteria**:
+- [ ] Sign in successfully
+- [ ] Force close the app completely
+- [ ] Reopen app
+- [ ] User is still logged in
+- [ ] Navigates directly to quest list (not login)
+
+---
+
+### S2-T18: Token Refresh Test
+**Type**: qa
+**Dependencies**: S2-T4
+
+**Description**:
+Verify automatic token refresh works.
+
+**Acceptance Criteria**:
+- [ ] Sign in and note token expiry time
+- [ ] Wait for token to expire (or manually expire it)
+- [ ] Make an API request
+- [ ] Token automatically refreshes
+- [ ] Request succeeds without user intervention
+
+**Note**: May need to temporarily reduce token TTL for testing.
+
+---
+
+### S2-T19: Offline Auth Test
+**Type**: qa
+**Dependencies**: S2-T7
+
+**Description**:
+Verify app works offline with cached credentials.
+
+**Acceptance Criteria**:
+- [ ] Sign in while online
+- [ ] Enable airplane mode
+- [ ] Kill and restart app
+- [ ] App shows cached user data
+- [ ] Navigates to quest list
+- [ ] Offline banner displayed (if implemented)
+
+---
+
+### S2-T20: Add Auth Tests to CI
+**Type**: infrastructure
+**Dependencies**: S2-T11, S2-T12, S2-T13, S2-T14
+
+**Description**:
+Ensure new auth tests run in CI pipeline.
+
+**Acceptance Criteria**:
+- [ ] All Flutter auth tests pass in CI
+- [ ] All Symfony auth tests pass in CI
+- [ ] JWT keys generated in CI for Symfony tests
+- [ ] No secrets exposed in CI logs
+
+---
+
 ## Sprint 2 Validation
 
 ```bash
