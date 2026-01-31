@@ -42,7 +42,12 @@
       "Bash(upsun ssh:*)",
       "Bash(docker rm:*)",
       "Bash(upsun variable:delete:*)",
-      "Bash(dart analyze:*)"
+      "Bash(dart analyze:*)",
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(wc:*)",
+      "Bash(dart run build_runner build:*)",
+      "Bash(./flutter/bin/dart run build_runner build:*)"
     ]
   }
 }

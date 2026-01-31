@@ -113,12 +113,7 @@ class AuthNotifier extends _$AuthNotifier {
       userData: userData,
     );
 
-    state = AuthState(
-      status: AuthStatus.authenticated,
-      user: repo.getCurrentUser().then((r) => r.fold((_) => null, (u) => u)) as User?,
-    );
-
-    // Refresh state properly
+    // Refresh state - _init() will properly load user and set authenticated state
     await _init();
   }
 
