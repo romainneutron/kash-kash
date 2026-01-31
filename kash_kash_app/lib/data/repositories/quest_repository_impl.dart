@@ -88,7 +88,9 @@ class QuestRepositoryImpl implements IQuestRepository {
   }
 
   @override
-  Future<Either<Failure, List<domain.Quest>>> getPublishedQuests() async {
+  Future<Either<Failure, List<domain.Quest>>> getPublishedQuests({
+    PaginationParams? pagination,
+  }) async {
     try {
       // Try to get cached quests first
       final cachedQuests = await _questDao.getAllPublished();
@@ -97,7 +99,10 @@ class QuestRepositoryImpl implements IQuestRepository {
       if (await _isOnline()) {
         try {
           final remoteQuests = await _withRetry(
-            () => _remoteDataSource.getPublishedQuests(),
+            () => _remoteDataSource.getPublishedQuests(
+              page: pagination?.page,
+              perPage: pagination?.perPage,
+            ),
           );
           await _questDao.batchUpsert(
             remoteQuests.map((q) => q.toDrift()).toList(),
@@ -263,10 +268,12 @@ class QuestRepositoryImpl implements IQuestRepository {
       // Try to get cached quests first
       final cachedQuests = await _questDao.getAll();
 
-      // Try to fetch fresh data from remote
+      // Try to fetch fresh data from remote with retry
       if (await _isOnline()) {
         try {
-          final remoteQuests = await _remoteDataSource.getPublishedQuests();
+          final remoteQuests = await _withRetry(
+            () => _remoteDataSource.getPublishedQuests(),
+          );
           await _questDao.batchUpsert(
             remoteQuests.map((q) => q.toDrift()).toList(),
             markAsSynced: true,

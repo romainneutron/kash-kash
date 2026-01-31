@@ -105,11 +105,18 @@ void main() {
     });
 
     group('equality', () {
-      test('should be equal when ids match', () {
+      test('should be equal when all fields match', () {
+        final quest1 = FakeData.createQuest(id: 'same-id');
+        final quest2 = FakeData.createQuest(id: 'same-id');
+
+        expect(quest1, equals(quest2));
+      });
+
+      test('should not be equal when ids match but other fields differ', () {
         final quest1 = FakeData.createQuest(id: 'same-id');
         final quest2 = FakeData.createQuest(id: 'same-id', title: 'Different');
 
-        expect(quest1, equals(quest2));
+        expect(quest1, isNot(equals(quest2)));
       });
 
       test('should not be equal when ids differ', () {

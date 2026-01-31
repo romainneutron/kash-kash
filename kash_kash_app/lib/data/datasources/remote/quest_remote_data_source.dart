@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:kash_kash_app/core/errors/failures.dart';
 import 'package:kash_kash_app/data/datasources/remote/api/api_client.dart';
 import 'package:kash_kash_app/data/models/quest_model.dart';
@@ -18,10 +19,23 @@ class QuestRemoteDataSource {
   QuestRemoteDataSource({required ApiClient apiClient})
       : _apiClient = apiClient;
 
-  /// Fetch all published quests.
-  Future<List<QuestModel>> getPublishedQuests() async {
-    final response =
-        await _apiClient.get<Map<String, dynamic>>(QuestEndpoints.quests);
+  /// Fetch published quests with optional pagination.
+  ///
+  /// If [page] and [perPage] are null, returns all quests (no pagination).
+  Future<List<QuestModel>> getPublishedQuests({
+    int? page,
+    int? perPage,
+  }) async {
+    final queryParams = <String, dynamic>{};
+    if (page != null && perPage != null) {
+      queryParams['page'] = page;
+      queryParams['itemsPerPage'] = perPage;
+    }
+
+    final response = await _apiClient.get<Map<String, dynamic>>(
+      QuestEndpoints.quests,
+      queryParameters: queryParams.isNotEmpty ? queryParams : null,
+    );
     final items = _extractListFromResponse(response.data);
     return items
         .map((json) => QuestModel.fromJson(json as Map<String, dynamic>))
@@ -125,6 +139,9 @@ class QuestRemoteDataSource {
   static const _nearbyListKeys = ['hydra:member', 'data', 'quests'];
 
   /// Extract list from API response by trying keys in order.
+  ///
+  /// Logs a warning if no recognized keys are found, which may indicate
+  /// an API contract change.
   List<dynamic> _extractListFromResponse(
     Map<String, dynamic>? data, {
     List<String> keys = _defaultListKeys,
@@ -134,6 +151,10 @@ class QuestRemoteDataSource {
       final value = requiredData[key];
       if (value != null) return value as List<dynamic>;
     }
+    debugPrint(
+      'Warning: No recognized list key found in API response. '
+      'Expected one of $keys, got keys: ${requiredData.keys.toList()}',
+    );
     return [];
   }
 }

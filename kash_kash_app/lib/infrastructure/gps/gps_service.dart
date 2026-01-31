@@ -36,12 +36,6 @@ class GpsService {
     _cacheTimestamp = null;
   }
 
-  /// Check if cached position is still valid.
-  bool get _isCacheValid {
-    if (_cachedPosition == null || _cacheTimestamp == null) return false;
-    return DateTime.now().difference(_cacheTimestamp!) < cacheTtl;
-  }
-
   /// Check if location services are enabled.
   Future<bool> isLocationServiceEnabled() async {
     return Geolocator.isLocationServiceEnabled();
@@ -91,8 +85,15 @@ class GpsService {
     bool forceRefresh = false,
   }) async {
     // Return cached position if valid and not forcing refresh
-    if (!forceRefresh && _isCacheValid) {
-      return Right(_cachedPosition!);
+    // Copy values atomically to prevent race condition with clearCache()
+    if (!forceRefresh) {
+      final cached = _cachedPosition;
+      final timestamp = _cacheTimestamp;
+      if (cached != null &&
+          timestamp != null &&
+          DateTime.now().difference(timestamp) < cacheTtl) {
+        return Right(cached);
+      }
     }
 
     // If a fetch is already in progress, wait for it

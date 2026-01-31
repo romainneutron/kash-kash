@@ -71,9 +71,36 @@ class Quest {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is Quest && other.id == id;
+    return other is Quest &&
+        other.id == id &&
+        other.title == title &&
+        other.description == description &&
+        other.latitude == latitude &&
+        other.longitude == longitude &&
+        other.radiusMeters == radiusMeters &&
+        other.createdBy == createdBy &&
+        other.published == published &&
+        other.difficulty == difficulty &&
+        other.locationType == locationType &&
+        other.createdAt == createdAt &&
+        other.updatedAt == updatedAt &&
+        other.syncedAt == syncedAt;
   }
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => Object.hash(
+        id,
+        title,
+        description,
+        latitude,
+        longitude,
+        radiusMeters,
+        createdBy,
+        published,
+        difficulty,
+        locationType,
+        createdAt,
+        updatedAt,
+        syncedAt,
+      );
 }
