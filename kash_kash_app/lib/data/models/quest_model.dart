@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:kash_kash_app/data/datasources/local/database.dart' as db;
 import 'package:kash_kash_app/domain/entities/quest.dart' as domain;
 
@@ -5,6 +6,8 @@ import 'package:kash_kash_app/domain/entities/quest.dart' as domain;
 ///
 /// Handles serialization between API JSON, Drift database, and domain entity.
 class QuestModel {
+  /// Default radius in meters for a quest's target area.
+  static const double defaultRadiusMeters = 3.0;
   final String id;
   final String title;
   final String? description;
@@ -28,7 +31,7 @@ class QuestModel {
     this.description,
     required this.latitude,
     required this.longitude,
-    this.radiusMeters = 3.0,
+    this.radiusMeters = defaultRadiusMeters,
     required this.createdBy,
     this.published = false,
     this.difficulty,
@@ -47,7 +50,8 @@ class QuestModel {
       description: json['description'] as String?,
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
-      radiusMeters: (json['radius_meters'] as num?)?.toDouble() ?? 3.0,
+      radiusMeters:
+          (json['radius_meters'] as num?)?.toDouble() ?? defaultRadiusMeters,
       createdBy: json['created_by'] as String,
       published: json['published'] as bool? ?? false,
       difficulty: json['difficulty'] as String?,
@@ -159,34 +163,38 @@ class QuestModel {
 
   static domain.QuestDifficulty? _parseDifficulty(String? value) {
     if (value == null) return null;
-    return domain.QuestDifficulty.values.firstWhere(
-      (e) => e.name == value,
-      orElse: () => domain.QuestDifficulty.easy,
-    );
+    for (final e in domain.QuestDifficulty.values) {
+      if (e.name == value) return e;
+    }
+    debugPrint('Unknown difficulty value: $value, defaulting to easy');
+    return domain.QuestDifficulty.easy;
   }
 
   static domain.LocationType? _parseLocationType(String? value) {
     if (value == null) return null;
-    return domain.LocationType.values.firstWhere(
-      (e) => e.name == value,
-      orElse: () => domain.LocationType.city,
-    );
+    for (final e in domain.LocationType.values) {
+      if (e.name == value) return e;
+    }
+    debugPrint('Unknown location type value: $value, defaulting to city');
+    return domain.LocationType.city;
   }
 
   static db.QuestDifficulty? _parseDriftDifficulty(String? value) {
     if (value == null) return null;
-    return db.QuestDifficulty.values.firstWhere(
-      (e) => e.name == value,
-      orElse: () => db.QuestDifficulty.easy,
-    );
+    for (final e in db.QuestDifficulty.values) {
+      if (e.name == value) return e;
+    }
+    debugPrint('Unknown difficulty value: $value, defaulting to easy');
+    return db.QuestDifficulty.easy;
   }
 
   static db.LocationType? _parseDriftLocationType(String? value) {
     if (value == null) return null;
-    return db.LocationType.values.firstWhere(
-      (e) => e.name == value,
-      orElse: () => db.LocationType.city,
-    );
+    for (final e in db.LocationType.values) {
+      if (e.name == value) return e;
+    }
+    debugPrint('Unknown location type value: $value, defaulting to city');
+    return db.LocationType.city;
   }
 
   QuestModel copyWith({

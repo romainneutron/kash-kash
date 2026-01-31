@@ -17,7 +17,9 @@ part 'quest_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 AppDatabase appDatabase(Ref ref) {
-  return AppDatabase();
+  final db = AppDatabase();
+  ref.onDispose(() => db.close());
+  return db;
 }
 
 @Riverpod(keepAlive: true)
@@ -51,10 +53,7 @@ QuestRepositoryImpl questRepository(Ref ref) {
   return QuestRepositoryImpl(
     questDao: questDao,
     remoteDataSource: remoteDataSource,
-    isOnline: () async {
-      final result = await Connectivity().checkConnectivity();
-      return !result.contains(ConnectivityResult.none);
-    },
+    isOnline: () => ref.read(isOnlineProvider.future),
   );
 }
 
@@ -137,6 +136,9 @@ class QuestListState {
 
 @riverpod
 class QuestListNotifier extends _$QuestListNotifier {
+  /// Sequence number to prevent race conditions when multiple loads occur.
+  int _loadSequence = 0;
+
   @override
   QuestListState build() {
     _loadQuests();
@@ -144,6 +146,7 @@ class QuestListNotifier extends _$QuestListNotifier {
   }
 
   Future<void> _loadQuests() async {
+    final currentSequence = ++_loadSequence;
     state = state.copyWith(isLoading: true, error: null);
 
     final gpsService = ref.read(gpsServiceProvider);
@@ -151,11 +154,18 @@ class QuestListNotifier extends _$QuestListNotifier {
     final filter = ref.read(distanceFilterProvider);
     final isOnline = await ref.read(isOnlineProvider.future);
 
+    // Abort if a newer request has started
+    if (currentSequence != _loadSequence) return;
+
     // Get current position
     final positionResult = await gpsService.getCurrentPosition();
 
+    // Abort if a newer request has started
+    if (currentSequence != _loadSequence) return;
+
     await positionResult.fold(
       (failure) async {
+        if (currentSequence != _loadSequence) return;
         state = state.copyWith(
           isLoading: false,
           error: failure.message,
@@ -169,6 +179,9 @@ class QuestListNotifier extends _$QuestListNotifier {
           longitude: position.longitude,
           radiusKm: filter.kilometers,
         );
+
+        // Abort if a newer request has started
+        if (currentSequence != _loadSequence) return;
 
         questsResult.fold(
           (failure) {

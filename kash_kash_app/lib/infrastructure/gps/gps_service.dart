@@ -112,13 +112,21 @@ class GpsService {
       }
     }
 
-    await for (final position in Geolocator.getPositionStream(
-      locationSettings: LocationSettings(
-        accuracy: accuracy,
-        distanceFilter: distanceFilter,
-      ),
-    )) {
-      yield Right(position);
+    try {
+      await for (final position in Geolocator.getPositionStream(
+        locationSettings: LocationSettings(
+          accuracy: accuracy,
+          distanceFilter: distanceFilter,
+        ),
+      )) {
+        yield Right(position);
+      }
+    } on LocationServiceDisabledException {
+      yield const Left(LocationFailure('Location services were disabled'));
+    } on PermissionDeniedException catch (e) {
+      yield Left(LocationFailure('Permission denied: ${e.message}'));
+    } catch (e) {
+      yield Left(LocationFailure('Location stream error: $e'));
     }
   }
 

@@ -48,7 +48,7 @@ final class AppDatabaseProvider
   }
 }
 
-String _$appDatabaseHash() => r'8c69eb46d45206533c176c88a926608e79ca927d';
+String _$appDatabaseHash() => r'448adad5717e7b1c0b3ca3ca7e03d0b2116237af';
 
 @ProviderFor(questDao)
 final questDaoProvider = QuestDaoProvider._();
@@ -258,7 +258,7 @@ final class QuestRepositoryProvider
   }
 }
 
-String _$questRepositoryHash() => r'9e850e4d463bc09b29cdc28c7cf0c4f6cc1564d2';
+String _$questRepositoryHash() => r'c6e88461b71b81287062728ed4ad8efe9b6b5f89';
 
 @ProviderFor(DistanceFilterNotifier)
 final distanceFilterProvider = DistanceFilterNotifierProvider._();
@@ -386,7 +386,7 @@ final class QuestListNotifierProvider
   }
 }
 
-String _$questListNotifierHash() => r'f8d7394825b4659fe6f03af445a99479ce80f573';
+String _$questListNotifierHash() => r'8e5896ac38a43aa3352e3888fb4d110f678f86a0';
 
 abstract class _$QuestListNotifier extends $Notifier<QuestListState> {
   QuestListState build();
