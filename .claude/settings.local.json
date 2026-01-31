@@ -30,7 +30,19 @@
       "Bash(git push:*)",
       "Bash(gh run list:*)",
       "Bash(gh run watch:*)",
-      "Bash(gh run view:*)"
+      "Bash(gh run view:*)",
+      "Bash(docker compose:*)",
+      "Bash(git check-ignore:*)",
+      "mcp__upsun__info-project",
+      "mcp__upsun__list-activity",
+      "mcp__upsun__log-activity",
+      "WebFetch(domain:meta.upsun.com)",
+      "mcp__upsun__redeploy-environment",
+      "Bash(git revert:*)",
+      "Bash(upsun ssh:*)",
+      "Bash(docker rm:*)",
+      "Bash(upsun variable:delete:*)",
+      "Bash(dart analyze:*)"
     ]
   }
 }
