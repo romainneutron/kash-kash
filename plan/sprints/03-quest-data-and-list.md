@@ -157,7 +157,7 @@ Implement Drift DAO for quests with CRUD and queries.
 - [x] Get quest by ID
 - [x] Watch quests stream (reactive)
 - [x] Batch upsert for sync
-- [ ] Unit tests with in-memory DB
+- [x] Unit tests with in-memory DB
 
 **Implementation**:
 ```dart
@@ -699,13 +699,13 @@ Test serialization and mapping for QuestModel.
 Test Drift DAO for quest operations with in-memory database.
 
 **Acceptance Criteria**:
-- [ ] getAllPublished returns only published quests
-- [ ] getById returns correct quest or null
-- [ ] upsert inserts new quest
-- [ ] upsert updates existing quest
-- [ ] batchUpsert handles multiple quests
-- [ ] watchAll stream emits on changes
-- [ ] deleteById removes quest
+- [x] getAllPublished returns only published quests
+- [x] getById returns correct quest or null
+- [x] upsert inserts new quest
+- [x] upsert updates existing quest
+- [x] batchUpsert handles multiple quests
+- [x] watchAll stream emits on changes
+- [x] deleteById removes quest
 
 **Test file**: `test/unit/data/datasources/local/quest_dao_test.dart`
 
@@ -719,12 +719,12 @@ Test Drift DAO for quest operations with in-memory database.
 Test offline-first quest repository behavior.
 
 **Acceptance Criteria**:
-- [ ] Returns cached data immediately
-- [ ] Fetches remote data when online
-- [ ] Updates cache with remote data
-- [ ] Returns cached data when offline
-- [ ] Handles network errors gracefully
-- [ ] Stream emits cached then remote data
+- [x] Returns cached data immediately
+- [x] Fetches remote data when online
+- [x] Updates cache with remote data
+- [x] Returns cached data when offline
+- [x] Handles network errors gracefully
+- [x] Stream emits cached then remote data
 
 **Test file**: `test/unit/data/repositories/quest_repository_test.dart`
 
