@@ -1,0 +1,4 @@
+tags:
+  sqlite:
+    # Tests that require libsqlite3.so
+    # Install with: apt-get install libsqlite3-dev

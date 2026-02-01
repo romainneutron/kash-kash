@@ -1,9 +1,8 @@
 // Database tests require libsqlite3.so on Linux.
-// Skip these tests if SQLite is not available.
-// To run: apt-get install libsqlite3-dev
+// CI installs this via: apt-get install libsqlite3-dev
+// Locally: apt-get install libsqlite3-dev OR run with --exclude-tags=sqlite
 @TestOn('vm')
-@Skip('Requires libsqlite3.so - run with: apt-get install libsqlite3-dev')
-library;
+@Tags(['sqlite'])
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kash_kash_app/data/datasources/local/database.dart';
