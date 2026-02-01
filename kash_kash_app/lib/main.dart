@@ -6,12 +6,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/analytics/analytics_service.dart';
 import 'core/constants/env_config.dart';
 import 'core/utils/sentry_service.dart';
+import 'core/utils/web_auth_handler.dart';
 import 'presentation/theme/app_theme.dart';
 import 'router/app_router.dart';
+
+/// Stores web OAuth tokens extracted before app starts (cleared after use)
+Map<String, String>? pendingWebAuthTokens;
 
 Future<void> main() async {
   await runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
+
+    // IMPORTANT: Extract web OAuth tokens BEFORE go_router initializes
+    // This prevents go_router from trying to parse the fragment as a route
+    pendingWebAuthTokens = getAuthTokensFromUrl();
+    if (pendingWebAuthTokens != null) {
+      clearAuthFragment();
+    }
 
     // Initialize Sentry for error tracking
     await SentryService.init(

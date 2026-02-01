@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:kash_kash_app/core/utils/web_auth_handler.dart';
 import 'package:kash_kash_app/data/datasources/remote/auth_remote_data_source.dart';
 import 'package:kash_kash_app/data/repositories/auth_repository_impl.dart';
 import 'package:kash_kash_app/domain/entities/user.dart';
+import 'package:kash_kash_app/main.dart' show pendingWebAuthTokens;
 import 'package:kash_kash_app/presentation/providers/api_provider.dart';
 
 part 'auth_provider.g.dart';
@@ -65,10 +65,11 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> _init() async {
     state = state.copyWith(status: AuthStatus.loading);
 
-    // Check for web OAuth callback tokens in URL
-    final webAuthTokens = getAuthTokensFromUrl();
-    if (webAuthTokens != null) {
-      await _handleWebAuthCallback(webAuthTokens);
+    // Check for web OAuth callback tokens (extracted in main.dart before go_router)
+    if (pendingWebAuthTokens != null) {
+      final tokens = pendingWebAuthTokens!;
+      pendingWebAuthTokens = null; // Clear after use
+      await _handleWebAuthCallback(tokens);
       return;
     }
 
@@ -103,8 +104,7 @@ class AuthNotifier extends _$AuthNotifier {
         userData = jsonDecode(userJson) as Map<String, dynamic>;
       }
 
-      // Clear the URL fragment
-      clearAuthFragment();
+      // Note: URL fragment already cleared in main.dart before go_router init
 
       // Save tokens and complete auth
       await handleAuthCallback(
