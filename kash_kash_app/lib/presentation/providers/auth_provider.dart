@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:kash_kash_app/data/datasources/remote/auth_remote_data_source.dart';
 import 'package:kash_kash_app/data/repositories/auth_repository_impl.dart';
@@ -58,19 +56,20 @@ class AuthState {
 class AuthNotifier extends _$AuthNotifier {
   @override
   AuthState build() {
-    _init();
+    // Schedule _init() to run after build completes to avoid
+    // modifying state during the build phase
+    Future.microtask(_init);
     return const AuthState();
   }
 
   Future<void> _init() async {
     state = state.copyWith(status: AuthStatus.loading);
 
-    // Check for web OAuth callback tokens (extracted in main.dart before go_router)
+    // Check for web OAuth callback tokens (extracted and saved in main.dart)
+    // Tokens are already saved to storage, just clear the pending flag and load user
     if (pendingWebAuthTokens != null) {
-      final tokens = pendingWebAuthTokens!;
       pendingWebAuthTokens = null; // Clear after use
-      await _handleWebAuthCallback(tokens);
-      return;
+      // Tokens already saved in main.dart, just reload state from storage
     }
 
     final repo = ref.read(authRepositoryProvider);
@@ -91,33 +90,6 @@ class AuthNotifier extends _$AuthNotifier {
         }
       },
     );
-  }
-
-  Future<void> _handleWebAuthCallback(Map<String, String> params) async {
-    try {
-      final accessToken = params['token']!;
-      final refreshToken = params['refresh_token']!;
-      final userJson = params['user'];
-
-      Map<String, dynamic> userData = {};
-      if (userJson != null) {
-        userData = jsonDecode(userJson) as Map<String, dynamic>;
-      }
-
-      // Note: URL fragment already cleared in main.dart before go_router init
-
-      // Save tokens and complete auth
-      await handleAuthCallback(
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-        userData: userData,
-      );
-    } catch (e) {
-      state = AuthState(
-        status: AuthStatus.error,
-        error: 'Failed to complete sign in: $e',
-      );
-    }
   }
 
   Future<void> signInWithGoogle() async {
