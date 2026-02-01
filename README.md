@@ -1,5 +1,7 @@
 # Kash-Kash
 
+[![CI](https://github.com/romainneutron/kash-kash/actions/workflows/ci.yml/badge.svg)](https://github.com/romainneutron/kash-kash/actions/workflows/ci.yml)
+
 A geocaching mobile game where players search for GPS coordinates using only color-coded visual feedback.
 
 ## Game Mechanics
@@ -12,16 +14,18 @@ A geocaching mobile game where players search for GPS coordinates using only col
 ## Tech Stack
 
 ### Frontend (Flutter)
-- State Management: Riverpod 2.x
+- Flutter 3.38.x / Dart 3.10.x
+- State Management: Riverpod 3.x with codegen
 - Navigation: go_router
 - Local Database: Drift (SQLite)
 - Location/GPS: geolocator
-- Maps: flutter_map (OpenStreetMap)
+- Error Handling: fpdart (Either types)
 
 ### Backend (Symfony)
-- Framework: Symfony 7 + API Platform
+- Framework: Symfony 8.0
 - Database: PostgreSQL 16 + PostGIS
 - Authentication: Google OAuth + JWT
+- ORM: Doctrine 3.x
 
 ### Monitoring
 - Error Tracking: Sentry
@@ -29,8 +33,13 @@ A geocaching mobile game where players search for GPS coordinates using only col
 
 ## Prerequisites
 
-- Flutter SDK 3.24+ (installed locally in `./flutter/`)
+- Flutter SDK 3.38+ (installed locally in `./flutter/`)
 - Docker & Docker Compose (for backend)
+- libsqlite3-dev (for running all tests locally)
+  ```bash
+  # Ubuntu/Debian
+  sudo apt-get install libsqlite3-dev
+  ```
 
 ## Quick Start
 
@@ -41,11 +50,30 @@ make setup
 # Run code generation
 make gen
 
-# Run the app
+# Run the app (web)
 make run
 
-# Run tests
+# Run tests (requires libsqlite3-dev)
 make test
+
+# Run tests without SQLite DAO tests
+make test-no-sqlite
+```
+
+## Development
+
+```bash
+# Pre-push check (run before every push)
+make pre-push
+
+# Pre-push without SQLite tests (if libsqlite3-dev not installed)
+make pre-push-no-sqlite
+
+# Start backend
+make backend-up
+
+# Run full CI locally
+make pre-push-full
 ```
 
 ## Project Structure
@@ -60,7 +88,7 @@ kash-kash/
 │       ├── infrastructure/  # GPS, sync, background services
 │       ├── presentation/    # Screens, widgets, providers
 │       └── router/          # App navigation
-├── backend/                 # Symfony API (TODO)
+├── backend/                 # Symfony API
 ├── plan/                    # Sprint planning documents
 └── flutter/                 # Local Flutter SDK (gitignored)
 ```
