@@ -96,8 +96,8 @@ class AuthRepositoryImpl implements IAuthRepository {
     }
   }
 
-  String getGoogleAuthUrl() {
-    return _remoteDataSource.getGoogleAuthUrl();
+  String getGoogleAuthUrl({String? webRedirectUri}) {
+    return _remoteDataSource.getGoogleAuthUrl(webRedirectUri: webRedirectUri);
   }
 
   Future<void> handleAuthCallback({

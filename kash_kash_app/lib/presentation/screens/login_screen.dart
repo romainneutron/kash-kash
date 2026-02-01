@@ -1,9 +1,13 @@
-import 'dart:convert';
-
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:kash_kash_app/presentation/providers/auth_provider.dart';
+
+// Conditional import: use stub on web, real implementation on mobile
+import 'google_auth_stub.dart'
+    if (dart.library.io) 'google_auth_mobile.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
@@ -107,7 +111,7 @@ class LoginScreen extends ConsumerWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // Google "G" icon using Material icon
+                          // Google "G" icon
                           Container(
                             width: 24,
                             height: 24,
@@ -146,12 +150,38 @@ class LoginScreen extends ConsumerWidget {
     );
   }
 
-  void _startGoogleSignIn(BuildContext context, WidgetRef ref) {
-    final authUrl = ref.read(authProvider.notifier).getGoogleAuthUrl();
+  void _startGoogleSignIn(BuildContext context, WidgetRef ref) async {
+    if (kIsWeb) {
+      // On web, get current URL (without fragment) as redirect target
+      final currentUrl = Uri.base.removeFragment().toString();
+      final authUrl = ref.read(authProvider.notifier).getGoogleAuthUrl(
+            webRedirectUri: currentUrl,
+          );
+      await _launchWebAuth(context, authUrl);
+    } else {
+      // On mobile, use WebView (no redirect needed)
+      final authUrl = ref.read(authProvider.notifier).getGoogleAuthUrl();
+      _launchMobileAuth(context, ref, authUrl);
+    }
+  }
 
+  Future<void> _launchWebAuth(BuildContext context, String authUrl) async {
+    final uri = Uri.parse(authUrl);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, webOnlyWindowName: '_self');
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open sign-in page')),
+        );
+      }
+    }
+  }
+
+  void _launchMobileAuth(BuildContext context, WidgetRef ref, String authUrl) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => _GoogleAuthWebView(
+        builder: (context) => buildGoogleAuthWebView(
           authUrl: authUrl,
           onAuthComplete: (accessToken, refreshToken, userData) {
             Navigator.of(context).pop();
@@ -171,111 +201,6 @@ class LoginScreen extends ConsumerWidget {
             );
           },
         ),
-      ),
-    );
-  }
-}
-
-class _GoogleAuthWebView extends StatefulWidget {
-  final String authUrl;
-  final void Function(
-      String accessToken, String refreshToken, Map<String, dynamic> userData)
-      onAuthComplete;
-  final void Function(String error) onError;
-
-  const _GoogleAuthWebView({
-    required this.authUrl,
-    required this.onAuthComplete,
-    required this.onError,
-  });
-
-  @override
-  State<_GoogleAuthWebView> createState() => _GoogleAuthWebViewState();
-}
-
-class _GoogleAuthWebViewState extends State<_GoogleAuthWebView> {
-  late final WebViewController _controller;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageStarted: (url) {
-            setState(() => _isLoading = true);
-          },
-          onPageFinished: (url) {
-            setState(() => _isLoading = false);
-            _checkForAuthCallback(url);
-          },
-          onNavigationRequest: (request) {
-            return NavigationDecision.navigate;
-          },
-          onWebResourceError: (error) {
-            widget.onError(error.description);
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(widget.authUrl));
-  }
-
-  void _checkForAuthCallback(String url) async {
-    // Check if URL is the callback with tokens
-    // The backend returns JSON with tokens after OAuth
-    if (url.contains('/auth/google/callback')) {
-      try {
-        // Get the page content (should be JSON with tokens)
-        final content = await _controller.runJavaScriptReturningResult(
-          'document.body.innerText',
-        );
-
-        if (content is String) {
-          // Remove quotes if present
-          var jsonStr = content;
-          if (jsonStr.startsWith('"') && jsonStr.endsWith('"')) {
-            jsonStr = jsonStr.substring(1, jsonStr.length - 1);
-            // Unescape JSON
-            jsonStr = jsonStr.replaceAll(r'\n', '\n').replaceAll(r'\"', '"');
-          }
-
-          final data = jsonDecode(jsonStr) as Map<String, dynamic>;
-
-          if (data.containsKey('token') && data.containsKey('refresh_token')) {
-            widget.onAuthComplete(
-              data['token'] as String,
-              data['refresh_token'] as String,
-              data['user'] as Map<String, dynamic>,
-            );
-            return;
-          }
-        }
-      } catch (e) {
-        // Not the expected callback page, continue
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign in with Google'),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: Stack(
-        children: [
-          WebViewWidget(controller: _controller),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
-            ),
-        ],
       ),
     );
   }

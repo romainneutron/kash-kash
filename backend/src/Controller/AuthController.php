@@ -24,13 +24,19 @@ class AuthController extends AbstractController
     ) {}
 
     #[Route('/google', name: 'connect_google', methods: ['GET'])]
-    public function connectGoogle(ClientRegistry $clientRegistry): RedirectResponse
+    public function connectGoogle(Request $request, ClientRegistry $clientRegistry): RedirectResponse
     {
+        // Store web redirect URI in session for callback
+        $webRedirectUri = $request->query->get('redirect_uri');
+        if ($webRedirectUri) {
+            $request->getSession()->set('oauth_web_redirect_uri', $webRedirectUri);
+        }
+
         return $clientRegistry->getClient('google')->redirect(['email', 'profile']);
     }
 
     #[Route('/google/callback', name: 'connect_google_check', methods: ['GET'])]
-    public function connectGoogleCheck(ClientRegistry $clientRegistry): JsonResponse
+    public function connectGoogleCheck(Request $request, ClientRegistry $clientRegistry): JsonResponse|RedirectResponse
     {
         $client = $clientRegistry->getClient('google');
 
@@ -58,6 +64,13 @@ class AuthController extends AbstractController
             $user->setGoogleId($googleUser->getId());
             $user->setUpdatedAt(new \DateTimeImmutable());
             $this->userRepository->save($user, true);
+        }
+
+        // Check if this is a web OAuth flow
+        $webRedirectUri = $request->getSession()->get('oauth_web_redirect_uri');
+        if ($webRedirectUri) {
+            $request->getSession()->remove('oauth_web_redirect_uri');
+            return $this->issueTokensAndRedirect($user, $webRedirectUri);
         }
 
         return $this->issueTokens($user);
@@ -124,6 +137,23 @@ class AuthController extends AbstractController
             'refresh_token' => $refreshToken->getToken(),
             'user' => $this->serializeUser($user),
         ]);
+    }
+
+    private function issueTokensAndRedirect(User $user, string $redirectUri): RedirectResponse
+    {
+        $accessToken = $this->jwtManager->create($user);
+        $refreshToken = new RefreshToken($user);
+        $this->refreshTokenRepository->save($refreshToken, true);
+
+        // Encode tokens in URL fragment (safer than query params)
+        $userData = $this->serializeUser($user);
+        $fragment = http_build_query([
+            'token' => $accessToken,
+            'refresh_token' => $refreshToken->getToken(),
+            'user' => json_encode($userData),
+        ]);
+
+        return new RedirectResponse($redirectUri . '#' . $fragment);
     }
 
     private function serializeUser(User $user): array

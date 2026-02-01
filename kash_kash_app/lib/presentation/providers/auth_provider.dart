@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:kash_kash_app/core/utils/web_auth_handler.dart';
 import 'package:kash_kash_app/data/datasources/remote/auth_remote_data_source.dart';
 import 'package:kash_kash_app/data/repositories/auth_repository_impl.dart';
 import 'package:kash_kash_app/domain/entities/user.dart';
@@ -62,6 +65,13 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> _init() async {
     state = state.copyWith(status: AuthStatus.loading);
 
+    // Check for web OAuth callback tokens in URL
+    final webAuthTokens = getAuthTokensFromUrl();
+    if (webAuthTokens != null) {
+      await _handleWebAuthCallback(webAuthTokens);
+      return;
+    }
+
     final repo = ref.read(authRepositoryProvider);
     final result = await repo.getCurrentUser();
 
@@ -80,6 +90,34 @@ class AuthNotifier extends _$AuthNotifier {
         }
       },
     );
+  }
+
+  Future<void> _handleWebAuthCallback(Map<String, String> params) async {
+    try {
+      final accessToken = params['token']!;
+      final refreshToken = params['refresh_token']!;
+      final userJson = params['user'];
+
+      Map<String, dynamic> userData = {};
+      if (userJson != null) {
+        userData = jsonDecode(userJson) as Map<String, dynamic>;
+      }
+
+      // Clear the URL fragment
+      clearAuthFragment();
+
+      // Save tokens and complete auth
+      await handleAuthCallback(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        userData: userData,
+      );
+    } catch (e) {
+      state = AuthState(
+        status: AuthStatus.error,
+        error: 'Failed to complete sign in: $e',
+      );
+    }
   }
 
   Future<void> signInWithGoogle() async {
@@ -123,9 +161,9 @@ class AuthNotifier extends _$AuthNotifier {
     state = const AuthState(status: AuthStatus.unauthenticated);
   }
 
-  String getGoogleAuthUrl() {
+  String getGoogleAuthUrl({String? webRedirectUri}) {
     final repo = ref.read(authRepositoryProvider);
-    return repo.getGoogleAuthUrl();
+    return repo.getGoogleAuthUrl(webRedirectUri: webRedirectUri);
   }
 }
 

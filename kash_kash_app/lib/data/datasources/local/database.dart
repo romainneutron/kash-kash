@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
 import 'attempt_dao.dart';
+import 'database_connection.dart';
 import 'path_point_dao.dart';
 import 'quest_dao.dart';
 
@@ -105,18 +101,10 @@ class SyncQueue extends Table {
   daos: [QuestDao, AttemptDao, PathPointDao],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  AppDatabase() : super(openConnection());
 
   AppDatabase.forTesting(super.e);
 
   @override
   int get schemaVersion => 1;
-}
-
-LazyDatabase _openConnection() {
-  return LazyDatabase(() async {
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'kashkash.sqlite'));
-    return NativeDatabase.createInBackground(file);
-  });
 }

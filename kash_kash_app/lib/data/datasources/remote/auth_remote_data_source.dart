@@ -36,7 +36,11 @@ class AuthRemoteDataSource {
     }
   }
 
-  String getGoogleAuthUrl() {
-    return '${_apiClient.dio.options.baseUrl}/auth/google';
+  String getGoogleAuthUrl({String? webRedirectUri}) {
+    final baseUrl = '${_apiClient.dio.options.baseUrl}/auth/google';
+    if (webRedirectUri != null) {
+      return '$baseUrl?redirect_uri=${Uri.encodeComponent(webRedirectUri)}';
+    }
+    return baseUrl;
   }
 }

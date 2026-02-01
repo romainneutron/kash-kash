@@ -96,7 +96,7 @@ final class QuestHistoryNotifierProvider
 }
 
 String _$questHistoryNotifierHash() =>
-    r'315688d8250ceacf91e304dc948f5afac23a989f';
+    r'bae475c0f31d0168e81f30af1eba3d2ce2d323da';
 
 /// Provider for quest history
 
