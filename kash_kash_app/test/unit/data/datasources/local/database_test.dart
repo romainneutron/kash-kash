@@ -3,6 +3,7 @@
 // Locally: apt-get install libsqlite3-dev OR run with --exclude-tags=sqlite
 @TestOn('vm')
 @Tags(['sqlite'])
+library;
 
 import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:flutter_test/flutter_test.dart';

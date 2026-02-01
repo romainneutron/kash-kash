@@ -3,6 +3,7 @@
 // Locally: apt-get install libsqlite3-dev OR run with --exclude-tags=sqlite
 @TestOn('vm')
 @Tags(['sqlite'])
+library;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kash_kash_app/data/datasources/local/attempt_dao.dart';
