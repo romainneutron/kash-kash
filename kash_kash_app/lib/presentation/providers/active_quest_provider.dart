@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/analytics/analytics_service.dart';
 import '../../data/datasources/local/attempt_dao.dart';
 import '../../data/datasources/local/path_point_dao.dart';
 import '../../data/repositories/attempt_repository_impl.dart';
@@ -179,6 +180,9 @@ class ActiveQuestNotifier extends _$ActiveQuestNotifier {
   }
 
   void _initGameplay(Quest quest, QuestAttempt attempt) {
+    // Track quest started
+    AnalyticsService.questStarted(questId: quest.id);
+
     final gpsService = ref.read(gpsServiceProvider);
 
     _gameManager = GameStateManager(
@@ -257,8 +261,15 @@ class ActiveQuestNotifier extends _$ActiveQuestNotifier {
 
     result.fold(
       (failure) => state = AsyncData(current.copyWith(error: failure.message)),
-      (updatedAttempt) =>
-          state = AsyncData(current.copyWith(attempt: updatedAttempt)),
+      (updatedAttempt) {
+        // Track quest completed
+        AnalyticsService.questCompleted(
+          questId: current.quest.id,
+          durationSeconds: current.elapsed.inSeconds,
+          distanceWalked: updatedAttempt.distanceWalked ?? 0,
+        );
+        state = AsyncData(current.copyWith(attempt: updatedAttempt));
+      },
     );
   }
 
@@ -274,10 +285,17 @@ class ActiveQuestNotifier extends _$ActiveQuestNotifier {
 
     result.fold(
       (failure) => state = AsyncData(current.copyWith(error: failure.message)),
-      (updatedAttempt) => state = AsyncData(current.copyWith(
-        attempt: updatedAttempt,
-        gameplayState: GameplayState.abandoned,
-      )),
+      (updatedAttempt) {
+        // Track quest abandoned
+        AnalyticsService.questAbandoned(
+          questId: current.quest.id,
+          durationSeconds: current.elapsed.inSeconds,
+        );
+        state = AsyncData(current.copyWith(
+          attempt: updatedAttempt,
+          gameplayState: GameplayState.abandoned,
+        ));
+      },
     );
   }
 

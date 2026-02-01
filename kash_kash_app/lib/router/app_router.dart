@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:kash_kash_app/presentation/providers/auth_provider.dart';
 import 'package:kash_kash_app/presentation/screens/active_quest_screen.dart';
 import 'package:kash_kash_app/presentation/screens/login_screen.dart';
+import 'package:kash_kash_app/presentation/screens/quest_history_screen.dart';
 import 'package:kash_kash_app/presentation/screens/quest_list_screen.dart';
 import 'package:kash_kash_app/presentation/widgets/error_boundary.dart';
 
@@ -84,7 +85,7 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.history,
         name: 'history',
-        builder: (context, state) => const _PlaceholderScreen(title: 'History'),
+        builder: (context, state) => const QuestHistoryScreen(),
       ),
       GoRoute(
         path: AppRoutes.adminQuestList,

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/analytics/analytics_service.dart';
 import 'core/constants/env_config.dart';
 import 'core/utils/sentry_service.dart';
 import 'presentation/theme/app_theme.dart';
@@ -12,11 +13,17 @@ Future<void> main() async {
   await runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    // Initialize Sentry
+    // Initialize Sentry for error tracking
     await SentryService.init(
       dsn: EnvConfig.sentryDsn,
       environment: EnvConfig.environment,
     );
+
+    // Initialize Aptabase for privacy-first analytics
+    await AnalyticsService.init(appKey: EnvConfig.aptabaseKey);
+
+    // Track app opened
+    AnalyticsService.appOpened();
 
     runApp(
       const ProviderScope(

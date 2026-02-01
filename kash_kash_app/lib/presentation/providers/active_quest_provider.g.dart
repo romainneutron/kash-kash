@@ -336,7 +336,7 @@ final class ActiveQuestNotifierProvider
 }
 
 String _$activeQuestNotifierHash() =>
-    r'5a139ceb5231ba88437ee3af10658c730cc39074';
+    r'bbbe769302464fcbb5cc56aa4808ec7b41bc9330';
 
 /// Notifier for active quest gameplay.
 ///

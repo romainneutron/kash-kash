@@ -18,10 +18,10 @@
 Initialize Aptabase for privacy-first product analytics.
 
 **Acceptance Criteria**:
-- [ ] Aptabase initialized in main.dart
-- [ ] Analytics service wrapper created
-- [ ] Events tracked: quest_started, quest_completed, quest_abandoned
-- [ ] No user identifiers collected (privacy-first)
+- [x] Aptabase initialized in main.dart
+- [x] Analytics service wrapper created
+- [x] Events tracked: quest_started, quest_completed, quest_abandoned
+- [x] No user identifiers collected (privacy-first)
 
 **Implementation**:
 ```dart
@@ -111,11 +111,11 @@ Future<void> abandon() {
 Complete attempt repository with offline-first approach.
 
 **Acceptance Criteria**:
-- [ ] Create attempt locally
-- [ ] Update attempt locally
-- [ ] Get user's attempt history
-- [ ] Mark for sync
-- [ ] Get unsynced attempts
+- [x] Create attempt locally
+- [x] Update attempt locally
+- [x] Get user's attempt history
+- [x] Mark for sync
+- [x] Get unsynced attempts
 
 **Implementation**:
 ```dart
@@ -178,10 +178,10 @@ class AttemptRepositoryImpl implements IAttemptRepository {
 Riverpod provider for quest history screen.
 
 **Acceptance Criteria**:
-- [ ] List past attempts
-- [ ] Filter by status (all, completed, abandoned)
-- [ ] Include quest details
-- [ ] Sort by date descending
+- [x] List past attempts
+- [x] Filter by status (all, completed, abandoned)
+- [x] Include quest details
+- [x] Sort by date descending
 
 **Implementation**:
 ```dart
@@ -244,11 +244,11 @@ class QuestAttemptWithQuest {
 Build quest history screen with filtering.
 
 **Acceptance Criteria**:
-- [ ] List of past attempts
-- [ ] Quest title, date, status, duration, distance
-- [ ] Filter chips (All, Completed, Abandoned)
-- [ ] Empty state for new users
-- [ ] Pull to refresh
+- [x] List of past attempts
+- [x] Quest title, date, status, duration, distance
+- [x] Filter chips (All, Completed, Abandoned)
+- [x] Empty state for new users
+- [x] Pull to refresh
 
 **Implementation**:
 ```dart
@@ -398,10 +398,10 @@ class StatusBadge extends StatelessWidget {
 Create endpoints for attempt sync.
 
 **Acceptance Criteria**:
-- [ ] POST `/api/attempts` creates attempt
-- [ ] PUT `/api/attempts/{id}` updates attempt
-- [ ] POST `/api/attempts/{id}/path` batch uploads path points
-- [ ] GET `/api/attempts` lists user's attempts
+- [x] POST `/api/attempts` creates attempt (via API Platform)
+- [x] PUT `/api/attempts/{id}` updates attempt (via API Platform)
+- [x] POST `/api/attempts/{id}/path` batch uploads path points
+- [x] GET `/api/attempts` lists user's attempts (via API Platform)
 
 **Implementation**:
 ```php
@@ -449,9 +449,9 @@ public function batchPathPoints(
 Add history access from main navigation.
 
 **Acceptance Criteria**:
-- [ ] History icon in quest list app bar
-- [ ] Navigation to history screen
-- [ ] Back navigation works
+- [x] History icon in quest list app bar
+- [x] Navigation to history screen
+- [x] Back navigation works
 
 **Implementation**:
 Update quest list screen app bar:
@@ -484,12 +484,12 @@ AppBar(
 Test attempt repository history and sync marking.
 
 **Acceptance Criteria**:
-- [ ] getHistory returns all user attempts
-- [ ] Results sorted by date descending
-- [ ] Completed and abandoned attempts included
-- [ ] In-progress attempts excluded from history
-- [ ] getUnsyncedAttempts returns only unsynced
-- [ ] Works fully offline with cached data
+- [x] getHistory returns all user attempts
+- [x] Results sorted by date descending
+- [x] Completed and abandoned attempts included
+- [x] In-progress attempts excluded from history
+- [x] getUnsyncedAttempts returns only unsynced
+- [x] Works fully offline with cached data
 
 **Test file**: `test/unit/data/repositories/attempt_repository_test.dart`
 
@@ -503,11 +503,11 @@ Test attempt repository history and sync marking.
 Test Riverpod provider for history state management.
 
 **Acceptance Criteria**:
-- [ ] Default filter is "all"
-- [ ] Filter change triggers rebuild
-- [ ] Completed filter shows only completed
-- [ ] Abandoned filter shows only abandoned
-- [ ] Quest details loaded for each attempt
+- [x] Default filter is "all"
+- [x] Filter change triggers rebuild
+- [x] Completed filter shows only completed
+- [x] Abandoned filter shows only abandoned
+- [x] Quest details loaded for each attempt
 
 **Test file**: `test/unit/presentation/providers/quest_history_provider_test.dart`
 
@@ -521,12 +521,12 @@ Test Riverpod provider for history state management.
 Functional tests for attempt API endpoints.
 
 **Acceptance Criteria**:
-- [ ] POST /api/attempts creates attempt
-- [ ] PUT /api/attempts/{id} updates attempt
-- [ ] GET /api/attempts lists user's attempts
-- [ ] POST /api/attempts/{id}/path batch uploads path points
-- [ ] Cannot access other user's attempts
-- [ ] Validates required fields
+- [x] POST /api/attempts creates attempt
+- [x] PUT /api/attempts/{id} updates attempt
+- [x] GET /api/attempts lists user's attempts
+- [x] POST /api/attempts/{id}/path batch uploads path points
+- [x] Cannot access other user's attempts
+- [x] Validates required fields
 
 **Test file**: `backend/tests/Functional/Controller/AttemptControllerTest.php`
 

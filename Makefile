@@ -142,17 +142,17 @@ ci: ci-flutter ci-backend ## [CI] Run full CI pipeline locally
 # PRE-PUSH CHECK (RUN THIS BEFORE EVERY PUSH)
 # =============================================================================
 
-pre-push: flutter-check ## Run all checks before pushing (requires libsqlite3-dev)
+pre-push: flutter-check-no-sqlite ## Run all checks before pushing (SQLite tests run in CI)
 	@echo ""
 	@echo "==========================================="
 	@echo "✓ Pre-push checks passed - safe to push"
+	@echo "  Note: SQLite DAO tests will run in CI"
 	@echo "==========================================="
 
-pre-push-no-sqlite: flutter-check-no-sqlite ## Run checks without SQLite tests
+pre-push-with-sqlite: flutter-check ## Run checks including SQLite tests (requires libsqlite3-dev)
 	@echo ""
 	@echo "==========================================="
-	@echo "✓ Pre-push checks passed (SQLite tests skipped)"
-	@echo "  Note: SQLite tests will run in CI"
+	@echo "✓ Pre-push checks passed (with SQLite)"
 	@echo "==========================================="
 
 pre-push-full: ci ## Run full CI locally before pushing (requires Docker)

@@ -76,7 +76,13 @@ make backend-check   # Full backend check
 **ALWAYS run before pushing:**
 
 ```bash
-make pre-push  # Runs analyze + test for Flutter
+make pre-push  # Runs analyze + test (SQLite tests run in CI)
+```
+
+**For full testing including SQLite (requires libsqlite3-dev):**
+
+```bash
+make pre-push-with-sqlite  # Includes SQLite DAO tests
 ```
 
 **For backend changes (requires Docker):**

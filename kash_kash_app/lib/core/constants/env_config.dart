@@ -23,4 +23,10 @@ abstract class EnvConfig {
 
   /// Whether we're in development
   static bool get isDevelopment => environment == 'development';
+
+  /// Aptabase key for privacy-first analytics
+  static const aptabaseKey = String.fromEnvironment(
+    'APTABASE_KEY',
+    defaultValue: '',
+  );
 }
