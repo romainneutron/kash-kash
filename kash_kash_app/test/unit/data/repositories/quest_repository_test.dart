@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kash_kash_app/core/errors/failures.dart';
 import 'package:kash_kash_app/data/datasources/local/database.dart' as db;
@@ -65,6 +67,7 @@ void main() {
   setUpAll(() {
     registerFallbackValue(testDriftQuest);
     registerFallbackValue(<db.Quest>[]);
+    registerFallbackValue(<String>[]);
     registerFallbackValue(testQuestModel);
   });
 
@@ -408,6 +411,228 @@ void main() {
           },
           (_) => fail('Expected Left'),
         );
+      });
+    });
+
+    group('getAllQuests', () {
+      test('online: calls batchUpsert with remote data', () async {
+        when(() => mockDao.getAll())
+            .thenAnswer((_) async => [testDriftQuest]);
+        when(() => mockRemoteDataSource.getAllQuests())
+            .thenAnswer((_) async => [testQuestModel]);
+        when(() => mockDao.batchUpsert(any(), markAsSynced: any(named: 'markAsSynced'))).thenAnswer((_) async {});
+        when(() => mockDao.deleteNotIn(any())).thenAnswer((_) async => 0);
+
+        final result = await repository.getAllQuests();
+
+        expect(result.isRight(), true);
+        verify(() => mockDao.batchUpsert(any(), markAsSynced: true)).called(1);
+      });
+
+      test('remote failure with cache: returns cached quests', () async {
+        when(() => mockDao.getAll())
+            .thenAnswer((_) async => [testDriftQuest]);
+        when(() => mockRemoteDataSource.getAllQuests())
+            .thenThrow(Exception('Network error'));
+
+        final result = await repository.getAllQuests();
+
+        expect(result.isRight(), true);
+        result.fold(
+          (failure) => fail('Expected Right, got Left: $failure'),
+          (quests) {
+            expect(quests.length, 1);
+            expect(quests.first.id, 'quest-1');
+          },
+        );
+      });
+
+      test('offline: returns cached quests, never calls remote', () async {
+        isOnlineValue = false;
+        when(() => mockDao.getAll())
+            .thenAnswer((_) async => [testDriftQuest]);
+
+        final result = await repository.getAllQuests();
+
+        expect(result.isRight(), true);
+        result.fold(
+          (failure) => fail('Expected Right, got Left: $failure'),
+          (quests) {
+            expect(quests.length, 1);
+          },
+        );
+        verifyNever(() => mockRemoteDataSource.getAllQuests());
+      });
+
+      test('online with empty remote: deletes cached quests not on server',
+          () async {
+        var getCallCount = 0;
+        when(() => mockDao.getAll()).thenAnswer((_) async {
+          getCallCount++;
+          // First call returns cached, second (after deleteNotIn) returns empty
+          return getCallCount == 1 ? [testDriftQuest] : [];
+        });
+        when(() => mockRemoteDataSource.getAllQuests())
+            .thenAnswer((_) async => []);
+        when(() => mockDao.batchUpsert(any(),
+                markAsSynced: any(named: 'markAsSynced')))
+            .thenAnswer((_) async {});
+        when(() => mockDao.deleteNotIn(any())).thenAnswer((_) async => 1);
+
+        final result = await repository.getAllQuests();
+
+        expect(result.isRight(), true);
+        result.fold(
+          (failure) => fail('Expected Right'),
+          (quests) => expect(quests, isEmpty),
+        );
+        // deleteNotIn is called with empty list, removing all local quests
+        verify(() => mockDao.deleteNotIn([])).called(1);
+      });
+
+      test('online: deletes local quests not present in remote response',
+          () async {
+        when(() => mockDao.getAll())
+            .thenAnswer((_) async => [testDriftQuest]);
+        when(() => mockRemoteDataSource.getAllQuests())
+            .thenAnswer((_) async => [testQuestModel]);
+        when(() => mockDao.batchUpsert(any(),
+                markAsSynced: any(named: 'markAsSynced')))
+            .thenAnswer((_) async {});
+        when(() => mockDao.deleteNotIn(any())).thenAnswer((_) async => 0);
+
+        await repository.getAllQuests();
+
+        verify(() => mockDao.deleteNotIn(['quest-1'])).called(1);
+      });
+    });
+
+    group('publishQuest', () {
+      test('online success: publishes and caches quest', () async {
+        final publishedModel = QuestModel(
+          id: 'quest-1',
+          title: 'Test Quest',
+          description: 'A test quest',
+          latitude: 48.8566,
+          longitude: 2.3522,
+          radiusMeters: 5.0,
+          createdBy: 'user-1',
+          published: true,
+          difficulty: 'medium',
+          locationType: 'park',
+          createdAt: now,
+          updatedAt: now,
+        );
+
+        when(() => mockRemoteDataSource.publishQuest('quest-1'))
+            .thenAnswer((_) async => publishedModel);
+        when(() => mockDao.upsert(any())).thenAnswer((_) async {});
+
+        final result = await repository.publishQuest('quest-1');
+
+        expect(result.isRight(), true);
+        verify(() => mockRemoteDataSource.publishQuest('quest-1')).called(1);
+        verify(() => mockDao.upsert(any())).called(1);
+      });
+
+      test('offline: returns NetworkFailure', () async {
+        isOnlineValue = false;
+
+        final result = await repository.publishQuest('quest-1');
+
+        expect(result.isLeft(), true);
+        result.fold(
+          (failure) => expect(failure, isA<NetworkFailure>()),
+          (_) => fail('Expected Left'),
+        );
+      });
+
+      test('remote error: returns ServerFailure', () async {
+        when(() => mockRemoteDataSource.publishQuest('quest-1'))
+            .thenThrow(Exception('Server error'));
+
+        final result = await repository.publishQuest('quest-1');
+
+        expect(result.isLeft(), true);
+        result.fold(
+          (failure) => expect(failure, isA<ServerFailure>()),
+          (_) => fail('Expected Left'),
+        );
+      });
+    });
+
+    group('unpublishQuest', () {
+      test('online success: unpublishes and caches quest', () async {
+        final unpublishedModel = QuestModel(
+          id: 'quest-1',
+          title: 'Test Quest',
+          description: 'A test quest',
+          latitude: 48.8566,
+          longitude: 2.3522,
+          radiusMeters: 5.0,
+          createdBy: 'user-1',
+          published: false,
+          difficulty: 'medium',
+          locationType: 'park',
+          createdAt: now,
+          updatedAt: now,
+        );
+
+        when(() => mockRemoteDataSource.unpublishQuest('quest-1'))
+            .thenAnswer((_) async => unpublishedModel);
+        when(() => mockDao.upsert(any())).thenAnswer((_) async {});
+
+        final result = await repository.unpublishQuest('quest-1');
+
+        expect(result.isRight(), true);
+        verify(() => mockRemoteDataSource.unpublishQuest('quest-1')).called(1);
+        verify(() => mockDao.upsert(any())).called(1);
+      });
+
+      test('offline: returns NetworkFailure', () async {
+        isOnlineValue = false;
+
+        final result = await repository.unpublishQuest('quest-1');
+
+        expect(result.isLeft(), true);
+        result.fold(
+          (failure) => expect(failure, isA<NetworkFailure>()),
+          (_) => fail('Expected Left'),
+        );
+      });
+
+      test('remote error: returns ServerFailure', () async {
+        when(() => mockRemoteDataSource.unpublishQuest('quest-1'))
+            .thenThrow(Exception('Server error'));
+
+        final result = await repository.unpublishQuest('quest-1');
+
+        expect(result.isLeft(), true);
+        result.fold(
+          (failure) => expect(failure, isA<ServerFailure>()),
+          (_) => fail('Expected Left'),
+        );
+      });
+    });
+
+    group('_withOnlineGuard retry', () {
+      test('retries write operation on transient SocketException', () async {
+        var callCount = 0;
+        when(() => mockRemoteDataSource.publishQuest('quest-1')).thenAnswer(
+          (_) async {
+            callCount++;
+            if (callCount == 1) {
+              throw const SocketException('Connection reset');
+            }
+            return testQuestModel;
+          },
+        );
+        when(() => mockDao.upsert(any())).thenAnswer((_) async {});
+
+        final result = await repository.publishQuest('quest-1');
+
+        expect(result.isRight(), true);
+        expect(callCount, 2);
       });
     });
 

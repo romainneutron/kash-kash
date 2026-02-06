@@ -71,6 +71,9 @@ class TestAdminQuestListNotifier extends AdminQuestListNotifier {
   /// Tracks calls to [deleteQuest].
   final List<String> deleteQuestCalls = [];
 
+  /// Tracks calls to [clearError].
+  int clearErrorCalls = 0;
+
   TestAdminQuestListNotifier(this._state);
 
   @override
@@ -85,6 +88,17 @@ class TestAdminQuestListNotifier extends AdminQuestListNotifier {
   Future<void> deleteQuest(String questId) async {
     deleteQuestCalls.add(questId);
   }
+
+  @override
+  void clearError() {
+    clearErrorCalls++;
+  }
+
+  @override
+  void setSearchQuery(String query) {}
+
+  @override
+  Future<void> refresh() async {}
 }
 
 /// Test notifier for admin quest form that returns a fixed async state.
@@ -97,7 +111,8 @@ class TestAdminQuestFormNotifier extends AdminQuestFormNotifier {
   /// Tracks calls to [clearError].
   int clearErrorCalls = 0;
 
-  /// Result to return from [save]. Defaults to a validation failure.
+  /// Result to return from [save]. Defaults to a [Left] validation failure;
+  /// set to `Right(quest)` in tests that expect a successful save.
   Either<Failure, Quest> saveResult =
       const Left(ValidationFailure('test'));
 
@@ -116,6 +131,41 @@ class TestAdminQuestFormNotifier extends AdminQuestFormNotifier {
   void clearError() {
     clearErrorCalls++;
   }
+
+  @override
+  void updateTitle(String title) {}
+
+  @override
+  void updateDescription(String description) {}
+
+  @override
+  void updateDifficulty(QuestDifficulty? difficulty) {}
+
+  @override
+  void updateLocationType(LocationType? locationType) {}
+
+  @override
+  void updateRadius(double radiusMeters) {}
+
+  @override
+  void updateLocation({required double latitude, required double longitude}) {}
+
+  @override
+  void clearLocation() {}
+
+  @override
+  Future<void> useCurrentLocation() async {}
+}
+
+/// Test notifier for admin quest form that throws on build to test error state.
+class TestAdminQuestFormErrorNotifier extends AdminQuestFormNotifier {
+  final String errorMessage;
+
+  TestAdminQuestFormErrorNotifier(this.errorMessage);
+
+  @override
+  FutureOr<AdminQuestFormState> build(String? questId) =>
+      throw Exception(errorMessage);
 }
 
 /// Test notifier for active quest that returns a fixed async state.

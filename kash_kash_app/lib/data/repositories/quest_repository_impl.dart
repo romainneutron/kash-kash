@@ -224,7 +224,11 @@ class QuestRepositoryImpl implements IQuestRepository {
       if (!await _isOnline()) {
         return Left(NetworkFailure('Cannot $action while offline'));
       }
-      return Right(await op());
+      return Right(await _withRetry(op));
+    } on SocketException catch (e) {
+      return Left(NetworkFailure('Failed to $action: $e'));
+    } on TimeoutException catch (e) {
+      return Left(NetworkFailure('Failed to $action: $e'));
     } catch (e) {
       return Left(ServerFailure('Failed to $action: $e'));
     }
@@ -271,10 +275,13 @@ class QuestRepositoryImpl implements IQuestRepository {
           final remoteQuests = await _withRetry(
             () => _remoteDataSource.getAllQuests(),
           );
-          await _questDao.batchUpsert(
-            remoteQuests.map((q) => q.toDrift()).toList(),
-            markAsSynced: true,
-          );
+          final driftQuests = remoteQuests.map((q) => q.toDrift()).toList();
+          await _questDao.batchUpsert(driftQuests, markAsSynced: true);
+          // Remove locally-cached quests that were deleted on the server.
+          // NOTE: This is only called from admin screens (getAllQuests). If it
+          // ever runs concurrently with getPublishedQuests, the deleteNotIn
+          // could remove quests fetched by the other call. Keep admin-only.
+          await _questDao.deleteNotIn(driftQuests.map((q) => q.id).toList());
 
           final freshQuests = await _questDao.getAll();
           return Right(_toDomainList(freshQuests));

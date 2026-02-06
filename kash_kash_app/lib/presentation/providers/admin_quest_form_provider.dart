@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/errors/failures.dart';
+import '../../core/utils/coordinate_validators.dart';
 import '../../domain/entities/quest.dart';
 import 'auth_provider.dart';
 import 'quest_provider.dart';
@@ -33,8 +34,34 @@ class QuestFormData {
     this.longitude,
   });
 
-  bool get isValid => title.trim().isNotEmpty && hasLocation;
+  static const int maxTitleLength = 255;
+
+  bool get hasRequiredFields => title.trim().isNotEmpty && hasLocation;
   bool get hasLocation => latitude != null && longitude != null;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is QuestFormData &&
+        other.title == title &&
+        other.description == description &&
+        other.difficulty == difficulty &&
+        other.locationType == locationType &&
+        other.radiusMeters == radiusMeters &&
+        other.latitude == latitude &&
+        other.longitude == longitude;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        title,
+        description,
+        difficulty,
+        locationType,
+        radiusMeters,
+        latitude,
+        longitude,
+      );
 
   QuestFormData copyWith({
     String? title,
@@ -66,29 +93,50 @@ class AdminQuestFormState {
   final Quest? existingQuest;
   final QuestFormData formData;
   final bool isSaving;
+  final bool isLocating;
   final String? error;
 
   const AdminQuestFormState({
     this.existingQuest,
     this.formData = const QuestFormData(),
     this.isSaving = false,
+    this.isLocating = false,
     this.error,
   });
 
   bool get isEditing => existingQuest != null;
   bool get hasError => error != null;
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AdminQuestFormState &&
+        other.existingQuest == existingQuest &&
+        other.formData == formData &&
+        other.isSaving == isSaving &&
+        other.isLocating == isLocating &&
+        other.error == error;
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(existingQuest, formData, isSaving, isLocating, error);
+
   AdminQuestFormState copyWith({
     Quest? existingQuest,
+    bool clearExistingQuest = false,
     QuestFormData? formData,
     bool? isSaving,
+    bool? isLocating,
     String? error,
     bool clearError = false,
   }) {
     return AdminQuestFormState(
-      existingQuest: existingQuest ?? this.existingQuest,
+      existingQuest:
+          clearExistingQuest ? null : (existingQuest ?? this.existingQuest),
       formData: formData ?? this.formData,
       isSaving: isSaving ?? this.isSaving,
+      isLocating: isLocating ?? this.isLocating,
       error: clearError ? null : (error ?? this.error),
     );
   }
@@ -97,15 +145,28 @@ class AdminQuestFormState {
 /// Notifier for admin quest form (create/edit)
 @riverpod
 class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
+  bool _mounted = true;
+
   AdminQuestFormState? _getCurrentState() {
+    if (!_mounted) return null;
     return switch (state) {
       AsyncData(:final value) => value,
       _ => null,
     };
   }
 
+  void _setStateIfMounted(AsyncData<AdminQuestFormState> newState) {
+    if (_mounted) state = newState;
+  }
+
   @override
   FutureOr<AdminQuestFormState> build(String? questId) async {
+    _mounted = true;
+    ref.onDispose(() => _mounted = false);
+
+    final isAdmin = ref.watch(isAdminProvider);
+    if (!isAdmin) throw const PermissionFailure('Admin access required');
+
     if (questId == null) {
       return const AdminQuestFormState();
     }
@@ -158,9 +219,10 @@ class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
     final current = _getCurrentState();
     if (current == null) return;
     state = AsyncData(current.copyWith(
-      formData: difficulty == null
-          ? current.formData.copyWith(clearDifficulty: true)
-          : current.formData.copyWith(difficulty: difficulty),
+      formData: current.formData.copyWith(
+        difficulty: difficulty,
+        clearDifficulty: difficulty == null,
+      ),
     ));
   }
 
@@ -168,9 +230,10 @@ class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
     final current = _getCurrentState();
     if (current == null) return;
     state = AsyncData(current.copyWith(
-      formData: locationType == null
-          ? current.formData.copyWith(clearLocationType: true)
-          : current.formData.copyWith(locationType: locationType),
+      formData: current.formData.copyWith(
+        locationType: locationType,
+        clearLocationType: locationType == null,
+      ),
     ));
   }
 
@@ -193,8 +256,19 @@ class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
     ));
   }
 
+  void clearLocation() {
+    final current = _getCurrentState();
+    if (current == null) return;
+    state = AsyncData(current.copyWith(
+      formData: current.formData.copyWith(clearLocation: true),
+    ));
+  }
+
   Future<void> useCurrentLocation() async {
-    if (_getCurrentState() == null) return;
+    final current = _getCurrentState();
+    if (current == null || current.isLocating) return;
+
+    state = AsyncData(current.copyWith(isLocating: true));
 
     final gpsService = ref.read(gpsServiceProvider);
     final positionResult = await gpsService.getCurrentPosition();
@@ -204,16 +278,20 @@ class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
 
     positionResult.fold(
       (failure) {
-        state = AsyncData(latest.copyWith(error: failure.message));
+        _setStateIfMounted(AsyncData(latest.copyWith(
+          isLocating: false,
+          error: failure.message,
+        )));
       },
       (position) {
-        state = AsyncData(latest.copyWith(
+        _setStateIfMounted(AsyncData(latest.copyWith(
           formData: latest.formData.copyWith(
             latitude: position.latitude,
             longitude: position.longitude,
           ),
+          isLocating: false,
           clearError: true,
-        ));
+        )));
       },
     );
   }
@@ -224,46 +302,67 @@ class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
       return left(const ServerFailure('Form state not available'));
     }
 
-    if (!current.formData.isValid) {
+    if (!current.formData.hasRequiredFields) {
       state = AsyncData(current.copyWith(
         error: 'Please fill in all required fields',
       ));
       return left(const ValidationFailure('Invalid form data'));
     }
 
+    if (current.formData.title.trim().length > QuestFormData.maxTitleLength) {
+      state = AsyncData(current.copyWith(
+        error: 'Title must be ${QuestFormData.maxTitleLength} characters or less',
+      ));
+      return left(const ValidationFailure('Title too long'));
+    }
+
     state = AsyncData(current.copyWith(isSaving: true, clearError: true));
+
+    // Re-read state after setting isSaving to avoid stale references
+    final saving = _getCurrentState()!;
 
     final repository = ref.read(questRepositoryProvider);
     final currentUser = ref.read(currentUserProvider);
     final now = DateTime.now();
 
-    if (!current.isEditing && currentUser == null) {
-      state = AsyncData(current.copyWith(
+    if (!saving.isEditing && currentUser == null) {
+      state = AsyncData(saving.copyWith(
         isSaving: false,
         error: 'You must be logged in to create a quest',
       ));
       return left(const AuthFailure('User not authenticated'));
     }
 
+    if (!CoordinateValidators.areCoordinatesInRange(
+      saving.formData.latitude!,
+      saving.formData.longitude!,
+    )) {
+      state = AsyncData(saving.copyWith(
+        isSaving: false,
+        error: 'Coordinates are out of range',
+      ));
+      return left(const ValidationFailure('Coordinates are out of range'));
+    }
+
     final quest = Quest(
-      id: current.existingQuest?.id ?? _uuid.v4(),
-      title: current.formData.title.trim(),
-      description: current.formData.description.trim().isEmpty
+      id: saving.existingQuest?.id ?? _uuid.v4(),
+      title: saving.formData.title.trim(),
+      description: saving.formData.description.trim().isEmpty
           ? null
-          : current.formData.description.trim(),
-      latitude: current.formData.latitude!,
-      longitude: current.formData.longitude!,
-      radiusMeters: current.formData.radiusMeters,
-      createdBy: current.existingQuest?.createdBy ?? currentUser!.id,
-      published: current.existingQuest?.published ?? false,
-      difficulty: current.formData.difficulty,
-      locationType: current.formData.locationType,
-      createdAt: current.existingQuest?.createdAt ?? now,
+          : saving.formData.description.trim(),
+      latitude: saving.formData.latitude!,
+      longitude: saving.formData.longitude!,
+      radiusMeters: saving.formData.radiusMeters,
+      createdBy: saving.existingQuest?.createdBy ?? currentUser!.id,
+      published: saving.existingQuest?.published ?? false,
+      difficulty: saving.formData.difficulty,
+      locationType: saving.formData.locationType,
+      createdAt: saving.existingQuest?.createdAt ?? now,
       updatedAt: now,
     );
 
     final Either<Failure, Quest> result;
-    if (current.isEditing) {
+    if (saving.isEditing) {
       result = await repository.updateQuest(quest);
     } else {
       result = await repository.createQuest(quest);
@@ -274,13 +373,13 @@ class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
 
     result.fold(
       (failure) {
-        state = AsyncData(latest.copyWith(
+        _setStateIfMounted(AsyncData(latest.copyWith(
           isSaving: false,
           error: failure.message,
-        ));
+        )));
       },
       (_) {
-        state = AsyncData(latest.copyWith(isSaving: false));
+        _setStateIfMounted(AsyncData(latest.copyWith(isSaving: false)));
       },
     );
 

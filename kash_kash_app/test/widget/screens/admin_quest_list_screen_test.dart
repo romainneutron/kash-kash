@@ -184,6 +184,23 @@ void main() {
       expect(find.text('Network error'), findsOneWidget);
     });
 
+    testWidgets('dismiss error banner calls clearError', (tester) async {
+      final quest = FakeData.createQuest();
+
+      final notifier = await pumpAdminQuestListScreen(
+        tester,
+        adminState: AdminQuestListState(
+          quests: [quest],
+          error: 'Something went wrong',
+        ),
+      );
+
+      await tester.tap(find.text('Dismiss'));
+      await tester.pumpAndSettle();
+
+      expect(notifier.clearErrorCalls, 1);
+    });
+
     testWidgets('search bar is present', (tester) async {
       final quest = FakeData.createQuest();
 

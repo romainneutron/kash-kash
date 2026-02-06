@@ -8,9 +8,9 @@ abstract class QuestEndpoints {
   static const String quests = '/api/quests';
   static const String adminQuests = '/api/admin/quests';
   static const String nearby = '/api/quests/nearby';
-  static String questById(String id) => '/api/quests/$id';
-  static String publish(String id) => '/api/quests/$id/publish';
-  static String unpublish(String id) => '/api/quests/$id/unpublish';
+  static String questById(String id) => '/api/admin/quests/$id';
+  static String publish(String id) => '/api/admin/quests/$id/publish';
+  static String unpublish(String id) => '/api/admin/quests/$id/unpublish';
 }
 
 /// Remote data source for quest operations.
@@ -100,7 +100,7 @@ class QuestRemoteDataSource {
   /// Create a new quest (admin only).
   Future<QuestModel> createQuest(QuestModel quest) async {
     final response = await _apiClient.post<Map<String, dynamic>>(
-      QuestEndpoints.quests,
+      QuestEndpoints.adminQuests,
       data: quest.toJson(),
     );
     return QuestModel.fromJson(_requireData(response.data));

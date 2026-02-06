@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/errors/failures.dart';
+import '../../core/utils/coordinate_validators.dart';
 import '../../domain/entities/quest.dart';
+import '../../router/app_router.dart';
 import '../providers/admin_quest_list_provider.dart';
 import '../widgets/widgets.dart';
 
@@ -16,9 +21,13 @@ class AdminQuestListScreen extends ConsumerStatefulWidget {
 
 class _AdminQuestListScreenState extends ConsumerState<AdminQuestListScreen> {
   final _searchController = TextEditingController();
+  Timer? _debounceTimer;
+  bool _disposed = false;
 
   @override
   void dispose() {
+    _disposed = true;
+    _debounceTimer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -32,13 +41,13 @@ class _AdminQuestListScreenState extends ConsumerState<AdminQuestListScreen> {
         title: const Text('Manage Quests'),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push('/admin/quests/new'),
+        onPressed: () => context.push(AppRoutes.adminQuestCreate),
         child: const Icon(Icons.add),
       ),
       body: asyncState.when(
         loading: () => const _AdminQuestListSkeleton(),
         error: (error, _) => ErrorView(
-          message: error.toString(),
+          message: error is Failure ? error.message : error.toString(),
           onRetry: () =>
               ref.read(adminQuestListProvider.notifier).refresh(),
         ),
@@ -58,7 +67,6 @@ class _AdminQuestListScreenState extends ConsumerState<AdminQuestListScreen> {
 
     return Column(
       children: [
-        // Error banner
         if (state.hasError && state.quests.isNotEmpty)
           MaterialBanner(
             content: Text(state.error!),
@@ -66,13 +74,12 @@ class _AdminQuestListScreenState extends ConsumerState<AdminQuestListScreen> {
               TextButton(
                 onPressed: () => ref
                     .read(adminQuestListProvider.notifier)
-                    .refresh(),
+                    .clearError(),
                 child: const Text('Dismiss'),
               ),
             ],
           ),
 
-        // Search bar
         Padding(
           padding: const EdgeInsets.all(16),
           child: TextField(
@@ -80,7 +87,7 @@ class _AdminQuestListScreenState extends ConsumerState<AdminQuestListScreen> {
             decoration: InputDecoration(
               hintText: 'Search quests...',
               prefixIcon: const Icon(Icons.search),
-              suffixIcon: _searchController.text.isNotEmpty
+              suffixIcon: state.searchQuery.isNotEmpty
                   ? IconButton(
                       icon: const Icon(Icons.clear),
                       onPressed: () {
@@ -94,20 +101,23 @@ class _AdminQuestListScreenState extends ConsumerState<AdminQuestListScreen> {
               border: const OutlineInputBorder(),
             ),
             onChanged: (value) {
-              ref
-                  .read(adminQuestListProvider.notifier)
-                  .setSearchQuery(value);
-              setState(() {}); // Update clear button visibility
+              _debounceTimer?.cancel();
+              final notifier = ref.read(adminQuestListProvider.notifier);
+              _debounceTimer = Timer(
+                const Duration(milliseconds: 300),
+                () {
+                  if (_disposed) return;
+                  notifier.setSearchQuery(value);
+                },
+              );
             },
           ),
         ),
 
-        // Saving indicator
         if (state.isSaving) const LinearProgressIndicator(),
 
-        // Quest list
         Expanded(
-          child: state.isEmpty
+          child: state.isFilteredEmpty
               ? EmptyState(
                   icon: Icons.quiz_outlined,
                   message: state.searchQuery.isNotEmpty
@@ -116,7 +126,7 @@ class _AdminQuestListScreenState extends ConsumerState<AdminQuestListScreen> {
                   actionLabel:
                       state.searchQuery.isEmpty ? 'Create Quest' : null,
                   onAction: state.searchQuery.isEmpty
-                      ? () => context.push('/admin/quests/new')
+                      ? () => context.push(AppRoutes.adminQuestCreate)
                       : null,
                 )
               : RefreshIndicator(
@@ -133,8 +143,9 @@ class _AdminQuestListScreenState extends ConsumerState<AdminQuestListScreen> {
                         onTogglePublished: () => ref
                             .read(adminQuestListProvider.notifier)
                             .togglePublished(quest),
-                        onEdit: () =>
-                            context.push('/admin/quests/${quest.id}'),
+                        onEdit: () => context.push(
+                            AppRoutes.adminQuestEdit
+                                .replaceFirst(':id', quest.id)),
                         onDelete: () =>
                             _showDeleteConfirmation(context, quest),
                       );
@@ -152,7 +163,11 @@ class _AdminQuestListScreenState extends ConsumerState<AdminQuestListScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Quest'),
-        content: Text('Are you sure you want to delete "${quest.title}"?'),
+        content: Text(
+          'Are you sure you want to delete "${quest.title}"?',
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -170,7 +185,7 @@ class _AdminQuestListScreenState extends ConsumerState<AdminQuestListScreen> {
     );
 
     if (confirmed == true && mounted) {
-      ref.read(adminQuestListProvider.notifier).deleteQuest(quest.id);
+      await ref.read(adminQuestListProvider.notifier).deleteQuest(quest.id);
     }
   }
 }
@@ -199,10 +214,8 @@ class _AdminQuestCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header row with status and title
             Row(
               children: [
-                // Published status indicator
                 Semantics(
                   label: quest.published ? 'Published' : 'Unpublished',
                   child: Container(
@@ -228,14 +241,13 @@ class _AdminQuestCard extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            // Subtitle with coordinates and metadata
             Padding(
               padding: const EdgeInsets.only(left: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${quest.latitude.toStringAsFixed(4)}, ${quest.longitude.toStringAsFixed(4)}',
+                    CoordinateValidators.formatLatLng(quest.latitude, quest.longitude),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color:
                               Theme.of(context).colorScheme.onSurfaceVariant,
@@ -260,11 +272,9 @@ class _AdminQuestCard extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            // Action row
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                // Publish toggle
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -279,13 +289,11 @@ class _AdminQuestCard extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
-                // Edit button
                 IconButton(
                   icon: const Icon(Icons.edit),
                   tooltip: 'Edit',
                   onPressed: isSaving ? null : onEdit,
                 ),
-                // Delete button
                 IconButton(
                   icon: const Icon(Icons.delete),
                   tooltip: 'Delete',

@@ -157,7 +157,58 @@ void main() {
     });
   });
 
+  group('AdminQuestFormScreen - Error State', () {
+    testWidgets('shows error text when quest loading fails', (tester) async {
+      final errorNotifier =
+          TestAdminQuestFormErrorNotifier('Quest not found');
+
+      await pumpAdminApp(
+        tester,
+        adminListOverride: () =>
+            TestAdminQuestListNotifier(AdminQuestListState()),
+        adminFormOverride: () => errorNotifier,
+      );
+
+      // Tap FAB to navigate to create form
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Quest not found'), findsOneWidget);
+    });
+  });
+
   group('AdminQuestFormScreen - Edit Mode', () {
+    testWidgets('navigating via edit icon shows Edit Quest title',
+        (tester) async {
+      final quest = FakeData.createQuest(id: 'quest-edit-1', title: 'Editable');
+      final editState = AdminQuestFormState(
+        existingQuest: quest,
+        formData: QuestFormData(
+          title: quest.title,
+          description: quest.description ?? '',
+          difficulty: quest.difficulty,
+          locationType: quest.locationType,
+          radiusMeters: quest.radiusMeters,
+          latitude: quest.latitude,
+          longitude: quest.longitude,
+        ),
+      );
+
+      await pumpAdminApp(
+        tester,
+        adminListOverride: () => TestAdminQuestListNotifier(
+          AdminQuestListState(quests: [quest]),
+        ),
+        adminFormOverride: () => TestAdminQuestFormNotifier(editState),
+      );
+
+      // Tap edit icon on quest card
+      await tester.tap(find.byIcon(Icons.edit));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Edit Quest'), findsOneWidget);
+    });
+
     testWidgets('shows Edit Quest title', (tester) async {
       final quest = FakeData.createQuest(title: 'Existing Quest');
 

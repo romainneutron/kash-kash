@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/errors/failures.dart';
+import '../../core/utils/coordinate_validators.dart';
 import '../../domain/entities/quest.dart';
+import '../../router/app_router.dart';
 import '../providers/admin_quest_form_provider.dart';
+import '../providers/admin_quest_list_provider.dart';
+import '../widgets/widgets.dart';
 
 class AdminQuestFormScreen extends ConsumerStatefulWidget {
   final String? questId;
@@ -17,22 +22,26 @@ class AdminQuestFormScreen extends ConsumerStatefulWidget {
 
 class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _titleController;
-  late final TextEditingController _descriptionController;
-  late final TextEditingController _latitudeController;
-  late final TextEditingController _longitudeController;
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _latitudeController = TextEditingController();
+  final _longitudeController = TextEditingController();
   bool _controllersInitialized = false;
-
-  AdminQuestFormNotifier get _notifier =>
-      ref.read(adminQuestFormProvider(widget.questId).notifier);
+  late AdminQuestFormNotifier _notifier;
 
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController();
-    _descriptionController = TextEditingController();
-    _latitudeController = TextEditingController();
-    _longitudeController = TextEditingController();
+    _notifier = ref.read(adminQuestFormProvider(widget.questId).notifier);
+  }
+
+  @override
+  void didUpdateWidget(AdminQuestFormScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.questId != widget.questId) {
+      _controllersInitialized = false;
+      _notifier = ref.read(adminQuestFormProvider(widget.questId).notifier);
+    }
   }
 
   @override
@@ -63,6 +72,10 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
     final lng = double.tryParse(_longitudeController.text.trim());
     if (lat != null && lng != null) {
       _notifier.updateLocation(latitude: lat, longitude: lng);
+    } else {
+      // Clear location when either field is empty/invalid to prevent
+      // stale coordinates from being retained in provider state.
+      _notifier.clearLocation();
     }
   }
 
@@ -92,8 +105,9 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
       ),
       body: asyncState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(
-          child: Text('Error: $error'),
+        error: (error, _) => ErrorView(
+          message: error is Failure ? error.message : error.toString(),
+          onRetry: () => ref.invalidate(adminQuestFormProvider(widget.questId)),
         ),
         data: (state) {
           _initControllers(state);
@@ -111,7 +125,6 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Error banner
             if (state.hasError)
               MaterialBanner(
                 content: Text(state.error!),
@@ -128,12 +141,10 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
                 ],
               ),
 
-            // Saving indicator
             if (state.isSaving) const LinearProgressIndicator(),
 
             const SizedBox(height: 16),
 
-            // Title field
             TextFormField(
               controller: _titleController,
               maxLength: 255,
@@ -145,6 +156,9 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
                 if (value == null || value.trim().isEmpty) {
                   return 'Title is required';
                 }
+                if (value.trim().length > QuestFormData.maxTitleLength) {
+                  return 'Title must be ${QuestFormData.maxTitleLength} characters or less';
+                }
                 return null;
               },
               onChanged: _notifier.updateTitle,
@@ -152,7 +166,6 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
 
             const SizedBox(height: 16),
 
-            // Description field
             TextFormField(
               controller: _descriptionController,
               maxLength: 2000,
@@ -166,8 +179,8 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
 
             const SizedBox(height: 16),
 
-            // Difficulty dropdown
             DropdownButtonFormField<QuestDifficulty>(
+              key: ValueKey('difficulty_${state.formData.difficulty}'),
               initialValue: state.formData.difficulty,
               decoration: const InputDecoration(
                 labelText: 'Difficulty',
@@ -190,8 +203,8 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
 
             const SizedBox(height: 16),
 
-            // Location type dropdown
             DropdownButtonFormField<LocationType>(
+              key: ValueKey('locationType_${state.formData.locationType}'),
               initialValue: state.formData.locationType,
               decoration: const InputDecoration(
                 labelText: 'Location Type',
@@ -214,7 +227,6 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
 
             const SizedBox(height: 16),
 
-            // Radius slider
             Text(
               'Radius: ${state.formData.radiusMeters.toStringAsFixed(0)} m',
               style: Theme.of(context).textTheme.titleSmall,
@@ -230,14 +242,12 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
 
             const SizedBox(height: 16),
 
-            // Location section
             Text(
               'Location',
               style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(height: 8),
 
-            // Latitude field
             TextFormField(
               controller: _latitudeController,
               decoration: const InputDecoration(
@@ -246,22 +256,12 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
               ),
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true, signed: true),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Latitude is required';
-                }
-                final lat = double.tryParse(value.trim());
-                if (lat == null || lat < -90 || lat > 90) {
-                  return 'Must be between -90 and 90';
-                }
-                return null;
-              },
+              validator: CoordinateValidators.validateLatitude,
               onChanged: (_) => _updateCoordinates(),
             ),
 
             const SizedBox(height: 16),
 
-            // Longitude field
             TextFormField(
               controller: _longitudeController,
               decoration: const InputDecoration(
@@ -270,26 +270,25 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
               ),
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true, signed: true),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Longitude is required';
-                }
-                final lng = double.tryParse(value.trim());
-                if (lng == null || lng < -180 || lng > 180) {
-                  return 'Must be between -180 and 180';
-                }
-                return null;
-              },
+              validator: CoordinateValidators.validateLongitude,
               onChanged: (_) => _updateCoordinates(),
             ),
 
             const SizedBox(height: 16),
 
-            // Use Current Location button
             OutlinedButton.icon(
-              onPressed: state.isSaving ? null : _onUseCurrentLocation,
-              icon: const Icon(Icons.my_location),
-              label: const Text('Use Current Location'),
+              onPressed: state.isSaving || state.isLocating
+                  ? null
+                  : _onUseCurrentLocation,
+              icon: state.isLocating
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.my_location),
+              label: Text(
+                  state.isLocating ? 'Locating...' : 'Use Current Location'),
             ),
 
             const SizedBox(height: 32),
@@ -302,26 +301,24 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
   Future<void> _onUseCurrentLocation() async {
     await _notifier.useCurrentLocation();
 
-    // Update text controllers with new location
-    final asyncFormState =
-        ref.read(adminQuestFormProvider(widget.questId));
-    final formState = switch (asyncFormState) {
-      AsyncData(:final value) => value,
-      _ => null,
-    };
-    if (formState != null && formState.formData.hasLocation) {
-      _latitudeController.text = formState.formData.latitude.toString();
-      _longitudeController.text = formState.formData.longitude.toString();
+    final asyncState = ref.read(adminQuestFormProvider(widget.questId));
+    if (asyncState case AsyncData(:final value)
+        when value.formData.hasLocation) {
+      _latitudeController.text = value.formData.latitude.toString();
+      _longitudeController.text = value.formData.longitude.toString();
     }
   }
 
   Future<void> _onSave() async {
+    // UI-level validation (field format). The provider also validates
+    // required fields and coordinate ranges as defense-in-depth.
     if (!_formKey.currentState!.validate()) return;
 
     final result = await _notifier.save();
 
     if (result.isRight() && mounted) {
-      context.go('/admin/quests');
+      ref.invalidate(adminQuestListProvider);
+      context.go(AppRoutes.adminQuestList);
     }
   }
 }

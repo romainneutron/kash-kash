@@ -55,8 +55,5 @@ Future<void> pumpAdminApp(
   );
   await tester.pumpAndSettle();
   await navigateToAdminPanel(tester);
-  if (!settle) {
-    await tester.pump();
-    await tester.pump();
-  }
+  if (!settle) await tester.pump();
 }

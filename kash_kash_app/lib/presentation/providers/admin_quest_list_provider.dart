@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../core/errors/failures.dart';
 import '../../domain/entities/quest.dart';
+import 'auth_provider.dart';
 import 'quest_provider.dart';
 
 part 'admin_quest_list_provider.g.dart';
@@ -11,23 +14,41 @@ class AdminQuestListState {
   final String searchQuery;
   final bool isSaving;
   final String? error;
-  List<Quest> get filteredQuests => _computeFilteredQuests();
 
-  AdminQuestListState({
+  const AdminQuestListState({
     this.quests = const [],
     this.searchQuery = '',
     this.isSaving = false,
     this.error,
   });
 
-  bool get isEmpty => filteredQuests.isEmpty;
-  bool get hasError => error != null;
-
-  List<Quest> _computeFilteredQuests() {
+  List<Quest> get filteredQuests {
     if (searchQuery.isEmpty) return quests;
     final query = searchQuery.toLowerCase();
     return quests.where((q) => q.title.toLowerCase().contains(query)).toList();
   }
+
+  bool get isFilteredEmpty => filteredQuests.isEmpty;
+  bool get hasNoQuests => quests.isEmpty;
+  bool get hasError => error != null;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AdminQuestListState &&
+        listEquals(other.quests, quests) &&
+        other.searchQuery == searchQuery &&
+        other.isSaving == isSaving &&
+        other.error == error;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        Object.hashAll(quests),
+        searchQuery,
+        isSaving,
+        error,
+      );
 
   AdminQuestListState copyWith({
     List<Quest>? quests,
@@ -48,22 +69,41 @@ class AdminQuestListState {
 /// Notifier for admin quest list
 @riverpod
 class AdminQuestListNotifier extends _$AdminQuestListNotifier {
+  bool _mounted = true;
+
   AdminQuestListState? _getCurrentState() {
+    if (!_mounted) return null;
     return switch (state) {
       AsyncData(:final value) => value,
       _ => null,
     };
   }
 
+  void _setStateIfMounted(AsyncData<AdminQuestListState> newState) {
+    if (_mounted) state = newState;
+  }
+
   @override
   FutureOr<AdminQuestListState> build() async {
+    _mounted = true;
+    ref.onDispose(() => _mounted = false);
+
+    final isAdmin = ref.watch(isAdminProvider);
+    if (!isAdmin) throw const PermissionFailure('Admin access required');
+
     final repository = ref.read(questRepositoryProvider);
     final result = await repository.getAllQuests();
 
     return result.fold(
-      (failure) => AdminQuestListState(error: failure.message),
+      (failure) => throw failure,
       (quests) => AdminQuestListState(quests: quests),
     );
+  }
+
+  void clearError() {
+    final current = _getCurrentState();
+    if (current == null) return;
+    state = AsyncData(current.copyWith(clearError: true));
   }
 
   void setSearchQuery(String query) {
@@ -88,21 +128,20 @@ class AdminQuestListNotifier extends _$AdminQuestListNotifier {
 
     result.fold(
       (failure) {
-        state = AsyncData(latest.copyWith(
+        _setStateIfMounted(AsyncData(latest.copyWith(
           isSaving: false,
           error: failure.message,
-        ));
+        )));
       },
       (updatedQuest) {
-        final updatedQuests = latest.quests.map((q) {
-          if (q.id == quest.id) return updatedQuest;
-          return q;
-        }).toList();
-
-        state = AsyncData(latest.copyWith(
+        final updatedQuests = [
+          for (final q in latest.quests)
+            if (q.id == quest.id) updatedQuest else q,
+        ];
+        _setStateIfMounted(AsyncData(latest.copyWith(
           quests: updatedQuests,
           isSaving: false,
-        ));
+        )));
       },
     );
   }
@@ -121,18 +160,18 @@ class AdminQuestListNotifier extends _$AdminQuestListNotifier {
 
     result.fold(
       (failure) {
-        state = AsyncData(latest.copyWith(
+        _setStateIfMounted(AsyncData(latest.copyWith(
           isSaving: false,
           error: failure.message,
-        ));
+        )));
       },
       (_) {
         final updatedQuests =
             latest.quests.where((q) => q.id != questId).toList();
-        state = AsyncData(latest.copyWith(
+        _setStateIfMounted(AsyncData(latest.copyWith(
           quests: updatedQuests,
           isSaving: false,
-        ));
+        )));
       },
     );
   }

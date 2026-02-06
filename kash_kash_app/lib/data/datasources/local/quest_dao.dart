@@ -93,6 +93,14 @@ class QuestDao extends DatabaseAccessor<AppDatabase> with _$QuestDaoMixin {
     return delete(quests).go();
   }
 
+  /// Delete quests whose IDs are not in the given set.
+  ///
+  /// Used after fetching all quests from the server to remove locally-cached
+  /// quests that have been deleted on the server.
+  Future<int> deleteNotIn(List<String> ids) {
+    return (delete(quests)..where((q) => q.id.isNotIn(ids))).go();
+  }
+
   /// Get quests created by a specific user.
   Future<List<Quest>> getByCreator(String userId) {
     return (select(quests)..where((q) => q.createdBy.equals(userId))).get();
