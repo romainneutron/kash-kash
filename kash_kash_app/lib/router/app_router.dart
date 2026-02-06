@@ -5,6 +5,8 @@ import 'package:kash_kash_app/presentation/providers/auth_provider.dart';
 import 'package:kash_kash_app/presentation/screens/active_quest_screen.dart';
 import 'package:kash_kash_app/presentation/screens/login_screen.dart';
 import 'package:kash_kash_app/presentation/screens/quest_history_screen.dart';
+import 'package:kash_kash_app/presentation/screens/admin_quest_form_screen.dart';
+import 'package:kash_kash_app/presentation/screens/admin_quest_list_screen.dart';
 import 'package:kash_kash_app/presentation/screens/quest_list_screen.dart';
 import 'package:kash_kash_app/presentation/widgets/error_boundary.dart';
 
@@ -101,19 +103,19 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.adminQuestList,
         name: 'adminQuestList',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Admin: Quests'),
+        builder: (context, state) => const AdminQuestListScreen(),
       ),
       GoRoute(
         path: AppRoutes.adminQuestCreate,
         name: 'adminQuestCreate',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Create Quest'),
+        builder: (context, state) => const AdminQuestFormScreen(),
       ),
       GoRoute(
         path: AppRoutes.adminQuestEdit,
         name: 'adminQuestEdit',
         builder: (context, state) {
           final questId = state.pathParameters['id']!;
-          return _PlaceholderScreen(title: 'Edit Quest: $questId');
+          return AdminQuestFormScreen(questId: questId);
         },
       ),
     ],

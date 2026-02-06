@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kash_kash_app/presentation/providers/active_quest_provider.dart';
+import 'package:kash_kash_app/presentation/providers/admin_quest_form_provider.dart';
+import 'package:kash_kash_app/presentation/providers/admin_quest_list_provider.dart';
 import 'package:kash_kash_app/presentation/providers/auth_provider.dart';
 import 'package:kash_kash_app/presentation/providers/quest_history_provider.dart';
 import 'package:kash_kash_app/presentation/providers/quest_provider.dart';
@@ -54,6 +56,26 @@ class TestHistoryFilterNotifier extends HistoryFilterNotifier {
 
   @override
   HistoryFilter build() => _filter;
+}
+
+/// Test notifier for admin quest list that returns a fixed async state.
+class TestAdminQuestListNotifier extends AdminQuestListNotifier {
+  final AdminQuestListState _state;
+
+  TestAdminQuestListNotifier(this._state);
+
+  @override
+  FutureOr<AdminQuestListState> build() => _state;
+}
+
+/// Test notifier for admin quest form that returns a fixed async state.
+class TestAdminQuestFormNotifier extends AdminQuestFormNotifier {
+  final AdminQuestFormState _state;
+
+  TestAdminQuestFormNotifier(this._state);
+
+  @override
+  FutureOr<AdminQuestFormState> build(String? questId) => _state;
 }
 
 /// Test notifier for active quest that returns a fixed async state.
