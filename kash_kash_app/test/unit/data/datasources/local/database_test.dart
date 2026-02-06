@@ -1,8 +1,6 @@
 // Database tests require libsqlite3.so on Linux.
-// CI installs this via: apt-get install libsqlite3-dev
-// Locally: apt-get install libsqlite3-dev OR run with --exclude-tags=sqlite
+// Install with: apt-get install libsqlite3-dev
 @TestOn('vm')
-@Tags(['sqlite'])
 library;
 
 import 'package:drift/drift.dart' hide isNotNull, isNull;

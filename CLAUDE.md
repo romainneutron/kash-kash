@@ -46,7 +46,7 @@ kash-kash/
 
 ```bash
 # Quick reference - run `make help` for full list
-make pre-push        # RUN THIS BEFORE EVERY PUSH (Flutter only)
+make pre-push        # RUN THIS BEFORE EVERY PUSH (requires libsqlite3-dev)
 make pre-push-full   # Full CI locally (requires Docker)
 
 # Flutter
@@ -76,13 +76,7 @@ make backend-check   # Full backend check
 **ALWAYS run before pushing:**
 
 ```bash
-make pre-push  # Runs analyze + test (SQLite tests run in CI)
-```
-
-**For full testing including SQLite (requires libsqlite3-dev):**
-
-```bash
-make pre-push-with-sqlite  # Includes SQLite DAO tests
+make pre-push  # Runs analyze + test (requires libsqlite3-dev)
 ```
 
 **For backend changes (requires Docker):**

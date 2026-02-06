@@ -1,8 +1,10 @@
-import 'package:kash_kash_app/domain/entities/user.dart';
+import 'package:kash_kash_app/data/models/user_model.dart';
+import 'package:kash_kash_app/domain/entities/path_point.dart';
 import 'package:kash_kash_app/domain/entities/quest.dart';
 import 'package:kash_kash_app/domain/entities/quest_attempt.dart';
-import 'package:kash_kash_app/domain/entities/path_point.dart';
-import 'package:kash_kash_app/data/models/user_model.dart';
+import 'package:kash_kash_app/domain/entities/user.dart';
+import 'package:kash_kash_app/presentation/providers/auth_provider.dart';
+import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
 
 /// Test data generators for unit tests
 
@@ -172,4 +174,43 @@ class FakeData {
       'role': role,
     };
   }
+}
+
+/// No-op wakelock implementation for tests.
+class FakeWakelockPlatform extends WakelockPlusPlatformInterface {
+  bool _enabled = false;
+
+  @override
+  Future<void> toggle({required bool enable}) async {
+    _enabled = enable;
+  }
+
+  @override
+  Future<bool> get enabled async => _enabled;
+}
+
+/// Common auth states for testing.
+class TestAuthStates {
+  static const unauthenticated = AuthState(
+    status: AuthStatus.unauthenticated,
+  );
+
+  static final authenticated = AuthState(
+    status: AuthStatus.authenticated,
+    user: FakeData.createUser(),
+  );
+
+  static final authenticatedAdmin = AuthState(
+    status: AuthStatus.authenticated,
+    user: FakeData.createAdminUser(),
+  );
+
+  static const loading = AuthState(
+    status: AuthStatus.loading,
+  );
+
+  static const error = AuthState(
+    status: AuthStatus.error,
+    error: 'Authentication failed',
+  );
 }

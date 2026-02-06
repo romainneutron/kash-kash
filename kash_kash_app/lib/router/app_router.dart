@@ -22,6 +22,33 @@ abstract class AppRoutes {
   static const adminQuestCreate = '/admin/quests/new';
 }
 
+/// Top-level redirect logic shared by the production router and tests.
+String? appRedirect(
+  GoRouterState state, {
+  required bool isAuthenticated,
+  required bool isAdmin,
+}) {
+  final isLoginRoute = state.matchedLocation == AppRoutes.login;
+  final isAdminRoute = state.matchedLocation.startsWith('/admin');
+
+  // If not authenticated and not on login page, redirect to login
+  if (!isAuthenticated && !isLoginRoute) {
+    return AppRoutes.login;
+  }
+
+  // If authenticated and on login page, redirect to quest list
+  if (isAuthenticated && isLoginRoute) {
+    return AppRoutes.questList;
+  }
+
+  // If trying to access admin routes without admin role, redirect to quest list
+  if (isAuthenticated && isAdminRoute && !isAdmin) {
+    return AppRoutes.questList;
+  }
+
+  return null;
+}
+
 /// App router provider
 @riverpod
 GoRouter appRouter(Ref ref) {
@@ -32,27 +59,11 @@ GoRouter appRouter(Ref ref) {
   return GoRouter(
     initialLocation: AppRoutes.questList,
     debugLogDiagnostics: true,
-    redirect: (context, state) {
-      final isLoginRoute = state.matchedLocation == AppRoutes.login;
-      final isAdminRoute = state.matchedLocation.startsWith('/admin');
-
-      // If not authenticated and not on login page, redirect to login
-      if (!isAuthenticated && !isLoginRoute) {
-        return AppRoutes.login;
-      }
-
-      // If authenticated and on login page, redirect to quest list
-      if (isAuthenticated && isLoginRoute) {
-        return AppRoutes.questList;
-      }
-
-      // If trying to access admin routes without admin role, redirect to quest list
-      if (isAdminRoute && !isAdmin) {
-        return AppRoutes.questList;
-      }
-
-      return null;
-    },
+    redirect: (context, state) => appRedirect(
+      state,
+      isAuthenticated: isAuthenticated,
+      isAdmin: isAdmin,
+    ),
     routes: [
       GoRoute(
         path: AppRoutes.login,

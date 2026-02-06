@@ -31,9 +31,6 @@ lint: analyze format ## [Flutter] Run all linting (analyze + format)
 test: ## [Flutter] Run all tests (requires libsqlite3-dev)
 	cd $(APP_DIR) && $(FLUTTER) test
 
-test-no-sqlite: ## [Flutter] Run tests excluding SQLite DAO tests
-	cd $(APP_DIR) && $(FLUTTER) test --exclude-tags=sqlite
-
 test-coverage: ## [Flutter] Run tests with coverage
 	cd $(APP_DIR) && $(FLUTTER) test --coverage
 	@echo "Coverage report at $(APP_DIR)/coverage/lcov.info"
@@ -83,8 +80,6 @@ upgrade-major: ## [Flutter] Upgrade to major versions
 	cd $(APP_DIR) && $(FLUTTER) pub upgrade --major-versions
 
 flutter-check: analyze test ## [Flutter] Run full check (analyze + test) - requires libsqlite3-dev
-
-flutter-check-no-sqlite: analyze test-no-sqlite ## [Flutter] Run check without SQLite tests
 
 # =============================================================================
 # SYMFONY/BACKEND COMMANDS
@@ -142,17 +137,10 @@ ci: ci-flutter ci-backend ## [CI] Run full CI pipeline locally
 # PRE-PUSH CHECK (RUN THIS BEFORE EVERY PUSH)
 # =============================================================================
 
-pre-push: flutter-check-no-sqlite ## Run all checks before pushing (SQLite tests run in CI)
+pre-push: flutter-check ## Run all checks before pushing
 	@echo ""
 	@echo "==========================================="
 	@echo "✓ Pre-push checks passed - safe to push"
-	@echo "  Note: SQLite DAO tests will run in CI"
-	@echo "==========================================="
-
-pre-push-with-sqlite: flutter-check ## Run checks including SQLite tests (requires libsqlite3-dev)
-	@echo ""
-	@echo "==========================================="
-	@echo "✓ Pre-push checks passed (with SQLite)"
 	@echo "==========================================="
 
 pre-push-full: ci ## Run full CI locally before pushing (requires Docker)

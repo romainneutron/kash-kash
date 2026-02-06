@@ -55,9 +55,6 @@ make run
 
 # Run tests (requires libsqlite3-dev)
 make test
-
-# Run tests without SQLite DAO tests
-make test-no-sqlite
 ```
 
 ## Development
@@ -65,9 +62,6 @@ make test-no-sqlite
 ```bash
 # Pre-push check (run before every push)
 make pre-push
-
-# Pre-push without SQLite tests (if libsqlite3-dev not installed)
-make pre-push-no-sqlite
 
 # Start backend
 make backend-up
