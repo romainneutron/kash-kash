@@ -82,6 +82,12 @@ abstract class IQuestRepository {
   /// Get all quests (admin only, including unpublished)
   Future<Either<Failure, List<Quest>>> getAllQuests();
 
+  /// Publish a quest (admin only)
+  Future<Either<Failure, Quest>> publishQuest(String id);
+
+  /// Unpublish a quest (admin only)
+  Future<Either<Failure, Quest>> unpublishQuest(String id);
+
   /// Batch upsert quests from sync
   Future<Either<Failure, Unit>> batchUpsert(List<Quest> quests);
 }

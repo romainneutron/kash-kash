@@ -14,10 +14,13 @@ import '../../helpers/test_notifiers.dart';
 
 void main() {
   /// Pump the app and navigate to admin quest list screen.
-  Future<void> pumpAdminQuestListScreen(
+  /// Returns the test notifier for interaction assertions.
+  Future<TestAdminQuestListNotifier> pumpAdminQuestListScreen(
     WidgetTester tester, {
     required AdminQuestListState adminState,
   }) async {
+    final notifier = TestAdminQuestListNotifier(adminState);
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -33,7 +36,7 @@ void main() {
             () => TestDistanceFilterNotifier(DistanceFilter.km5),
           ),
           adminQuestListProvider.overrideWith(
-            () => TestAdminQuestListNotifier(adminState),
+            () => notifier,
           ),
         ],
         child: const KashKashApp(),
@@ -46,13 +49,15 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Admin Panel'));
     await tester.pumpAndSettle();
+
+    return notifier;
   }
 
   group('AdminQuestListScreen', () {
     testWidgets('empty state shows message', (tester) async {
       await pumpAdminQuestListScreen(
         tester,
-        adminState: const AdminQuestListState(),
+        adminState: AdminQuestListState(),
       );
 
       expect(
@@ -114,6 +119,21 @@ void main() {
       expect(switchWidget.value, isFalse);
     });
 
+    testWidgets('toggle switch calls togglePublished', (tester) async {
+      final quest = FakeData.createQuest(published: false);
+
+      final notifier = await pumpAdminQuestListScreen(
+        tester,
+        adminState: AdminQuestListState(quests: [quest]),
+      );
+
+      await tester.tap(find.byType(Switch));
+      await tester.pumpAndSettle();
+
+      expect(notifier.togglePublishedCalls, hasLength(1));
+      expect(notifier.togglePublishedCalls.first.id, quest.id);
+    });
+
     testWidgets('delete button shows confirmation dialog', (tester) async {
       final quest = FakeData.createQuest(title: 'Delete Me');
 
@@ -134,10 +154,47 @@ void main() {
       expect(find.text('Delete'), findsOneWidget);
     });
 
+    testWidgets('confirming delete calls deleteQuest', (tester) async {
+      final quest = FakeData.createQuest(title: 'Delete Me');
+
+      final notifier = await pumpAdminQuestListScreen(
+        tester,
+        adminState: AdminQuestListState(quests: [quest]),
+      );
+
+      await tester.tap(find.byIcon(Icons.delete));
+      await tester.pumpAndSettle();
+
+      // Tap the Delete button in the dialog
+      await tester.tap(find.widgetWithText(TextButton, 'Delete'));
+      await tester.pumpAndSettle();
+
+      expect(notifier.deleteQuestCalls, hasLength(1));
+      expect(notifier.deleteQuestCalls.first, quest.id);
+    });
+
+    testWidgets('cancelling delete does not call deleteQuest', (tester) async {
+      final quest = FakeData.createQuest(title: 'Keep Me');
+
+      final notifier = await pumpAdminQuestListScreen(
+        tester,
+        adminState: AdminQuestListState(quests: [quest]),
+      );
+
+      await tester.tap(find.byIcon(Icons.delete));
+      await tester.pumpAndSettle();
+
+      // Tap Cancel in the dialog
+      await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(notifier.deleteQuestCalls, isEmpty);
+    });
+
     testWidgets('FAB is present for creating quest', (tester) async {
       await pumpAdminQuestListScreen(
         tester,
-        adminState: const AdminQuestListState(),
+        adminState: AdminQuestListState(),
       );
 
       expect(find.byType(FloatingActionButton), findsOneWidget);
@@ -147,7 +204,7 @@ void main() {
     testWidgets('error state shows ErrorView with retry', (tester) async {
       await pumpAdminQuestListScreen(
         tester,
-        adminState: const AdminQuestListState(error: 'Network error'),
+        adminState: AdminQuestListState(error: 'Network error'),
       );
 
       expect(find.byType(ErrorView), findsOneWidget);

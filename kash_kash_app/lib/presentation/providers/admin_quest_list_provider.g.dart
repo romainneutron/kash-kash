@@ -38,7 +38,7 @@ final class AdminQuestListNotifierProvider
 }
 
 String _$adminQuestListNotifierHash() =>
-    r'0aac17225777a5a905ec27114bb00344981a812c';
+    r'4b4d5a34c5d23dd8cdc25f1ee173215d4b305794';
 
 /// Notifier for admin quest list
 

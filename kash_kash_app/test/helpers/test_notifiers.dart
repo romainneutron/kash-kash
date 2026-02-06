@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:kash_kash_app/core/errors/failures.dart';
+import 'package:kash_kash_app/domain/entities/quest.dart';
 import 'package:kash_kash_app/presentation/providers/active_quest_provider.dart';
 import 'package:kash_kash_app/presentation/providers/admin_quest_form_provider.dart';
 import 'package:kash_kash_app/presentation/providers/admin_quest_list_provider.dart';
@@ -62,20 +65,57 @@ class TestHistoryFilterNotifier extends HistoryFilterNotifier {
 class TestAdminQuestListNotifier extends AdminQuestListNotifier {
   final AdminQuestListState _state;
 
+  /// Tracks calls to [togglePublished].
+  final List<Quest> togglePublishedCalls = [];
+
+  /// Tracks calls to [deleteQuest].
+  final List<String> deleteQuestCalls = [];
+
   TestAdminQuestListNotifier(this._state);
 
   @override
   FutureOr<AdminQuestListState> build() => _state;
+
+  @override
+  Future<void> togglePublished(Quest quest) async {
+    togglePublishedCalls.add(quest);
+  }
+
+  @override
+  Future<void> deleteQuest(String questId) async {
+    deleteQuestCalls.add(questId);
+  }
 }
 
 /// Test notifier for admin quest form that returns a fixed async state.
 class TestAdminQuestFormNotifier extends AdminQuestFormNotifier {
   final AdminQuestFormState _state;
 
+  /// Tracks calls to [save].
+  int saveCalls = 0;
+
+  /// Tracks calls to [clearError].
+  int clearErrorCalls = 0;
+
+  /// Result to return from [save]. Defaults to a validation failure.
+  Either<Failure, Quest> saveResult =
+      const Left(ValidationFailure('test'));
+
   TestAdminQuestFormNotifier(this._state);
 
   @override
   FutureOr<AdminQuestFormState> build(String? questId) => _state;
+
+  @override
+  Future<Either<Failure, Quest>> save() async {
+    saveCalls++;
+    return saveResult;
+  }
+
+  @override
+  void clearError() {
+    clearErrorCalls++;
+  }
 }
 
 /// Test notifier for active quest that returns a fixed async state.

@@ -23,6 +23,9 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
   late final TextEditingController _longitudeController;
   bool _controllersInitialized = false;
 
+  AdminQuestFormNotifier get _notifier =>
+      ref.read(adminQuestFormProvider(widget.questId).notifier);
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +55,14 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
     }
     if (formState.formData.longitude != null) {
       _longitudeController.text = formState.formData.longitude.toString();
+    }
+  }
+
+  void _updateCoordinates() {
+    final lat = double.tryParse(_latitudeController.text.trim());
+    final lng = double.tryParse(_longitudeController.text.trim());
+    if (lat != null && lng != null) {
+      _notifier.updateLocation(latitude: lat, longitude: lng);
     }
   }
 
@@ -93,9 +104,6 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
   }
 
   Widget _buildForm(BuildContext context, AdminQuestFormState state) {
-    final notifier =
-        ref.read(adminQuestFormProvider(widget.questId).notifier);
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Form(
@@ -114,9 +122,7 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
                 ),
                 actions: [
                   TextButton(
-                    onPressed: () => notifier.updateTitle(
-                      _titleController.text,
-                    ),
+                    onPressed: _notifier.clearError,
                     child: const Text('Dismiss'),
                   ),
                 ],
@@ -130,6 +136,7 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
             // Title field
             TextFormField(
               controller: _titleController,
+              maxLength: 255,
               decoration: const InputDecoration(
                 labelText: 'Title *',
                 border: OutlineInputBorder(),
@@ -140,7 +147,7 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
                 }
                 return null;
               },
-              onChanged: notifier.updateTitle,
+              onChanged: _notifier.updateTitle,
             ),
 
             const SizedBox(height: 16),
@@ -148,12 +155,13 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
             // Description field
             TextFormField(
               controller: _descriptionController,
+              maxLength: 2000,
               decoration: const InputDecoration(
                 labelText: 'Description',
                 border: OutlineInputBorder(),
               ),
               maxLines: 3,
-              onChanged: notifier.updateDescription,
+              onChanged: _notifier.updateDescription,
             ),
 
             const SizedBox(height: 16),
@@ -177,7 +185,7 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
                   ),
                 ),
               ],
-              onChanged: notifier.updateDifficulty,
+              onChanged: _notifier.updateDifficulty,
             ),
 
             const SizedBox(height: 16),
@@ -201,7 +209,7 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
                   ),
                 ),
               ],
-              onChanged: notifier.updateLocationType,
+              onChanged: _notifier.updateLocationType,
             ),
 
             const SizedBox(height: 16),
@@ -217,7 +225,7 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
               max: 20,
               divisions: 19,
               label: '${state.formData.radiusMeters.toStringAsFixed(0)} m',
-              onChanged: notifier.updateRadius,
+              onChanged: _notifier.updateRadius,
             ),
 
             const SizedBox(height: 16),
@@ -248,17 +256,7 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
                 }
                 return null;
               },
-              onChanged: (value) {
-                final lat = double.tryParse(value.trim());
-                final lng =
-                    double.tryParse(_longitudeController.text.trim());
-                if (lat != null && lng != null) {
-                  notifier.updateLocation(
-                    latitude: lat,
-                    longitude: lng,
-                  );
-                }
-              },
+              onChanged: (_) => _updateCoordinates(),
             ),
 
             const SizedBox(height: 16),
@@ -282,17 +280,7 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
                 }
                 return null;
               },
-              onChanged: (value) {
-                final lng = double.tryParse(value.trim());
-                final lat =
-                    double.tryParse(_latitudeController.text.trim());
-                if (lat != null && lng != null) {
-                  notifier.updateLocation(
-                    latitude: lat,
-                    longitude: lng,
-                  );
-                }
-              },
+              onChanged: (_) => _updateCoordinates(),
             ),
 
             const SizedBox(height: 16),
@@ -312,9 +300,7 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
   }
 
   Future<void> _onUseCurrentLocation() async {
-    final notifier =
-        ref.read(adminQuestFormProvider(widget.questId).notifier);
-    await notifier.useCurrentLocation();
+    await _notifier.useCurrentLocation();
 
     // Update text controllers with new location
     final asyncFormState =
@@ -332,17 +318,10 @@ class _AdminQuestFormScreenState extends ConsumerState<AdminQuestFormScreen> {
   Future<void> _onSave() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final notifier =
-        ref.read(adminQuestFormProvider(widget.questId).notifier);
-    final result = await notifier.save();
+    final result = await _notifier.save();
 
-    result.fold(
-      (_) {}, // Error is shown via state.error in the banner
-      (_) {
-        if (mounted) {
-          context.go('/admin/quests');
-        }
-      },
-    );
+    if (result.isRight() && mounted) {
+      context.go('/admin/quests');
+    }
   }
 }

@@ -241,13 +241,11 @@ class _AdminQuestCard extends StatelessWidget {
                   if (quest.difficulty != null || quest.locationType != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
-                      child: Row(
+                      child: Wrap(
+                        spacing: 8,
                         children: [
                           if (quest.difficulty != null)
                             _buildChip(context, quest.difficulty!.name),
-                          if (quest.difficulty != null &&
-                              quest.locationType != null)
-                            const SizedBox(width: 8),
                           if (quest.locationType != null)
                             _buildChip(context, quest.locationType!.name),
                         ],

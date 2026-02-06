@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../core/errors/failures.dart';
 import '../../domain/entities/quest.dart';
+import 'auth_provider.dart';
 import 'quest_provider.dart';
 
 part 'admin_quest_form_provider.g.dart';
@@ -130,6 +131,12 @@ class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
     );
   }
 
+  void clearError() {
+    final current = _getCurrentState();
+    if (current == null) return;
+    state = AsyncData(current.copyWith(clearError: true));
+  }
+
   void updateTitle(String title) {
     final current = _getCurrentState();
     if (current == null) return;
@@ -187,19 +194,21 @@ class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
   }
 
   Future<void> useCurrentLocation() async {
-    final current = _getCurrentState();
-    if (current == null) return;
+    if (_getCurrentState() == null) return;
 
     final gpsService = ref.read(gpsServiceProvider);
     final positionResult = await gpsService.getCurrentPosition();
 
+    final latest = _getCurrentState();
+    if (latest == null) return;
+
     positionResult.fold(
       (failure) {
-        state = AsyncData(current.copyWith(error: failure.message));
+        state = AsyncData(latest.copyWith(error: failure.message));
       },
       (position) {
-        state = AsyncData(current.copyWith(
-          formData: current.formData.copyWith(
+        state = AsyncData(latest.copyWith(
+          formData: latest.formData.copyWith(
             latitude: position.latitude,
             longitude: position.longitude,
           ),
@@ -225,6 +234,7 @@ class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
     state = AsyncData(current.copyWith(isSaving: true, clearError: true));
 
     final repository = ref.read(questRepositoryProvider);
+    final currentUser = ref.read(currentUserProvider);
     final now = DateTime.now();
 
     final quest = Quest(
@@ -236,7 +246,7 @@ class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
       latitude: current.formData.latitude!,
       longitude: current.formData.longitude!,
       radiusMeters: current.formData.radiusMeters,
-      createdBy: current.existingQuest?.createdBy ?? '',
+      createdBy: current.existingQuest?.createdBy ?? currentUser?.id ?? '',
       published: current.existingQuest?.published ?? false,
       difficulty: current.formData.difficulty,
       locationType: current.formData.locationType,
@@ -251,15 +261,18 @@ class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
       result = await repository.createQuest(quest);
     }
 
+    final latest = _getCurrentState();
+    if (latest == null) return result;
+
     result.fold(
       (failure) {
-        state = AsyncData(current.copyWith(
+        state = AsyncData(latest.copyWith(
           isSaving: false,
           error: failure.message,
         ));
       },
       (_) {
-        state = AsyncData(current.copyWith(isSaving: false));
+        state = AsyncData(latest.copyWith(isSaving: false));
       },
     );
 

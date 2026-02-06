@@ -14,10 +14,13 @@ import '../../helpers/test_notifiers.dart';
 
 void main() {
   /// Pump the app and navigate to the quest form via admin list > FAB.
-  Future<void> pumpCreateForm(
+  /// Returns the test form notifier for interaction assertions.
+  Future<TestAdminQuestFormNotifier> pumpCreateForm(
     WidgetTester tester, {
     required AdminQuestFormState formState,
   }) async {
+    final formNotifier = TestAdminQuestFormNotifier(formState);
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -33,10 +36,10 @@ void main() {
             () => TestDistanceFilterNotifier(DistanceFilter.km5),
           ),
           adminQuestListProvider.overrideWith(
-            () => TestAdminQuestListNotifier(const AdminQuestListState()),
+            () => TestAdminQuestListNotifier(AdminQuestListState()),
           ),
           adminQuestFormProvider.overrideWith(
-            () => TestAdminQuestFormNotifier(formState),
+            () => formNotifier,
           ),
         ],
         child: const KashKashApp(),
@@ -53,6 +56,8 @@ void main() {
     // Tap FAB to navigate to create form
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
+
+    return formNotifier;
   }
 
   group('AdminQuestFormScreen - Create Mode', () {
@@ -113,6 +118,54 @@ void main() {
       );
     });
 
+    testWidgets('dismiss error banner calls clearError', (tester) async {
+      final notifier = await pumpCreateForm(
+        tester,
+        formState: const AdminQuestFormState(
+          error: 'Some error',
+        ),
+      );
+
+      await tester.tap(find.text('Dismiss'));
+      await tester.pumpAndSettle();
+
+      expect(notifier.clearErrorCalls, 1);
+    });
+
+    testWidgets('tapping Save with empty title shows validation error',
+        (tester) async {
+      await pumpCreateForm(
+        tester,
+        formState: const AdminQuestFormState(),
+      );
+
+      // Tap Save without filling in fields
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Title is required'), findsOneWidget);
+    });
+
+    testWidgets('tapping Save with valid form calls save', (tester) async {
+      final notifier = await pumpCreateForm(
+        tester,
+        formState: const AdminQuestFormState(
+          formData: QuestFormData(
+            title: 'Test',
+            latitude: 48.0,
+            longitude: 2.0,
+          ),
+        ),
+      );
+
+      // Title and coordinates are pre-filled via _initControllers,
+      // so form validation should pass.
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      expect(notifier.saveCalls, 1);
+    });
+
     testWidgets('shows saving indicator', (tester) async {
       // Can't use pumpCreateForm here because pumpAndSettle times out
       // with LinearProgressIndicator animation. Navigate manually with pump().
@@ -131,7 +184,7 @@ void main() {
               () => TestDistanceFilterNotifier(DistanceFilter.km5),
             ),
             adminQuestListProvider.overrideWith(
-              () => TestAdminQuestListNotifier(const AdminQuestListState()),
+              () => TestAdminQuestListNotifier(AdminQuestListState()),
             ),
             adminQuestFormProvider.overrideWith(
               () => TestAdminQuestFormNotifier(

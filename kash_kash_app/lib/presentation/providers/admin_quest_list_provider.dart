@@ -11,8 +11,9 @@ class AdminQuestListState {
   final String searchQuery;
   final bool isSaving;
   final String? error;
+  late final List<Quest> filteredQuests = _computeFilteredQuests();
 
-  const AdminQuestListState({
+  AdminQuestListState({
     this.quests = const [],
     this.searchQuery = '',
     this.isSaving = false,
@@ -22,7 +23,7 @@ class AdminQuestListState {
   bool get isEmpty => filteredQuests.isEmpty;
   bool get hasError => error != null;
 
-  List<Quest> get filteredQuests {
+  List<Quest> _computeFilteredQuests() {
     if (searchQuery.isEmpty) return quests;
     final query = searchQuery.toLowerCase();
     return quests.where((q) => q.title.toLowerCase().contains(query)).toList();
@@ -77,32 +78,30 @@ class AdminQuestListNotifier extends _$AdminQuestListNotifier {
 
     state = AsyncData(current.copyWith(isSaving: true, clearError: true));
 
-    try {
-      final remoteDataSource = ref.read(questRemoteDataSourceProvider);
-      if (quest.published) {
-        await remoteDataSource.unpublishQuest(quest.id);
-      } else {
-        await remoteDataSource.publishQuest(quest.id);
-      }
+    final repository = ref.read(questRepositoryProvider);
+    final result = quest.published
+        ? await repository.unpublishQuest(quest.id)
+        : await repository.publishQuest(quest.id);
 
-      // Update local state
-      final updatedQuests = current.quests.map((q) {
-        if (q.id == quest.id) {
-          return q.copyWith(published: !quest.published);
-        }
-        return q;
-      }).toList();
+    result.fold(
+      (failure) {
+        state = AsyncData(current.copyWith(
+          isSaving: false,
+          error: failure.message,
+        ));
+      },
+      (updatedQuest) {
+        final updatedQuests = current.quests.map((q) {
+          if (q.id == quest.id) return updatedQuest;
+          return q;
+        }).toList();
 
-      state = AsyncData(current.copyWith(
-        quests: updatedQuests,
-        isSaving: false,
-      ));
-    } catch (e) {
-      state = AsyncData(current.copyWith(
-        isSaving: false,
-        error: 'Failed to update publish status: $e',
-      ));
-    }
+        state = AsyncData(current.copyWith(
+          quests: updatedQuests,
+          isSaving: false,
+        ));
+      },
+    );
   }
 
   Future<void> deleteQuest(String questId) async {
@@ -133,7 +132,7 @@ class AdminQuestListNotifier extends _$AdminQuestListNotifier {
   }
 
   Future<void> refresh() async {
-    state = const AsyncLoading();
     ref.invalidateSelf();
+    await future;
   }
 }

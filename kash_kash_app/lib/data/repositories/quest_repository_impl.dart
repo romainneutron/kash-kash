@@ -297,6 +297,38 @@ class QuestRepositoryImpl implements IQuestRepository {
   }
 
   @override
+  Future<Either<Failure, domain.Quest>> publishQuest(String id) async {
+    try {
+      if (!await _isOnline()) {
+        return const Left(NetworkFailure('Cannot publish quest while offline'));
+      }
+
+      final updated = await _remoteDataSource.publishQuest(id);
+      await _questDao.upsert(updated.toDrift());
+
+      return Right(updated.toDomain());
+    } catch (e) {
+      return Left(ServerFailure('Failed to publish quest: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, domain.Quest>> unpublishQuest(String id) async {
+    try {
+      if (!await _isOnline()) {
+        return const Left(NetworkFailure('Cannot unpublish quest while offline'));
+      }
+
+      final updated = await _remoteDataSource.unpublishQuest(id);
+      await _questDao.upsert(updated.toDrift());
+
+      return Right(updated.toDomain());
+    } catch (e) {
+      return Left(ServerFailure('Failed to unpublish quest: $e'));
+    }
+  }
+
+  @override
   Future<Either<Failure, Unit>> batchUpsert(List<domain.Quest> quests) async {
     try {
       final driftQuests = quests

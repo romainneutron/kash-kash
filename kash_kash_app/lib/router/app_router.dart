@@ -103,19 +103,25 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.adminQuestList,
         name: 'adminQuestList',
-        builder: (context, state) => const AdminQuestListScreen(),
+        builder: (context, state) => const ErrorBoundary(
+          child: AdminQuestListScreen(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.adminQuestCreate,
         name: 'adminQuestCreate',
-        builder: (context, state) => const AdminQuestFormScreen(),
+        builder: (context, state) => const ErrorBoundary(
+          child: AdminQuestFormScreen(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.adminQuestEdit,
         name: 'adminQuestEdit',
         builder: (context, state) {
           final questId = state.pathParameters['id']!;
-          return AdminQuestFormScreen(questId: questId);
+          return ErrorBoundary(
+            child: AdminQuestFormScreen(questId: questId),
+          );
         },
       ),
     ],

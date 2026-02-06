@@ -56,7 +56,7 @@ final class AdminQuestFormNotifierProvider
 }
 
 String _$adminQuestFormNotifierHash() =>
-    r'02ebe58ecdab40437a9652b9dfdaf5fa820c8369';
+    r'f227edd7240ea462a38ac5e19713cf4c604f4b51';
 
 /// Notifier for admin quest form (create/edit)
 
