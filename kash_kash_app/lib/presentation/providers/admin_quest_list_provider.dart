@@ -11,7 +11,7 @@ class AdminQuestListState {
   final String searchQuery;
   final bool isSaving;
   final String? error;
-  late final List<Quest> filteredQuests = _computeFilteredQuests();
+  List<Quest> get filteredQuests => _computeFilteredQuests();
 
   AdminQuestListState({
     this.quests = const [],
@@ -83,20 +83,23 @@ class AdminQuestListNotifier extends _$AdminQuestListNotifier {
         ? await repository.unpublishQuest(quest.id)
         : await repository.publishQuest(quest.id);
 
+    final latest = _getCurrentState();
+    if (latest == null) return;
+
     result.fold(
       (failure) {
-        state = AsyncData(current.copyWith(
+        state = AsyncData(latest.copyWith(
           isSaving: false,
           error: failure.message,
         ));
       },
       (updatedQuest) {
-        final updatedQuests = current.quests.map((q) {
+        final updatedQuests = latest.quests.map((q) {
           if (q.id == quest.id) return updatedQuest;
           return q;
         }).toList();
 
-        state = AsyncData(current.copyWith(
+        state = AsyncData(latest.copyWith(
           quests: updatedQuests,
           isSaving: false,
         ));
@@ -113,17 +116,20 @@ class AdminQuestListNotifier extends _$AdminQuestListNotifier {
     final repository = ref.read(questRepositoryProvider);
     final result = await repository.deleteQuest(questId);
 
+    final latest = _getCurrentState();
+    if (latest == null) return;
+
     result.fold(
       (failure) {
-        state = AsyncData(current.copyWith(
+        state = AsyncData(latest.copyWith(
           isSaving: false,
           error: failure.message,
         ));
       },
       (_) {
         final updatedQuests =
-            current.quests.where((q) => q.id != questId).toList();
-        state = AsyncData(current.copyWith(
+            latest.quests.where((q) => q.id != questId).toList();
+        state = AsyncData(latest.copyWith(
           quests: updatedQuests,
           isSaving: false,
         ));

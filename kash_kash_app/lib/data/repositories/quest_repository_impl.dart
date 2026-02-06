@@ -212,54 +212,51 @@ class QuestRepositoryImpl implements IQuestRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, domain.Quest>> createQuest(domain.Quest quest) async {
+  /// Execute an online-only operation with error handling.
+  ///
+  /// Checks connectivity first, then runs [op]. Catches exceptions and
+  /// wraps them in a [ServerFailure] with the given [action] description.
+  Future<Either<Failure, T>> _withOnlineGuard<T>(
+    String action,
+    Future<T> Function() op,
+  ) async {
     try {
       if (!await _isOnline()) {
-        return const Left(NetworkFailure('Cannot create quest while offline'));
+        return Left(NetworkFailure('Cannot $action while offline'));
       }
+      return Right(await op());
+    } catch (e) {
+      return Left(ServerFailure('Failed to $action: $e'));
+    }
+  }
 
+  @override
+  Future<Either<Failure, domain.Quest>> createQuest(domain.Quest quest) async {
+    return _withOnlineGuard('create quest', () async {
       final model = QuestModel.fromDomain(quest);
       final created = await _remoteDataSource.createQuest(model);
       await _questDao.upsert(created.toDrift());
-
-      return Right(created.toDomain());
-    } catch (e) {
-      return Left(ServerFailure('Failed to create quest: $e'));
-    }
+      return created.toDomain();
+    });
   }
 
   @override
   Future<Either<Failure, domain.Quest>> updateQuest(domain.Quest quest) async {
-    try {
-      if (!await _isOnline()) {
-        return const Left(NetworkFailure('Cannot update quest while offline'));
-      }
-
+    return _withOnlineGuard('update quest', () async {
       final model = QuestModel.fromDomain(quest);
       final updated = await _remoteDataSource.updateQuest(model);
       await _questDao.upsert(updated.toDrift());
-
-      return Right(updated.toDomain());
-    } catch (e) {
-      return Left(ServerFailure('Failed to update quest: $e'));
-    }
+      return updated.toDomain();
+    });
   }
 
   @override
   Future<Either<Failure, Unit>> deleteQuest(String id) async {
-    try {
-      if (!await _isOnline()) {
-        return const Left(NetworkFailure('Cannot delete quest while offline'));
-      }
-
+    return _withOnlineGuard('delete quest', () async {
       await _remoteDataSource.deleteQuest(id);
       await _questDao.deleteById(id);
-
-      return const Right(unit);
-    } catch (e) {
-      return Left(ServerFailure('Failed to delete quest: $e'));
-    }
+      return unit;
+    });
   }
 
   @override
@@ -272,7 +269,7 @@ class QuestRepositoryImpl implements IQuestRepository {
       if (await _isOnline()) {
         try {
           final remoteQuests = await _withRetry(
-            () => _remoteDataSource.getPublishedQuests(),
+            () => _remoteDataSource.getAllQuests(),
           );
           await _questDao.batchUpsert(
             remoteQuests.map((q) => q.toDrift()).toList(),
@@ -298,34 +295,20 @@ class QuestRepositoryImpl implements IQuestRepository {
 
   @override
   Future<Either<Failure, domain.Quest>> publishQuest(String id) async {
-    try {
-      if (!await _isOnline()) {
-        return const Left(NetworkFailure('Cannot publish quest while offline'));
-      }
-
+    return _withOnlineGuard('publish quest', () async {
       final updated = await _remoteDataSource.publishQuest(id);
       await _questDao.upsert(updated.toDrift());
-
-      return Right(updated.toDomain());
-    } catch (e) {
-      return Left(ServerFailure('Failed to publish quest: $e'));
-    }
+      return updated.toDomain();
+    });
   }
 
   @override
   Future<Either<Failure, domain.Quest>> unpublishQuest(String id) async {
-    try {
-      if (!await _isOnline()) {
-        return const Left(NetworkFailure('Cannot unpublish quest while offline'));
-      }
-
+    return _withOnlineGuard('unpublish quest', () async {
       final updated = await _remoteDataSource.unpublishQuest(id);
       await _questDao.upsert(updated.toDrift());
-
-      return Right(updated.toDomain());
-    } catch (e) {
-      return Left(ServerFailure('Failed to unpublish quest: $e'));
-    }
+      return updated.toDomain();
+    });
   }
 
   @override

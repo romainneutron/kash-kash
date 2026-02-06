@@ -203,12 +203,15 @@ class _AdminQuestCard extends StatelessWidget {
             Row(
               children: [
                 // Published status indicator
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: quest.published ? Colors.green : Colors.grey,
+                Semantics(
+                  label: quest.published ? 'Published' : 'Unpublished',
+                  child: Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: quest.published ? Colors.green : Colors.grey,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),

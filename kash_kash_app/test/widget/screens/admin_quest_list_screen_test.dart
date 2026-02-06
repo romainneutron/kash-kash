@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:kash_kash_app/domain/entities/quest.dart';
-import 'package:kash_kash_app/main.dart';
 import 'package:kash_kash_app/presentation/providers/admin_quest_list_provider.dart';
-import 'package:kash_kash_app/presentation/providers/auth_provider.dart';
-import 'package:kash_kash_app/presentation/providers/quest_provider.dart';
 import 'package:kash_kash_app/presentation/widgets/error_view.dart';
 
 import '../../helpers/fakes.dart';
+import '../../helpers/test_admin_helpers.dart';
 import '../../helpers/test_notifiers.dart';
 
 void main() {
@@ -21,34 +18,10 @@ void main() {
   }) async {
     final notifier = TestAdminQuestListNotifier(adminState);
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          authProvider.overrideWith(
-            () => TestAuthNotifier(TestAuthStates.authenticatedAdmin),
-          ),
-          questListProvider.overrideWith(
-            () => TestQuestListNotifier(
-              const QuestListState(isLoading: false, quests: []),
-            ),
-          ),
-          distanceFilterProvider.overrideWith(
-            () => TestDistanceFilterNotifier(DistanceFilter.km5),
-          ),
-          adminQuestListProvider.overrideWith(
-            () => notifier,
-          ),
-        ],
-        child: const KashKashApp(),
-      ),
+    await pumpAdminApp(
+      tester,
+      adminListOverride: () => notifier,
     );
-    await tester.pumpAndSettle();
-
-    // Navigate to admin screen via popup menu
-    await tester.tap(find.byIcon(Icons.more_vert));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Admin Panel'));
-    await tester.pumpAndSettle();
 
     return notifier;
   }

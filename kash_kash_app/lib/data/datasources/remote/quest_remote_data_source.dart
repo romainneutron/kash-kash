@@ -6,6 +6,7 @@ import 'package:kash_kash_app/data/models/quest_model.dart';
 /// API endpoint paths for quest operations.
 abstract class QuestEndpoints {
   static const String quests = '/api/quests';
+  static const String adminQuests = '/api/admin/quests';
   static const String nearby = '/api/quests/nearby';
   static String questById(String id) => '/api/quests/$id';
   static String publish(String id) => '/api/quests/$id/publish';
@@ -73,6 +74,17 @@ class QuestRemoteDataSource {
       },
     );
     final items = _extractListFromResponse(response.data, keys: _nearbyListKeys);
+    return items
+        .map((json) => QuestModel.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Fetch all quests including unpublished (admin only).
+  Future<List<QuestModel>> getAllQuests() async {
+    final response = await _apiClient.get<Map<String, dynamic>>(
+      QuestEndpoints.adminQuests,
+    );
+    final items = _extractListFromResponse(response.data);
     return items
         .map((json) => QuestModel.fromJson(json as Map<String, dynamic>))
         .toList();

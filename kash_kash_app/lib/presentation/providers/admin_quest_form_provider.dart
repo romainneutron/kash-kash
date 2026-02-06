@@ -237,6 +237,14 @@ class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
     final currentUser = ref.read(currentUserProvider);
     final now = DateTime.now();
 
+    if (!current.isEditing && currentUser == null) {
+      state = AsyncData(current.copyWith(
+        isSaving: false,
+        error: 'You must be logged in to create a quest',
+      ));
+      return left(const AuthFailure('User not authenticated'));
+    }
+
     final quest = Quest(
       id: current.existingQuest?.id ?? _uuid.v4(),
       title: current.formData.title.trim(),
@@ -246,7 +254,7 @@ class AdminQuestFormNotifier extends _$AdminQuestFormNotifier {
       latitude: current.formData.latitude!,
       longitude: current.formData.longitude!,
       radiusMeters: current.formData.radiusMeters,
-      createdBy: current.existingQuest?.createdBy ?? currentUser?.id ?? '',
+      createdBy: current.existingQuest?.createdBy ?? currentUser!.id,
       published: current.existingQuest?.published ?? false,
       difficulty: current.formData.difficulty,
       locationType: current.formData.locationType,

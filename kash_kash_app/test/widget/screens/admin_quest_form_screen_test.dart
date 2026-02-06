@@ -1,61 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:kash_kash_app/domain/entities/quest.dart';
-import 'package:kash_kash_app/main.dart';
 import 'package:kash_kash_app/presentation/providers/admin_quest_form_provider.dart';
 import 'package:kash_kash_app/presentation/providers/admin_quest_list_provider.dart';
-import 'package:kash_kash_app/presentation/providers/auth_provider.dart';
-import 'package:kash_kash_app/presentation/providers/quest_provider.dart';
 
 import '../../helpers/fakes.dart';
+import '../../helpers/test_admin_helpers.dart';
 import '../../helpers/test_notifiers.dart';
 
 void main() {
   /// Pump the app and navigate to the quest form via admin list > FAB.
   /// Returns the test form notifier for interaction assertions.
+  ///
+  /// Set [settle] to false when testing animations (e.g. LinearProgressIndicator).
   Future<TestAdminQuestFormNotifier> pumpCreateForm(
     WidgetTester tester, {
     required AdminQuestFormState formState,
+    bool settle = true,
   }) async {
     final formNotifier = TestAdminQuestFormNotifier(formState);
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          authProvider.overrideWith(
-            () => TestAuthNotifier(TestAuthStates.authenticatedAdmin),
-          ),
-          questListProvider.overrideWith(
-            () => TestQuestListNotifier(
-              const QuestListState(isLoading: false, quests: []),
-            ),
-          ),
-          distanceFilterProvider.overrideWith(
-            () => TestDistanceFilterNotifier(DistanceFilter.km5),
-          ),
-          adminQuestListProvider.overrideWith(
-            () => TestAdminQuestListNotifier(AdminQuestListState()),
-          ),
-          adminQuestFormProvider.overrideWith(
-            () => formNotifier,
-          ),
-        ],
-        child: const KashKashApp(),
-      ),
+    await pumpAdminApp(
+      tester,
+      adminListOverride: () =>
+          TestAdminQuestListNotifier(AdminQuestListState()),
+      adminFormOverride: () => formNotifier,
     );
-    await tester.pumpAndSettle();
-
-    // Navigate to admin screen via popup menu
-    await tester.tap(find.byIcon(Icons.more_vert));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Admin Panel'));
-    await tester.pumpAndSettle();
 
     // Tap FAB to navigate to create form
     await tester.tap(find.byType(FloatingActionButton));
-    await tester.pumpAndSettle();
+    if (settle) {
+      await tester.pumpAndSettle();
+    } else {
+      await tester.pump();
+      await tester.pump();
+    }
 
     return formNotifier;
   }
@@ -167,46 +147,11 @@ void main() {
     });
 
     testWidgets('shows saving indicator', (tester) async {
-      // Can't use pumpCreateForm here because pumpAndSettle times out
-      // with LinearProgressIndicator animation. Navigate manually with pump().
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            authProvider.overrideWith(
-              () => TestAuthNotifier(TestAuthStates.authenticatedAdmin),
-            ),
-            questListProvider.overrideWith(
-              () => TestQuestListNotifier(
-                const QuestListState(isLoading: false, quests: []),
-              ),
-            ),
-            distanceFilterProvider.overrideWith(
-              () => TestDistanceFilterNotifier(DistanceFilter.km5),
-            ),
-            adminQuestListProvider.overrideWith(
-              () => TestAdminQuestListNotifier(AdminQuestListState()),
-            ),
-            adminQuestFormProvider.overrideWith(
-              () => TestAdminQuestFormNotifier(
-                const AdminQuestFormState(isSaving: true),
-              ),
-            ),
-          ],
-          child: const KashKashApp(),
-        ),
+      await pumpCreateForm(
+        tester,
+        formState: const AdminQuestFormState(isSaving: true),
+        settle: false,
       );
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byIcon(Icons.more_vert));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Admin Panel'));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byType(FloatingActionButton));
-      // Use pump() instead of pumpAndSettle() since LinearProgressIndicator
-      // has ongoing animation that prevents settling
-      await tester.pump();
-      await tester.pump();
 
       expect(find.byType(LinearProgressIndicator), findsOneWidget);
     });
